@@ -24,8 +24,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    graphstate.cpp \
+    graphelement.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    graphstate.h \
+    graphelement.h \
+    constants.h
 
 FORMS    += mainwindow.ui
