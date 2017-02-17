@@ -13,7 +13,7 @@ namespace constants
      */
     const int ELEMENT_ROOT = 0;
     const int ELEMENT_CUT = 1;
-    const int ELEMENT_STATMENT = 2;
+    const int ELEMENT_STATEMENT = 2;
 }
 
 #endif // CONSTANTS_H
