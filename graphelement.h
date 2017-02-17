@@ -41,25 +41,29 @@ public:
     static GraphElement Cut(GraphElement* parent);
     static GraphElement Statement(GraphElement* parent, QString s);
 
-    ~GraphElement();
+    ~GraphElement() {}
 
     int addChild(GraphElement* child);
     int removeChild(GraphElement* child);
-    QList<GraphElement*> getChildren();
 
     int updateParent(GraphElement* newParent);
 
     /* Boolean identifiers */
     bool isRoot() { return type == constants::ELEMENT_ROOT; }
     bool isCut() { return type == constants::ELEMENT_CUT; }
-    bool isStatement(){ return type == constants::ELEMENT_STATMENT; }
+    bool isStatement(){ return type == constants::ELEMENT_STATEMENT; }
 
 private:
-    GraphElement(); /* private constructor */
+    /* Private constructor forces factory method construction */
+    GraphElement(const int t, GraphElement* p, QString n)
+        : type(t)
+        , parent(p)
+        , name(n) {}
 
-    int type;
+    const int type;
     GraphElement* parent;
     QList<GraphElement*> children;
+    QString name;
 
 };
 
