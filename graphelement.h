@@ -46,7 +46,12 @@ public:
     int addChild(GraphElement* child);
     int removeChild(GraphElement* child);
 
+    /* TODO: fix rep. exposure (make private? friend graphstate?) */
+    QList<GraphElement*> getChildren() { return children; }
+    GraphElement* getParent() { return parent; }
+
     int updateParent(GraphElement* newParent);
+
 
     /* Boolean identifiers */
     bool isRoot() { return type == constants::ELEMENT_ROOT; }
