@@ -55,10 +55,30 @@ void GraphState::selectLeftSibling()
         selected = previous;
 }
 
-/* Identical to selectLeftSibling, except we go to the right */
+/* Select the next right sibling */
 void GraphState::selectRightSibling()
 {
-    /* TODO: finish implementation */
+    /* Root doesn't have any siblings */
+    if (selected->isRoot())
+        return;
+
+    /* List has the selected item and all its siblings */
+    QList<GraphElement*> list = selected->getParent()->getChildren();
+
+    GraphElement* next = NULL;
+    QList<GraphElement*>::const_reverse_iterator it = list.rbegin();
+    for (; it != list.rend(); ++it)
+    {
+        if (*it == selected)
+            break;
+        next = *it;
+    }
+
+    /* Nothing to the right */
+    if (next == NULL)
+       selected = list.front();
+    else /* Choose the next as the new selection */
+        selected = next;
 }
 
 
