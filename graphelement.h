@@ -1,7 +1,7 @@
 #ifndef GRAPHELEMENT_H
 #define GRAPHELEMENT_H
 
-#include<QVector>
+#include<QList>
 #include <QString>
 
 #include "constants.h"
@@ -45,7 +45,7 @@ public:
 
     int addChild(GraphElement* child);
     int removeChild(GraphElement* child);
-    QVector<GraphElement*> getChildren();
+    QList<GraphElement*> getChildren();
 
     int updateParent(GraphElement* newParent);
 
@@ -59,7 +59,7 @@ private:
 
     int type;
     GraphElement* parent;
-    QVector<GraphElement*> children;
+    QList<GraphElement*> children;
 
 };
 
