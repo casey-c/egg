@@ -4,7 +4,7 @@
 /* Factory to build a root element */
 GraphElement GraphElement::Root()
 {
-    return GraphElement(constants::ELEMENT_CUT,NULL,NULL);
+    return GraphElement(constants::ELEMENT_ROOT,NULL,NULL);
 }
 
 /* Factory to build a cut element */
