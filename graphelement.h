@@ -9,7 +9,7 @@
 /*
  * A GraphElement is one of the particular objects of an existential graph tree.
  * It can either be a root element, a cut element, or a statement. The first
- * two are allowed to have child elements, while the latter cannot. Statements
+ * two are allowed to have child elements, while the statement cannot. Statements
  * also have a particular string associated with them (e.g. the letter 'A')
  * that will be displayed by the canvas.
  *

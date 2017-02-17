@@ -2,6 +2,12 @@
 
 /* TODO: implement graphstate.cpp */
 
+
+GraphState::~GraphState()
+{
+
+}
+
 void GraphState::selectAChild()
 {
 
