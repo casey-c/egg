@@ -32,6 +32,7 @@ class GraphState
 {
 public:
     GraphState();
+    ~GraphState();
 
     /* Change selection */
     void selectAChild();
