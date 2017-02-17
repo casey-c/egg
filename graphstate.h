@@ -59,9 +59,8 @@ public:
     /* TODO: inference mode*/
 
 private:
-    GraphElement root;
-
-    GraphElement selected; /* TODO: List<> for multi-select? */
+    GraphElement* root;
+    GraphElement* selected; /* TODO: List<> for multi-select? */
 };
 
 #endif // GRAPHSTATE_H
