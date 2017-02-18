@@ -1,69 +1,95 @@
 #include "headers/graphelement.h"
 #include "headers/constants.h"
 
-/* Factory to build a root element */
-GraphElement GraphElement::Root()
+/* Add child cut */
+GraphElement* GraphElement::addChildCut()
 {
-    return GraphElement(constants::ELEMENT_ROOT,NULL,NULL);
-}
-
-/* Factory to build a cut element */
-GraphElement GraphElement::Cut(GraphElement* parent)
-{
-    return GraphElement(constants::ELEMENT_CUT,parent,NULL);
-}
-
-/* Factory to build a statement element */
-GraphElement GraphElement::Statement(GraphElement* parent, QString s)
-{
-    return GraphElement(constants::ELEMENT_STATEMENT, parent, s);
-}
-
-/*
- * Attempts to add the parameter as a child to this node. Only root elements or
- * cut elements are allowed to have children.
- *
- * Returns:
- * 		-1: if this node is not allowed to have children
- * 		 0: if the child is successfully added
- * 		 1: if the child already exists
- */
-int GraphElement::addChild(GraphElement* child)
-{
+    // Check if this is allowed to have children
     if (isStatement())
-        return -1;
+        return this;
 
-    if (children.contains(child))
-        return 1;
+    // Check if this is a placeholder
+    if (isPlaceHolder())
+    {
+        // Replace this element
+        type = constants::ELEMENT_CUT;
+        parent->placeHolderChild = false;
+        return this;
+    }
 
-    children.push_back(child);
-    return 0;
+    // See if we have a placeholder child to replace
+    if (placeHolderChild)
+    {
+        // Replace that element
+        placeholder->type = constants::ELEMENT_CUT;
+        placeHolderChild = false;
+
+        return placeholder;
+    }
+
+    // Otherwise, make a new cut element
+    //GraphElement newCut(constants::ELEMENT_CUT,this,NULL);
+    GraphElement* newCut = new GraphElement(constants::ELEMENT_CUT,this,NULL);
+    children.append(newCut);
+    return newCut;
 }
 
-/*
- * Attempts to remove the child from this nodes list of children.
- *
- * Returns:
- * 		-1: if unable to remove this child
- * 		 0: if successfully removed
- */
-int GraphElement::removeChild(GraphElement* child)
+/* Add child statement */
+GraphElement* GraphElement::addChildStatement(QString s)
 {
-    return children.removeOne(child) ? -1 : 0;
+    // Check if this is allowed to have children
+    if (isStatement())
+        return this;
+
+    // Check if this is a placeholder
+    if (isPlaceHolder())
+    {
+        // Replace this element
+        type = constants::ELEMENT_STATEMENT;
+        name = s;
+        parent->placeHolderChild = false;
+
+        return this;
+    }
+
+    // See if we have a placeholder child to replace
+    if (placeHolderChild)
+    {
+        // Replace that element
+        placeholder->type = constants::ELEMENT_STATEMENT;
+        placeholder->name = s;
+        placeHolderChild = false;
+
+        return placeholder;
+    }
+
+    // Otherwise, make a new statement element
+    GraphElement* newStatement = new GraphElement(constants::ELEMENT_STATEMENT,this,s);
+    children.append(newStatement);
+
+    return newStatement;
+
 }
 
-/*
- * Updates this node's parent to equal the parameter
- *
- * Returns:
- * 		-1: if newParent == NULL or this is root
- * 		 0: if successfully updated
- */
-int GraphElement::updateParent(GraphElement* newParent)
+/* Add child placeholder */
+GraphElement* GraphElement::addChildPlaceholder()
 {
-    if (newParent == NULL || isRoot())
-        return -1;
+    // Check if this is allowed to have children
+    if (isStatement())
+        return this;
 
-    parent = newParent;
-    return 0;
+    // Check if this is already a placeholder
+    if (isPlaceHolder())
+        return this;
+
+    // Check if we already have a child placeholder
+    if (placeHolderChild)
+        return this;
+
+    // We should be good to add a new child placeholder
+    GraphElement* newPlaceholder = new GraphElement(constants::ELEMENT_PLACEHOLDER,this,NULL);
+    placeHolderChild = true;
+    placeholder = newPlaceholder;
+
+    return newPlaceholder;
 }

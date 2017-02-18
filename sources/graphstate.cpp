@@ -84,40 +84,19 @@ void GraphState::selectRightSibling()
 /* Adds a cut to the selected node's children */
 void GraphState::addChildCut()
 {
-    /* Statements cannot have children */
-    if (selected->isStatement())
-        return;
 
-    GraphElement newCut = GraphElement::Cut(selected);
-    selected->addChild(&newCut);
-
-    selected = &newCut;
 }
 
 /* Adds a double cut to the selected region */
 void GraphState::addChildDoubleCut()
 {
-    /* Statements cannot have children */
-    if (selected->isStatement())
-        return;
 
-    GraphElement newOuterCut = GraphElement::Cut(selected);
-    GraphElement newInnerCut = GraphElement::Cut(&newOuterCut);
-    newOuterCut.addChild(&newInnerCut);
-
-    selected->addChild(&newOuterCut);
-    selected = &newInnerCut;
 }
 
 /* Adds a child statement with the string s */
 void GraphState::addChildStatement(QString s)
 {
-    if (selected->isStatement())
-        return;
 
-    GraphElement newStatement = GraphElement::Statement(selected,s);
-    selected->addChild(&newStatement);
-    selected = &newStatement;
 }
 
 /* Remove */
