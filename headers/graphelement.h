@@ -86,7 +86,7 @@ public:
     bool isStatement(){ return type == constants::ELEMENT_STATEMENT; }
 
     bool isPlaceHolder() { return type == constants::ELEMENT_PLACEHOLDER; }
-    bool hasPlaceHolderChild() { return hasPlaceHolderChild == true; }
+    bool hasPlaceHolderChild() { return placeHolderChild == true; }
 
 private:
     /* Private constructor forces factory method construction */
@@ -94,14 +94,14 @@ private:
         : type(t)
         , parent(p)
         , name(n)
-        , hasPlaceHolderChild() {}
+        , placeHolderChild() {}
 
     const int type;
     GraphElement* parent;
     QList<GraphElement*> children;
     QString name;
 
-    bool hasPlaceHolderChild;
+    bool placeHolderChild;
 };
 
 #endif // GRAPHELEMENT_H

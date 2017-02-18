@@ -1,5 +1,5 @@
-#include "graphelement.h"
-#include "constants.h"
+#include "headers/graphelement.h"
+#include "headers/constants.h"
 
 /* Factory to build a root element */
 GraphElement GraphElement::Root()

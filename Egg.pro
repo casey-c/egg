@@ -23,14 +23,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
-    graphstate.cpp \
-    graphelement.cpp
+SOURCES += sources/main.cpp\
+        sources/mainwindow.cpp \
+    sources/graphstate.cpp \
+   sources/graphelement.cpp
 
-HEADERS  += mainwindow.h \
-    graphstate.h \
-    graphelement.h \
-    constants.h
+HEADERS  += headers/mainwindow.h \
+    headers/graphstate.h \
+    headers/graphelement.h \
+    headers/constants.h
 
-FORMS    += mainwindow.ui
+FORMS    += forms/mainwindow.ui
+
+INCLUDEPATH += $$PWD
