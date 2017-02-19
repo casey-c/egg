@@ -1,7 +1,7 @@
-#ifndef GRAPHSTATE_H
-#define GRAPHSTATE_H
+#ifndef TREE_TREESTATE_H
+#define TREE_TREESTATE_H
 
-#include "graphelement.h"
+#include "treenode.h"
 
 /*
  * A graph state stores the root element of an existential graph tree. It also
@@ -28,11 +28,11 @@
  *
  * Surround with cut simply adds a cut above the selected region in the tree.
  */
-class GraphState
+class TreeState
 {
 public:
-    GraphState();
-    ~GraphState();
+    TreeState();
+    ~TreeState() {}
 
     /* Change selection */
     void selectAChild();
@@ -59,8 +59,8 @@ public:
     /* TODO: inference mode*/
 
 private:
-    GraphElement* root;
-    GraphElement* selected; /* TODO: List<> for multi-select? */
+    TreeNode* root;
+    TreeNode* selected; /* TODO: List<> for multi-select? */
 };
 
-#endif // GRAPHSTATE_H
+#endif // TREE_TREESTATE_H

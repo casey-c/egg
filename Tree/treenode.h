@@ -1,10 +1,10 @@
-#ifndef GRAPHELEMENT_H
-#define GRAPHELEMENT_H
+#ifndef TREE_TREENODE_H
+#define TREE_TREENODE_H
 
 #include<QList>
 #include <QString>
 
-#include "constants.h"
+#include "Utilities/constants.h"
 
 /*
  * A GraphElement is the basic node of an existential graph tree. These elements
@@ -28,22 +28,22 @@
  * have placeholders of their own.
  */
 
-class GraphElement
+class TreeNode
 {
 public:
     /* Public factory constructor */
-    static GraphElement Root();
+    static TreeNode Root();
 
     /* TODO: deallocate dynamic memory on destruction of a tree */
-    ~GraphElement() {}
+    ~TreeNode() {}
 
-    GraphElement* addChildCut();
-    GraphElement* addChildStatement(QString s);
-    GraphElement* addChildPlaceholder();
+    TreeNode* addChildCut();
+    TreeNode* addChildStatement(QString s);
+    TreeNode* addChildPlaceholder();
 
     /* TODO: fix rep. exposure (make private? friend graphstate?) */
-    QList<GraphElement*> getChildren() { return children; }
-    GraphElement* getParent() { return parent; }
+    QList<TreeNode*> getChildren() { return children; }
+    TreeNode* getParent() { return parent; }
 
     /* Boolean identifiers */
     bool isRoot() { return type == constants::ELEMENT_ROOT; }
@@ -53,19 +53,19 @@ public:
 
 private:
     /* Private default constructor */
-    GraphElement(const int t, GraphElement* p, QString n)
+    TreeNode(const int t, TreeNode* p, QString n)
             : type(t)
             , parent(p)
             , name(n)
             , placeHolderChild() {}
 
     int type;
-    GraphElement* parent;
-    QList<GraphElement*> children;
+    TreeNode* parent;
+    QList<TreeNode*> children;
     QString name;
 
-    GraphElement* placeholder;
+    TreeNode* placeholder;
     bool placeHolderChild;
 };
 
-#endif // GRAPHELEMENT_H
+#endif // TREE_TREENODE_H
