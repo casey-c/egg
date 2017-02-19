@@ -1,47 +1,41 @@
-#include "headers/graphstate.h"
+#include "Tree/treestate.h"
 
 /* TODO: implement graphstate.cpp */
 
-/* Destructor */
-GraphState::~GraphState()
-{
-
-}
-
 /* Selects the first child of the selected region, if it exists */
-void GraphState::selectAChild()
+void TreeState::selectAChild()
 {
     if (!selected->getChildren().isEmpty())
         selected = selected->getChildren().first();
 }
 
 /* Selects the parent of the selected node, if not already root. */
-void GraphState::selectParent()
+void TreeState::selectParent()
 {
     if (!selected->isRoot())
         selected = selected->getParent();
 }
 
 /* Recursively selects the parent of the selection until we reach root */
-void GraphState::selectRoot()
+void TreeState::selectRoot()
 {
     while (!selected->isRoot())
         selected = selected->getParent();
 }
 
 /* Selects the previous sibling of the parent's getChildren list */
-void GraphState::selectLeftSibling()
+void TreeState::selectLeftSibling()
 {
     /* Root doesn't have any siblings */
     if (selected->isRoot())
         return;
 
     /* List has the selected item and all its siblings */
-    QList<GraphElement*> list = selected->getParent()->getChildren();
+    QList<TreeNode*> list = selected->getParent()->getChildren();
 
-    GraphElement* previous = NULL;
+    TreeNode* previous = NULL;
 
-    for (GraphElement* prev : list)
+    for (TreeNode* prev : list)
     {
         if (prev == selected)
             break;
@@ -56,17 +50,17 @@ void GraphState::selectLeftSibling()
 }
 
 /* Select the next right sibling */
-void GraphState::selectRightSibling()
+void TreeState::selectRightSibling()
 {
     /* Root doesn't have any siblings */
     if (selected->isRoot())
         return;
 
     /* List has the selected item and all its siblings */
-    QList<GraphElement*> list = selected->getParent()->getChildren();
+    QList<TreeNode*> list = selected->getParent()->getChildren();
 
-    GraphElement* next = NULL;
-    QList<GraphElement*>::const_reverse_iterator it = list.rbegin();
+    TreeNode* next = NULL;
+    QList<TreeNode*>::const_reverse_iterator it = list.rbegin();
     for (; it != list.rend(); ++it)
     {
         if (*it == selected)
@@ -82,39 +76,39 @@ void GraphState::selectRightSibling()
 }
 
 /* Adds a cut to the selected node's children */
-void GraphState::addChildCut()
+void TreeState::addChildCut()
 {
 
 }
 
 /* Adds a double cut to the selected region */
-void GraphState::addChildDoubleCut()
+void TreeState::addChildDoubleCut()
 {
 
 }
 
 /* Adds a child statement with the string s */
-void GraphState::addChildStatement(QString s)
+void TreeState::addChildStatement(QString s)
 {
 
 }
 
 /* Remove */
-void GraphState::removeAndSaveOrphans()
+void TreeState::removeAndSaveOrphans()
 {
 
 }
-void GraphState::removeAndBurnTheOrphanage()
+void TreeState::removeAndBurnTheOrphanage()
 {
 
 }
 
 /* Surround with cut */
-void GraphState::surroundWithCut()
+void TreeState::surroundWithCut()
 {
 
 }
-void GraphState::surroundWithDoubleCut()
+void TreeState::surroundWithDoubleCut()
 {
 
 }

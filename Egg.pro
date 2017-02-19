@@ -25,13 +25,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += MainWindow/main.cpp\
         MainWindow/mainwindow.cpp \
-    Tree/graphstate.cpp \
-   Tree/graphelement.cpp
+    Tree/treenode.cpp \
+    Tree/treestate.cpp
 
 HEADERS  += MainWindow/mainwindow.h \
-    Tree/graphstate.h \
-    Tree/graphelement.h \
-    Utilities/constants.h
+    Utilities/constants.h \
+    Tree/treenode.h \
+    Tree/treestate.h
 
 FORMS    += MainWindow/mainwindow.ui
 

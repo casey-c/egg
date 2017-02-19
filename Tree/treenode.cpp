@@ -1,8 +1,8 @@
-#include "headers/graphelement.h"
-#include "headers/constants.h"
+#include "Tree/treenode.h"
+#include "Tree/treestate.h"
 
 /* Add child cut */
-GraphElement* GraphElement::addChildCut()
+TreeNode* TreeNode::addChildCut()
 {
     // Check if this is allowed to have children
     if (isStatement())
@@ -28,14 +28,13 @@ GraphElement* GraphElement::addChildCut()
     }
 
     // Otherwise, make a new cut element
-    //GraphElement newCut(constants::ELEMENT_CUT,this,NULL);
-    GraphElement* newCut = new GraphElement(constants::ELEMENT_CUT,this,NULL);
+    TreeNode* newCut = new TreeNode(constants::ELEMENT_CUT,this,NULL);
     children.append(newCut);
     return newCut;
 }
 
 /* Add child statement */
-GraphElement* GraphElement::addChildStatement(QString s)
+TreeNode* TreeNode::addChildStatement(QString s)
 {
     // Check if this is allowed to have children
     if (isStatement())
@@ -64,7 +63,7 @@ GraphElement* GraphElement::addChildStatement(QString s)
     }
 
     // Otherwise, make a new statement element
-    GraphElement* newStatement = new GraphElement(constants::ELEMENT_STATEMENT,this,s);
+    TreeNode* newStatement = new TreeNode(constants::ELEMENT_STATEMENT,this,s);
     children.append(newStatement);
 
     return newStatement;
@@ -72,7 +71,7 @@ GraphElement* GraphElement::addChildStatement(QString s)
 }
 
 /* Add child placeholder */
-GraphElement* GraphElement::addChildPlaceholder()
+TreeNode* TreeNode::addChildPlaceholder()
 {
     // Check if this is allowed to have children
     if (isStatement())
@@ -87,7 +86,7 @@ GraphElement* GraphElement::addChildPlaceholder()
         return this;
 
     // We should be good to add a new child placeholder
-    GraphElement* newPlaceholder = new GraphElement(constants::ELEMENT_PLACEHOLDER,this,NULL);
+    TreeNode* newPlaceholder = new TreeNode(constants::ELEMENT_PLACEHOLDER,this,NULL);
     placeHolderChild = true;
     placeholder = newPlaceholder;
 
