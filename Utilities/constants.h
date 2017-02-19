@@ -1,5 +1,5 @@
-#ifndef CONSTANTS_H
-#define CONSTANTS_H
+#ifndef UTILITIES_CONSTANTS_H
+#define UTILITIES_CONSTANTS_H
 
 namespace constants
 {
@@ -17,4 +17,4 @@ namespace constants
     const int ELEMENT_PLACEHOLDER = 3;
 }
 
-#endif // CONSTANTS_H
+#endif // UTILITIES_CONSTANTS_H
