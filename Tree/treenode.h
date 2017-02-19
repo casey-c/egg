@@ -41,6 +41,11 @@ public:
     TreeNode* addChildStatement(QString s);
     TreeNode* addChildPlaceholder();
 
+    void addAll(QList<TreeNode*> list);
+
+    void addExisting(TreeNode* node);
+    void remove();
+
     /* TODO: fix rep. exposure (make private? friend graphstate?) */
     QList<TreeNode*> getChildren() { return children; }
     TreeNode* getParent() { return parent; }

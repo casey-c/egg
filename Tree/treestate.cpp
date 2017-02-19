@@ -78,29 +78,39 @@ void TreeState::selectRightSibling()
 /* Adds a cut to the selected node's children */
 void TreeState::addChildCut()
 {
-
+    selected = selected->addChildCut();
 }
 
 /* Adds a double cut to the selected region */
 void TreeState::addChildDoubleCut()
 {
-
+    selected = selected->addChildCut();
+    selected = selected->addChildCut();
 }
 
 /* Adds a child statement with the string s */
 void TreeState::addChildStatement(QString s)
 {
-
+    selected = selected->addChildStatement(s);
 }
 
 /* Remove */
 void TreeState::removeAndSaveOrphans()
 {
+    QList<TreeNode*> children = selected->getChildren();
+    TreeNode* parent = selected->getParent();
+
+    parent->addAll(children);
+
+    // Delete the selected node
+    selected->remove();
 
 }
+
+/* Remove the selected node and any of its children */
 void TreeState::removeAndBurnTheOrphanage()
 {
-
+    selected->remove();
 }
 
 /* Surround with cut */
@@ -108,6 +118,8 @@ void TreeState::surroundWithCut()
 {
 
 }
+
+/* Surround with double cut */
 void TreeState::surroundWithDoubleCut()
 {
 
