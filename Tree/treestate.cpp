@@ -86,8 +86,10 @@ void TreeState::addChildCut()
 /* Adds a double cut to the selected region */
 void TreeState::addChildDoubleCut()
 {
-    selected = selected->addChildCut();
-    selected = selected->addChildCut();
+    //selected = selected->addChildCut();
+    //selected = selected->addChildCut();
+    addChildCut();
+    addChildCut();
 }
 
 /* Adds a child statement with the string s */

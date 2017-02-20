@@ -18,9 +18,18 @@ MainWindow::MainWindow(QWidget *parent) :
                      treeDisplayWidget,
                      SLOT(updateText(QString)));
 
-    //currentTree->addChildStatement("t");
+    currentTree->addChildCut();
     currentTree->addChildStatement(QString("A"));
-    //currentTree->printTree();
+    currentTree->selectRoot();
+    currentTree->addChildStatement(QString("B"));
+    currentTree->selectParent();
+    currentTree->addChildDoubleCut();
+    currentTree->addChildStatement("C");
+    currentTree->selectParent();
+    currentTree->selectParent();
+    currentTree->addChildStatement("D");
+    currentTree->selectRoot();
+    currentTree->addChildCut();
 
 }
 
