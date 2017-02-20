@@ -2,6 +2,15 @@
 #include "Tree/treestate.h"
 
 #include <QDebug>
+/* Constructor */
+TreeNode::TreeNode()
+{
+    type = constants::ELEMENT_ROOT;
+    name = QString("Root");
+    placeHolderChild = false;
+    placeholder = NULL;
+    parent = NULL;
+}
 
 /* Add child cut */
 TreeNode* TreeNode::addChildCut()
