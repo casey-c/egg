@@ -9,6 +9,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     currentTree = new TreeState();
+    currentTree->addChildStatement("t");
+    currentTree->printTree();
 }
 
 MainWindow::~MainWindow()
