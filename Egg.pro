@@ -26,13 +26,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += MainWindow/main.cpp\
         MainWindow/mainwindow.cpp \
     Tree/treenode.cpp \
-    Tree/treestate.cpp
+    Tree/treestate.cpp \
+    TreeDisplayWidget/treedisplaywidget.cpp
 
 HEADERS  += MainWindow/mainwindow.h \
     Utilities/constants.h \
     Tree/treenode.h \
-    Tree/treestate.h
+    Tree/treestate.h \
+    TreeDisplayWidget/treedisplaywidget.h
 
-FORMS    += MainWindow/mainwindow.ui
+FORMS    += MainWindow/mainwindow.ui \
+    TreeDisplayWidget/treedisplaywidget.ui
 
 INCLUDEPATH += $$PWD

@@ -47,6 +47,7 @@ public:
     void remove();
 
     void print(QString indent, bool last);
+    QString getFormattedString(QString indent, bool last);
 
     /* TODO: fix rep. exposure (make private? friend graphstate?) */
     QList<TreeNode*> getChildren() { return children; }

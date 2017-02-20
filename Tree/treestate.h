@@ -2,6 +2,7 @@
 #define TREE_TREESTATE_H
 
 #include "treenode.h"
+#include <QObject>
 
 /*
  * A graph state stores the root element of an existential graph tree. It also
@@ -28,8 +29,10 @@
  *
  * Surround with cut simply adds a cut above the selected region in the tree.
  */
-class TreeState
+class TreeState : public QObject
 {
+    Q_OBJECT
+
 public:
     TreeState(): root(new TreeNode()), selected(root){}
     ~TreeState() {}
@@ -61,9 +64,15 @@ public:
 
     /* TODO: inference mode*/
 
+
+signals:
+    void treeChanged(QString s);
+
 private:
     TreeNode* root;
     TreeNode* selected; /* TODO: List<> for multi-select? */
+
+    QString getFormattedString();
 };
 
 #endif // TREE_TREESTATE_H
