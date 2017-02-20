@@ -13,7 +13,10 @@ TreeNode* TreeNode::addChildCut()
     {
         // Replace this element
         type = constants::ELEMENT_CUT;
+
+        // Update our parent's info
         parent->placeHolderChild = false;
+        parent->children.append(this);
         return this;
     }
 
@@ -24,6 +27,8 @@ TreeNode* TreeNode::addChildCut()
         placeholder->type = constants::ELEMENT_CUT;
         placeHolderChild = false;
 
+        // Make it our real child
+        children.append(placeholder);
         return placeholder;
     }
 
@@ -46,8 +51,10 @@ TreeNode* TreeNode::addChildStatement(QString s)
         // Replace this element
         type = constants::ELEMENT_STATEMENT;
         name = s;
-        parent->placeHolderChild = false;
 
+        // Update our parent's info
+        parent->placeHolderChild = false;
+        parent->children.append(this);
         return this;
     }
 
@@ -57,7 +64,10 @@ TreeNode* TreeNode::addChildStatement(QString s)
         // Replace that element
         placeholder->type = constants::ELEMENT_STATEMENT;
         placeholder->name = s;
+
+        // Make it a real boy
         placeHolderChild = false;
+        children.append(placeholder);
 
         return placeholder;
     }
@@ -83,7 +93,7 @@ TreeNode* TreeNode::addChildPlaceholder()
 
     // Check if we already have a child placeholder
     if (placeHolderChild)
-        return this;
+        return placeholder;
 
     // We should be good to add a new child placeholder
     TreeNode* newPlaceholder = new TreeNode(constants::ELEMENT_PLACEHOLDER,this,NULL);
@@ -114,6 +124,10 @@ void TreeNode::addAll(QList<TreeNode *> list)
         this->type = first->type;
         this->name = first->name;
 
+        // Make sure our parent knows we're a real boy now
+        parent->children.append(this);
+        parent->placeHolderChild = false;
+
         // Add the rest as siblings to this node
         for (TreeNode* node : list)
             parent->addExisting(node);
@@ -132,7 +146,9 @@ void TreeNode::addAll(QList<TreeNode *> list)
         placeholder->type = first->type;
         placeholder->name = first->name;
 
+        // Update parent info
         placeHolderChild = false;
+        children.append(placeholder);
 
         // Then add the other items as additional children
         for (TreeNode* node : list)
@@ -147,8 +163,17 @@ void TreeNode::addExisting(TreeNode *node)
 {
     // Check to make sure the existing node doesn't conflict with placeholder
     // restrictions
-    if (node->isPlaceHolder() && this->placeHolderChild)
+    if (node->isPlaceHolder())
+    {
+        // Only allowed one placeholder per parent node
+        if (this->placeHolderChild)
+            return;
+
+        // Otherwise, set this node as our new placeholder
+        placeHolderChild = true;
+        placeholder = node;
         return;
+    }
 
     // Otherwise, we should be free to add a new child
     TreeNode* newNode = new TreeNode(node->type,this,node->name);
