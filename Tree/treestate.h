@@ -31,7 +31,7 @@
 class TreeState
 {
 public:
-    TreeState(): root(new TreeNode()), selected(NULL){}
+    TreeState(): root(new TreeNode()), selected(root){}
     ~TreeState() {}
 
     /* Change selection */

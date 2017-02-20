@@ -207,5 +207,26 @@ void TreeNode::remove()
 
 void TreeNode::print(QString indent, bool last)
 {
-    qDebug() << "test ";
+    QString line;
+    line += indent;
+    if (last)
+    {
+        line += "└─ ";
+        indent += "  ";
+    }
+    else
+    {
+        line += "├─ ";
+        indent += "│ ";
+    }
+
+    if (isRoot())
+        qDebug() << QString(line + "Root");
+    else
+        qDebug() << QString(line + name);
+
+    for (auto child : children)
+    {
+        child->print(indent, true);
+    }
 }
