@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "Tree/treestate.h"
+#include "TreeDisplayWidget/treedisplaywidget.h"
 
 namespace Ui {
 class MainWindow;
@@ -19,6 +20,7 @@ public:
 private:
     Ui::MainWindow *ui;
     TreeState* currentTree;
+    TreeDisplayWidget* treeDisplayWidget;
 };
 
 #endif // MAINWINDOW_MAINWINDOW_H

@@ -230,3 +230,32 @@ void TreeNode::print(QString indent, bool last)
         child->print(indent, true);
     }
 }
+
+QString TreeNode::getFormattedString(QString indent, bool last)
+{
+    QString line = indent;
+    if (last)
+    {
+        line += "└─ ";
+        indent += "  ";
+    }
+    else
+    {
+        line += "├─ ";
+        indent += "│ ";
+    }
+
+    if (isRoot())
+        line += "Root\n";
+    else if (isStatement())
+        line += name + "\n";
+    else if (isCut())
+        line += "Cut\n";
+    else if (isPlaceHolder())
+        line += "{?}\n";
+
+    for (auto child : children)
+        line += child->getFormattedString(indent,true) + "\n";
+
+    return line;
+}

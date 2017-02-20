@@ -79,6 +79,8 @@ void TreeState::selectRightSibling()
 void TreeState::addChildCut()
 {
     selected = selected->addChildCut();
+    emit treeChanged(getFormattedString());
+
 }
 
 /* Adds a double cut to the selected region */
@@ -92,6 +94,7 @@ void TreeState::addChildDoubleCut()
 void TreeState::addChildStatement(QString s)
 {
     selected = selected->addChildStatement(s);
+    emit treeChanged(getFormattedString());
 }
 
 /* Remove */
@@ -130,3 +133,10 @@ void TreeState::printTree()
 {
     root->print(QString(""), true);
 }
+
+/* Similar to print, but stores everything in a QString */
+QString TreeState::getFormattedString()
+{
+    return root->getFormattedString(QString(""),true);
+}
+

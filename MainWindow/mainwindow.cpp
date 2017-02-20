@@ -8,9 +8,20 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
     currentTree = new TreeState();
-    currentTree->addChildStatement("t");
-    currentTree->printTree();
+    treeDisplayWidget = new TreeDisplayWidget();
+    ui->leftLayout->addWidget(treeDisplayWidget);
+
+    QObject::connect(currentTree,
+                     SIGNAL(treeChanged(QString)),
+                     treeDisplayWidget,
+                     SLOT(updateText(QString)));
+
+    //currentTree->addChildStatement("t");
+    currentTree->addChildStatement(QString("A"));
+    //currentTree->printTree();
+
 }
 
 MainWindow::~MainWindow()
