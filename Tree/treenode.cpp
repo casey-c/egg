@@ -1,6 +1,8 @@
 #include "Tree/treenode.h"
 #include "Tree/treestate.h"
 
+#include <QDebug>
+
 /* Add child cut */
 TreeNode* TreeNode::addChildCut()
 {
@@ -196,5 +198,5 @@ void TreeNode::remove()
 
 void TreeNode::print(QString indent, bool last)
 {
-
+    qDebug() << "test ";
 }
