@@ -56,6 +56,9 @@ public:
     void surroundWithCut();
     void surroundWithDoubleCut();
 
+    /* Print */
+    void printTree();
+
     /* TODO: inference mode*/
 
 private:

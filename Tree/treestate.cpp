@@ -124,3 +124,9 @@ void TreeState::surroundWithDoubleCut()
 {
 
 }
+
+/* Print the tree in the current state */
+void printTree()
+{
+
+}
