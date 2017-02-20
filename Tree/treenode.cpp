@@ -1,6 +1,16 @@
 #include "Tree/treenode.h"
 #include "Tree/treestate.h"
 
+/* Constructor */
+TreeNode::TreeNode()
+{
+    type = constants::ELEMENT_ROOT;
+    name = QString("Root");
+    placeHolderChild = false;
+    placeholder = NULL;
+    parent = NULL;
+}
+
 /* Add child cut */
 TreeNode* TreeNode::addChildCut()
 {
