@@ -193,3 +193,8 @@ void TreeNode::remove()
     // Delete us permanently
     delete this;
 }
+
+void TreeNode::print(QString indent, bool last)
+{
+
+}

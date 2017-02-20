@@ -46,6 +46,8 @@ public:
     void addExisting(TreeNode* node);
     void remove();
 
+    void print(QString indent, bool last);
+
     /* TODO: fix rep. exposure (make private? friend graphstate?) */
     QList<TreeNode*> getChildren() { return children; }
     TreeNode* getParent() { return parent; }
