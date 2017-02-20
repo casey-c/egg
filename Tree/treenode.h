@@ -31,8 +31,8 @@
 class TreeNode
 {
 public:
-    /* Public factory constructor */
-    static TreeNode Root();
+    /* Constructor makes a root node */
+    TreeNode();
 
     /* TODO: deallocate dynamic memory on destruction of a tree */
     ~TreeNode() {}
