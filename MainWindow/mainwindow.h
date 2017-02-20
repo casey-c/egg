@@ -2,6 +2,7 @@
 #define MAINWINDOW_MAINWINDOW_H
 
 #include <QMainWindow>
+#include "Tree/treestate.h"
 
 namespace Ui {
 class MainWindow;
@@ -17,6 +18,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    TreeState* currentTree;
 };
 
 #endif // MAINWINDOW_MAINWINDOW_H
