@@ -311,12 +311,21 @@ QString TreeNode::getBoxLine(int depth, int end, bool bottom, int skips)
     else // Non-root elements are a tad more complicated
     {
         // Vertical spacer based on depth
+        int numTimesSkipped = 0;
         for ( int i = 0; i < depth - 1; ++i )
-            result += "│  ";
+        {
+            if (numTimesSkipped == skips)
+                result += "│  ";
+            else
+                result += "   ";
+        }
 
         // Start of the branch to parent
         if (bottom)
+        {
+            skips++;
             result += "└──";
+        }
         else
             result += "├──";
 
@@ -337,7 +346,7 @@ QString TreeNode::getBoxLine(int depth, int end, bool bottom, int skips)
     {
         bool childIsBottom = (i == children.size() - 1);
         TreeNode* child = children.at(i);
-        QString childRow = child->getBoxLine(depth + 1, end, childIsBottom, 0);
+        QString childRow = child->getBoxLine(depth + 1, end, childIsBottom, skips);
         childRows.append(childRow);
     }
 
