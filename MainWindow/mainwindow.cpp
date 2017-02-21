@@ -20,17 +20,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
     currentTree->addChildCut();
     currentTree->addChildStatement(QString("A"));
-    currentTree->selectRoot();
-    currentTree->addChildStatement(QString("B"));
-    currentTree->selectParent();
-    currentTree->addChildDoubleCut();
-    currentTree->addChildStatement("C");
-    currentTree->selectParent();
-    currentTree->selectParent();
-    currentTree->addChildStatement("D");
-    currentTree->selectRoot();
-    currentTree->addChildCut();
-
+    // currentTree->selectRoot();
+    // currentTree->addChildStatement(QString("B"));
+    // currentTree->selectParent();
+    // currentTree->addChildDoubleCut();
+    // currentTree->addChildStatement("C");
+    // currentTree->selectParent();
+    // currentTree->selectParent();
+    // currentTree->addChildStatement("D");
+    // currentTree->selectRoot();
+    // currentTree->addChildCut();
 }
 
 MainWindow::~MainWindow()

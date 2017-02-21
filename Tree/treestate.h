@@ -64,6 +64,8 @@ public:
 
     /* TODO: inference mode*/
 
+    /* boxed string */
+    QString getBoxedString();
 
 signals:
     void treeChanged(QString s);

@@ -1,5 +1,6 @@
 #include "Tree/treenode.h"
 #include "Tree/treestate.h"
+#include <algorithm>
 
 #include <QDebug>
 /* Constructor */
@@ -258,4 +259,91 @@ QString TreeNode::getFormattedString(QString indent, bool last)
         line += child->getFormattedString(indent,true) + "\n";
 
     return line;
+}
+
+/* Returns a QString to identify this node by type */
+QString TreeNode::getTypeID()
+{
+    if (isRoot())
+        return QString("Root");
+    else if (isStatement())
+        return name;
+    else if (isCut())
+        return QString("Cut");
+
+    return QString("{?}");
+}
+
+/* For determining how large the box should be */
+int TreeNode::getBoxWidth(int depth)
+{
+    int myRowLength = (depth * 3) + getTypeID().size();
+
+    int childLength = 0;
+    for (auto child : children)
+        childLength = std::max(child->getBoxWidth(depth+1),
+                               childLength);
+
+    return std::max(myRowLength,childLength);
+}
+
+/* For getting this node's line
+ * Params:
+ *      depth:  how many parents you need to traverse until root
+ *      end:    where the line should end (calculated by getBoxWidth beforehand)
+ *      bottom: if this node is the last child of our parent (this is for
+ *              differentiating between └ and ├ characters when displaying the
+ *              tree)
+ *      skips:  an int specifying how many │ characters are ignored (WIP)
+ */
+QString TreeNode::getBoxLine(int depth, int end, bool bottom, int skips)
+{
+    QString result = "│ ";
+
+    // Root does less work
+    if (isRoot())
+    {
+        result += "Root";
+        for (int i = 0; i < end - 3; ++i)
+            result += " ";
+        result += "│\n";
+    }
+    else // Non-root elements are a tad more complicated
+    {
+        // Vertical spacer based on depth
+        for ( int i = 0; i < depth - 1; ++i )
+            result += "│  ";
+
+        // Start of the branch to parent
+        if (bottom)
+            result += "└──";
+        else
+            result += "├──";
+
+        // Add the label for this row
+        result += getTypeID();
+
+        // Add the remaining space
+        int used = (3 * (depth - 1)) + getTypeID().size() + 3;
+        for (int i = 0; i < (end - used); ++i )
+            result += " ";
+
+        result += " │\n";
+    }
+
+    // Now figure out all the children
+    QList<QString> childRows;
+    for (int i = 0; i < children.size(); ++i)
+    {
+        bool childIsBottom = (i == children.size() - 1);
+        TreeNode* child = children.at(i);
+        QString childRow = child->getBoxLine(depth + 1, end, childIsBottom, 0);
+        childRows.append(childRow);
+    }
+
+    // Combine all the child rows here and append them to result
+    for (auto s : childRows)
+        result += s;
+
+    return result;
 }
