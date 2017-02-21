@@ -1,4 +1,5 @@
 #include "Tree/treestate.h"
+#include <QDebug>
 
 /* TODO: implement graphstate.cpp */
 
@@ -79,7 +80,8 @@ void TreeState::selectRightSibling()
 void TreeState::addChildCut()
 {
     selected = selected->addChildCut();
-    emit treeChanged(getFormattedString());
+    //emit treeChanged(getFormattedString());
+    emit treeChanged(getBoxedString());
 
 }
 
@@ -96,7 +98,9 @@ void TreeState::addChildDoubleCut()
 void TreeState::addChildStatement(QString s)
 {
     selected = selected->addChildStatement(s);
-    emit treeChanged(getFormattedString());
+    //emit treeChanged(getFormattedString());
+
+    emit treeChanged(getBoxedString());
 }
 
 /* Remove */
@@ -140,5 +144,31 @@ void TreeState::printTree()
 QString TreeState::getFormattedString()
 {
     return root->getFormattedString(QString(""),true);
+}
+
+/* Box print */
+QString TreeState::getBoxedString()
+{
+    // First determine the width of inner region of box
+    int width = root->getBoxWidth(0);
+    qDebug() << "Final width is " << width;
+
+    // Header (first row)
+    qDebug() << "Making the top row";
+    QString result = "┌";
+    for (int i = 0; i < width + 2; ++i)
+        result += "─";
+    result += "┐\n";
+
+    // Add each boxLine recursively
+    result += root->getBoxLine(0,width,true,0);
+
+    // Footer (last row)
+    result += "└";
+    for (int i = 0; i < width + 2; ++i)
+        result += "─";
+    result += "┘";
+
+    return result;
 }
 

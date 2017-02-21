@@ -49,6 +49,10 @@ public:
     void print(QString indent, bool last);
     QString getFormattedString(QString indent, bool last);
 
+    int getBoxWidth(int depth);
+    QString getBoxLine(int depth, int end, bool bottom, int skips);
+    QString getTypeID();
+
     /* TODO: fix rep. exposure (make private? friend graphstate?) */
     QList<TreeNode*> getChildren() { return children; }
     TreeNode* getParent() { return parent; }
