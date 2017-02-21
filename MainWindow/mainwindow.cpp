@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include "Tree/treestate.h"
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -38,4 +39,20 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+/* Key Press */
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    switch (event->key())
+    {
+    case Qt::Key_A:
+            qDebug() << "A is pressed";
+            break;
+    case Qt::Key_B:
+            qDebug() << "B is pressed";
+            break;
+    default:
+            QMainWindow::keyPressEvent(event);
+    }
 }

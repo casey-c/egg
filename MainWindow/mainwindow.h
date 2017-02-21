@@ -21,6 +21,9 @@ private:
     Ui::MainWindow *ui;
     TreeState* currentTree;
     TreeDisplayWidget* treeDisplayWidget;
+
+protected:
+    void keyPressEvent(QKeyEvent *event);
 };
 
 #endif // MAINWINDOW_MAINWINDOW_H
