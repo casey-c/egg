@@ -34,6 +34,11 @@ public:
     /* Constructor makes a root node */
     TreeNode();
 
+    /* ID for debugging */
+    static int globalID;
+    int myID;
+    int getID() { return myID; }
+
     /* TODO: deallocate dynamic memory on destruction of a tree */
     ~TreeNode() {}
 
@@ -50,7 +55,7 @@ public:
     QString getFormattedString(QString indent, bool last);
 
     int getBoxWidth(int depth);
-    QString getBoxLine(int depth, int end, bool bottom, int skips);
+    QString getBoxLine(int depth, int end, bool bottom, int skips, TreeNode* selected);
     QString getTypeID();
 
     /* TODO: fix rep. exposure (make private? friend graphstate?) */
@@ -69,7 +74,8 @@ private:
             : type(t)
             , parent(p)
             , name(n)
-            , placeHolderChild() {}
+            , placeHolderChild()
+            , myID(globalID++) {}
 
     int type;
     TreeNode* parent;

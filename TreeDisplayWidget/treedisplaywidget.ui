@@ -19,6 +19,7 @@
      <property name="font">
       <font>
        <family>Consolas</family>
+       <pointsize>13</pointsize>
       </font>
      </property>
      <property name="lineWrapMode">
