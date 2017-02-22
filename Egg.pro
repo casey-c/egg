@@ -27,13 +27,16 @@ SOURCES += MainWindow/main.cpp\
         MainWindow/mainwindow.cpp \
     Tree/treenode.cpp \
     Tree/treestate.cpp \
-    TreeDisplayWidget/treedisplaywidget.cpp
+    TreeDisplayWidget/treedisplaywidget.cpp \
+    Utilities/Command/ctreestateaddstatement.cpp
 
 HEADERS  += MainWindow/mainwindow.h \
     Utilities/constants.h \
     Tree/treenode.h \
     Tree/treestate.h \
-    TreeDisplayWidget/treedisplaywidget.h
+    TreeDisplayWidget/treedisplaywidget.h \
+    Utilities/Command/icommand.h \
+    Utilities/Command/ctreestateaddstatement.h
 
 FORMS    += MainWindow/mainwindow.ui \
     TreeDisplayWidget/treedisplaywidget.ui
