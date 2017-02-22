@@ -1,5 +1,24 @@
 #include "Tree/treenode.h"
 #include "Tree/treestate.h"
+#include <algorithm>
+
+#include <QDebug>
+
+/* Debug id */
+int TreeNode::globalID = 0;
+
+/* Constructor */
+TreeNode::TreeNode()
+{
+    type = constants::ELEMENT_ROOT;
+    name = QString("Root");
+    placeHolderChild = false;
+    placeholder = NULL;
+    parent = NULL;
+
+    myID = globalID++;
+
+}
 
 /* Add child cut */
 TreeNode* TreeNode::addChildCut()
@@ -13,7 +32,10 @@ TreeNode* TreeNode::addChildCut()
     {
         // Replace this element
         type = constants::ELEMENT_CUT;
+
+        // Update our parent's info
         parent->placeHolderChild = false;
+        parent->children.append(this);
         return this;
     }
 
@@ -24,6 +46,8 @@ TreeNode* TreeNode::addChildCut()
         placeholder->type = constants::ELEMENT_CUT;
         placeHolderChild = false;
 
+        // Make it our real child
+        children.append(placeholder);
         return placeholder;
     }
 
@@ -46,8 +70,10 @@ TreeNode* TreeNode::addChildStatement(QString s)
         // Replace this element
         type = constants::ELEMENT_STATEMENT;
         name = s;
-        parent->placeHolderChild = false;
 
+        // Update our parent's info
+        parent->placeHolderChild = false;
+        parent->children.append(this);
         return this;
     }
 
@@ -57,7 +83,10 @@ TreeNode* TreeNode::addChildStatement(QString s)
         // Replace that element
         placeholder->type = constants::ELEMENT_STATEMENT;
         placeholder->name = s;
+
+        // Make it a real boy
         placeHolderChild = false;
+        children.append(placeholder);
 
         return placeholder;
     }
@@ -83,7 +112,7 @@ TreeNode* TreeNode::addChildPlaceholder()
 
     // Check if we already have a child placeholder
     if (placeHolderChild)
-        return this;
+        return placeholder;
 
     // We should be good to add a new child placeholder
     TreeNode* newPlaceholder = new TreeNode(constants::ELEMENT_PLACEHOLDER,this,NULL);
@@ -114,6 +143,10 @@ void TreeNode::addAll(QList<TreeNode *> list)
         this->type = first->type;
         this->name = first->name;
 
+        // Make sure our parent knows we're a real boy now
+        parent->children.append(this);
+        parent->placeHolderChild = false;
+
         // Add the rest as siblings to this node
         for (TreeNode* node : list)
             parent->addExisting(node);
@@ -132,7 +165,9 @@ void TreeNode::addAll(QList<TreeNode *> list)
         placeholder->type = first->type;
         placeholder->name = first->name;
 
+        // Update parent info
         placeHolderChild = false;
+        children.append(placeholder);
 
         // Then add the other items as additional children
         for (TreeNode* node : list)
@@ -147,8 +182,17 @@ void TreeNode::addExisting(TreeNode *node)
 {
     // Check to make sure the existing node doesn't conflict with placeholder
     // restrictions
-    if (node->isPlaceHolder() && this->placeHolderChild)
+    if (node->isPlaceHolder())
+    {
+        // Only allowed one placeholder per parent node
+        if (this->placeHolderChild)
+            return;
+
+        // Otherwise, set this node as our new placeholder
+        placeHolderChild = true;
+        placeholder = node;
         return;
+    }
 
     // Otherwise, we should be free to add a new child
     TreeNode* newNode = new TreeNode(node->type,this,node->name);
@@ -167,4 +211,179 @@ void TreeNode::remove()
 
     // Delete us permanently
     delete this;
+}
+
+void TreeNode::print(QString indent, bool last)
+{
+    QString line;
+    line += indent;
+    if (last)
+    {
+        line += "└─ ";
+        indent += "  ";
+    }
+    else
+    {
+        line += "├─ ";
+        indent += "│ ";
+    }
+
+    if (isRoot())
+        qDebug() << QString(line + "Root");
+    else
+        qDebug() << QString(line + name);
+
+    for (auto child : children)
+    {
+        child->print(indent, true);
+    }
+}
+
+QString TreeNode::getFormattedString(QString indent, bool last)
+{
+    QString line = indent;
+    if (last)
+    {
+        line += "└─ ";
+        indent += "  ";
+    }
+    else
+    {
+        line += "├─ ";
+        indent += "│ ";
+    }
+
+    if (isRoot())
+        line += "Root\n";
+    else if (isStatement())
+        line += name + "\n";
+    else if (isCut())
+        line += "Cut\n";
+    else if (isPlaceHolder())
+        line += "{?}\n";
+
+    for (auto child : children)
+        line += child->getFormattedString(indent,true) + "\n";
+
+    return line;
+}
+
+/* Returns a QString to identify this node by type */
+QString TreeNode::getTypeID()
+{
+    if (isRoot())
+        return QString("Root");
+    else if (isStatement())
+        return name;
+    else if (isCut())
+        return QString("Cut");
+
+    return QString("{?}");
+}
+
+/* For determining how large the box should be */
+int TreeNode::getBoxWidth(int depth)
+{
+    int myRowLength = (depth * 3) + getTypeID().size();
+
+    int childLength = 0;
+    for (auto child : children)
+        childLength = std::max(child->getBoxWidth(depth+1),
+                               childLength);
+
+    return std::max(myRowLength,childLength);
+}
+
+/* For getting this node's line
+ * Params:
+ *      depth:  how many parents you need to traverse until root
+ *      end:    where the line should end (calculated by getBoxWidth beforehand)
+ *      bottom: if this node is the last child of our parent (this is for
+ *              differentiating between └ and ├ characters when displaying the
+ *              tree)
+ *      skips:  an int specifying how many │ characters are ignored (WIP)
+ */
+QString TreeNode::getBoxLine(int depth, int end, bool bottom, int skips, TreeNode* selected)
+{
+    QString result = "│ ";
+
+    // Root does less work
+    if (isRoot())
+    {
+        result += "Root";
+        for (int i = 0; i < end - 4; ++i)
+            result += " ";
+        //result += "│";
+      //  if (selected == this)
+      //      result += "(*)";
+      //  result += "\n";
+    }
+    else // Non-root elements are a tad more complicated
+    {
+        // Vertical spacer based on depth
+        int numTimesSkipped = 0;
+        for ( int i = 0; i < depth - 1; ++i )
+        {
+            if (numTimesSkipped == skips)
+                result += "│  ";
+            else
+                result += "   ";
+        }
+
+        /*
+         * TODO: rework skips to deal with issue:
+         * xxxakkbkkc
+         */
+        // Vertical lines
+        for (int i = 0; i < depth - 1; ++i)
+        {
+
+        }
+
+        // Skipped lines
+        for (int i = skips; i >= 0; --i)
+        {
+
+        }
+
+        // Start of the branch to parent
+        if (bottom)
+        {
+            skips++;
+            result += "└──";
+        }
+        else
+            result += "├──";
+
+        // Add the label for this row
+        result += getTypeID();
+
+        // Add the remaining space
+        int used = (3 * (depth - 1)) + getTypeID().size() + 3;
+        for (int i = 0; i < (end - used); ++i )
+            result += " ";
+
+        //result += " │\n";
+    }
+
+    result += " │";
+    if (selected == this)
+            result += "(*)";
+    result += "\n";
+
+    // Now figure out all the children
+    QList<QString> childRows;
+    for (int i = 0; i < children.size(); ++i)
+    {
+        bool childIsBottom = (i == children.size() - 1);
+        TreeNode* child = children.at(i);
+        QString childRow = child->getBoxLine(depth + 1, end, childIsBottom, skips,selected);
+        childRows.append(childRow);
+    }
+
+    // Combine all the child rows here and append them to result
+    for (auto s : childRows)
+        result += s;
+
+    return result;
 }
