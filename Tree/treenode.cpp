@@ -3,6 +3,10 @@
 #include <algorithm>
 
 #include <QDebug>
+
+/* Debug id */
+int TreeNode::globalID = 0;
+
 /* Constructor */
 TreeNode::TreeNode()
 {
@@ -11,6 +15,9 @@ TreeNode::TreeNode()
     placeHolderChild = false;
     placeholder = NULL;
     parent = NULL;
+
+    myID = globalID++;
+
 }
 
 /* Add child cut */
@@ -296,7 +303,7 @@ int TreeNode::getBoxWidth(int depth)
  *              tree)
  *      skips:  an int specifying how many │ characters are ignored (WIP)
  */
-QString TreeNode::getBoxLine(int depth, int end, bool bottom, int skips)
+QString TreeNode::getBoxLine(int depth, int end, bool bottom, int skips, TreeNode* selected)
 {
     QString result = "│ ";
 
@@ -304,9 +311,12 @@ QString TreeNode::getBoxLine(int depth, int end, bool bottom, int skips)
     if (isRoot())
     {
         result += "Root";
-        for (int i = 0; i < end - 3; ++i)
+        for (int i = 0; i < end - 4; ++i)
             result += " ";
-        result += "│\n";
+        //result += "│";
+      //  if (selected == this)
+      //      result += "(*)";
+      //  result += "\n";
     }
     else // Non-root elements are a tad more complicated
     {
@@ -318,6 +328,22 @@ QString TreeNode::getBoxLine(int depth, int end, bool bottom, int skips)
                 result += "│  ";
             else
                 result += "   ";
+        }
+
+        /*
+         * TODO: rework skips to deal with issue:
+         * xxxakkbkkc
+         */
+        // Vertical lines
+        for (int i = 0; i < depth - 1; ++i)
+        {
+
+        }
+
+        // Skipped lines
+        for (int i = skips; i >= 0; --i)
+        {
+
         }
 
         // Start of the branch to parent
@@ -337,8 +363,13 @@ QString TreeNode::getBoxLine(int depth, int end, bool bottom, int skips)
         for (int i = 0; i < (end - used); ++i )
             result += " ";
 
-        result += " │\n";
+        //result += " │\n";
     }
+
+    result += " │";
+    if (selected == this)
+            result += "(*)";
+    result += "\n";
 
     // Now figure out all the children
     QList<QString> childRows;
@@ -346,7 +377,7 @@ QString TreeNode::getBoxLine(int depth, int end, bool bottom, int skips)
     {
         bool childIsBottom = (i == children.size() - 1);
         TreeNode* child = children.at(i);
-        QString childRow = child->getBoxLine(depth + 1, end, childIsBottom, skips);
+        QString childRow = child->getBoxLine(depth + 1, end, childIsBottom, skips,selected);
         childRows.append(childRow);
     }
 

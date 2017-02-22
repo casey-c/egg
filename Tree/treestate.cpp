@@ -8,6 +8,9 @@ void TreeState::selectAChild()
 {
     if (!selected->getChildren().isEmpty())
         selected = selected->getChildren().first();
+
+    qDebug() << "I have selected node " << selected->getID();
+    emit treeChanged(getBoxedString());
 }
 
 /* Selects the parent of the selected node, if not already root. */
@@ -15,13 +18,20 @@ void TreeState::selectParent()
 {
     if (!selected->isRoot())
         selected = selected->getParent();
+
+    qDebug() << "I have selected node " << selected->getID();
+    emit treeChanged(getBoxedString());
 }
+
 
 /* Recursively selects the parent of the selection until we reach root */
 void TreeState::selectRoot()
 {
     while (!selected->isRoot())
         selected = selected->getParent();
+
+    qDebug() << "I have selected node " << selected->getID();
+    emit treeChanged(getBoxedString());
 }
 
 /* Selects the previous sibling of the parent's getChildren list */
@@ -29,7 +39,10 @@ void TreeState::selectLeftSibling()
 {
     /* Root doesn't have any siblings */
     if (selected->isRoot())
+    {
+        qDebug() << "I have selected node " << selected->getID();
         return;
+    }
 
     /* List has the selected item and all its siblings */
     QList<TreeNode*> list = selected->getParent()->getChildren();
@@ -48,6 +61,9 @@ void TreeState::selectLeftSibling()
        selected = list.last();
     else /* Choose the previous as the new selection */
         selected = previous;
+
+    qDebug() << "I have selected node " << selected->getID();
+    emit treeChanged(getBoxedString());
 }
 
 /* Select the next right sibling */
@@ -55,7 +71,10 @@ void TreeState::selectRightSibling()
 {
     /* Root doesn't have any siblings */
     if (selected->isRoot())
+    {
+        qDebug() << "I have selected node " << selected->getID();
         return;
+    }
 
     /* List has the selected item and all its siblings */
     QList<TreeNode*> list = selected->getParent()->getChildren();
@@ -74,12 +93,16 @@ void TreeState::selectRightSibling()
        selected = list.front();
     else /* Choose the next as the new selection */
         selected = next;
+
+    qDebug() << "I have selected node " << selected->getID();
+    emit treeChanged(getBoxedString());
 }
 
 /* Adds a cut to the selected node's children */
 void TreeState::addChildCut()
 {
     selected = selected->addChildCut();
+    qDebug() << "I have selected node " << selected->getID();
     //emit treeChanged(getFormattedString());
     emit treeChanged(getBoxedString());
 
@@ -98,6 +121,7 @@ void TreeState::addChildDoubleCut()
 void TreeState::addChildStatement(QString s)
 {
     selected = selected->addChildStatement(s);
+    qDebug() << "I have selected node " << selected->getID();
     //emit treeChanged(getFormattedString());
 
     emit treeChanged(getBoxedString());
@@ -161,7 +185,7 @@ QString TreeState::getBoxedString()
     result += "┐\n";
 
     // Add each boxLine recursively
-    result += root->getBoxLine(0,width,true,0);
+    result += root->getBoxLine(0,width,true,0,selected);
 
     // Footer (last row)
     result += "└";
