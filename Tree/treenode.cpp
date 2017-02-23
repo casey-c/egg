@@ -115,11 +115,49 @@ TreeNode* TreeNode::addChildPlaceholder()
         return placeholder;
 
     // We should be good to add a new child placeholder
-    TreeNode* newPlaceholder = new TreeNode(constants::ELEMENT_PLACEHOLDER,this,NULL);
+    TreeNode* newPlaceholder =
+            new TreeNode(constants::ELEMENT_PLACEHOLDER,this,NULL);
     placeHolderChild = true;
     placeholder = newPlaceholder;
 
     return newPlaceholder;
+}
+
+/* Copy a node and its children and return the copy */
+TreeNode* TreeNode::copyTree(TreeNode* original)
+{
+    TreeNode* newNode = TreeNode::copyChildren(original);
+    return newNode;
+}
+
+/* Recursively copy a node with their children */
+TreeNode* TreeNode::copyChildren(TreeNode* original)
+{
+    TreeNode* newNode;
+    if (original->isRoot())
+        newNode = new TreeNode();
+    else if (original->isStatement())
+        newNode = new TreeNode(constants::ELEMENT_STATEMENT,
+                               original->getParent(),
+                               original->getName());
+    else if (original->isCut())
+        newNode = new TreeNode(constants::ELEMENT_CUT,
+                               original->getParent(),
+                               NULL);
+    else if (original->isPlaceHolder())
+        newNode = new TreeNode(constants::ELEMENT_PLACEHOLDER,
+                               original->getParent(),
+                               NULL);
+    else qDebug() << "This node type is not valid";
+
+    if(original->children.isEmpty())
+        return newNode;
+    else
+        for (auto child : original->getChildren())
+            newNode->children.append(TreeNode::copyChildren(child));
+
+    return newNode;
+
 }
 
 /* Add all */
