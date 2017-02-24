@@ -150,7 +150,8 @@ TreeNode* TreeNode::copyChildren(TreeNode* original)
                                NULL);
     else qDebug() << "This node type is not valid";
 
-    if(original->children.isEmpty())
+    /* If there is no more children to copy then return the empty node */
+    if (original->children.isEmpty())
         return newNode;
     else
         for (auto child : original->getChildren())
