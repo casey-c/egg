@@ -57,11 +57,11 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             break;
     case Qt::Key_J:
             qDebug() << "J is pressed";
-            currentTree->selectParent();
+            currentTree->selectAChild();
             break;
     case Qt::Key_K:
             qDebug() << "K is pressed";
-            currentTree->selectAChild();
+            currentTree->selectParent();
             break;
     case Qt::Key_H:
             qDebug() << "H is pressed";
