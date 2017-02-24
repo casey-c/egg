@@ -58,6 +58,7 @@ public:
 
     /* Copy */
     static TreeState* copyState(TreeState* currentTree);
+    TreeNode* getRoot(){ return this->root; }
 
     /* Surround with cut */
     void surroundWithCut();
