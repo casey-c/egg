@@ -9,7 +9,6 @@ void TreeState::selectAChild()
     if (!selected->getChildren().isEmpty())
         selected = selected->getChildren().first();
 
-    qDebug() << "I have selected node " << selected->getID();
     emit treeChanged(getBoxedString());
 }
 
@@ -19,7 +18,6 @@ void TreeState::selectParent()
     if (!selected->isRoot())
         selected = selected->getParent();
 
-    qDebug() << "I have selected node " << selected->getID();
     emit treeChanged(getBoxedString());
 }
 
@@ -30,7 +28,6 @@ void TreeState::selectRoot()
     while (!selected->isRoot())
         selected = selected->getParent();
 
-    qDebug() << "I have selected node " << selected->getID();
     emit treeChanged(getBoxedString());
 }
 
@@ -39,14 +36,10 @@ void TreeState::selectLeftSibling()
 {
     /* Root doesn't have any siblings */
     if (selected->isRoot())
-    {
-        qDebug() << "I have selected node " << selected->getID();
         return;
-    }
 
     /* List has the selected item and all its siblings */
     QList<TreeNode*> list = selected->getParent()->getChildren();
-
     TreeNode* previous = NULL;
 
     for (TreeNode* prev : list)
@@ -62,7 +55,6 @@ void TreeState::selectLeftSibling()
     else /* Choose the previous as the new selection */
         selected = previous;
 
-    qDebug() << "I have selected node " << selected->getID();
     emit treeChanged(getBoxedString());
 }
 
@@ -71,10 +63,7 @@ void TreeState::selectRightSibling()
 {
     /* Root doesn't have any siblings */
     if (selected->isRoot())
-    {
-        qDebug() << "I have selected node " << selected->getID();
         return;
-    }
 
     /* List has the selected item and all its siblings */
     QList<TreeNode*> list = selected->getParent()->getChildren();
@@ -94,7 +83,6 @@ void TreeState::selectRightSibling()
     else /* Choose the next as the new selection */
         selected = next;
 
-    qDebug() << "I have selected node " << selected->getID();
     emit treeChanged(getBoxedString());
 }
 
@@ -102,17 +90,12 @@ void TreeState::selectRightSibling()
 void TreeState::addChildCut()
 {
     selected = selected->addChildCut();
-    qDebug() << "I have selected node " << selected->getID();
-    //emit treeChanged(getFormattedString());
     emit treeChanged(getBoxedString());
-
 }
 
 /* Adds a double cut to the selected region */
 void TreeState::addChildDoubleCut()
 {
-    //selected = selected->addChildCut();
-    //selected = selected->addChildCut();
     addChildCut();
     addChildCut();
 }
@@ -120,13 +103,7 @@ void TreeState::addChildDoubleCut()
 /* Adds a child statement with the string s */
 void TreeState::addChildStatement(QString s)
 {
-    if(this->selected == this->root)
-        selected = selected->addChildStatement(s);
-    else
-        selected = selected->getParent()->addChildStatement(s);
-    qDebug() << "I have selected node " << selected->getID();
-    //emit treeChanged(getFormattedString());
-
+    selected = selected->addChildStatement(s);
     emit treeChanged(getBoxedString());
 }
 
@@ -140,7 +117,6 @@ void TreeState::removeAndSaveOrphans()
 
     // Delete the selected node
     selected->remove();
-
 }
 
 /* Remove the selected node and any of its children */
@@ -185,10 +161,8 @@ QString TreeState::getBoxedString()
 {
     // First determine the width of inner region of box
     int width = root->getBoxWidth(0);
-    qDebug() << "Final width is " << width;
 
     // Header (first row)
-    qDebug() << "Making the top row";
     QString result = "┌";
     for (int i = 0; i < width + 2; ++i)
         result += "─";
