@@ -47,7 +47,7 @@ public:
     TreeNode* addChildPlaceholder();
 
     static TreeNode* copyTree(TreeNode* original);
-    static TreeNode* copyChildren(TreeNode* original);
+    static TreeNode* copyChildren(TreeNode* original, TreeNode *parent);
 
     void addAll(QList<TreeNode*> list);
 
