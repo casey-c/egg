@@ -5,7 +5,7 @@ CTreeStateAddStatement::CTreeStateAddStatement(TreeState* prev, QString s)
 {
     previous = prev;
 
-    desired = previous; // TODO: copy constructor
+    desired = TreeState(prev);
     desired->addChildStatement(s);
 }
 
