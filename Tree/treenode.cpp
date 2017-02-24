@@ -60,9 +60,9 @@ TreeNode* TreeNode::addChildCut()
 /* Add child statement */
 TreeNode* TreeNode::addChildStatement(QString s)
 {
-    // Check if this is allowed to have children
+    // Add as sibling instead of instantly returning
     if (isStatement())
-        return this;
+        return parent->addChildStatement(s);
 
     // Check if this is a placeholder
     if (isPlaceHolder())
@@ -115,11 +115,50 @@ TreeNode* TreeNode::addChildPlaceholder()
         return placeholder;
 
     // We should be good to add a new child placeholder
-    TreeNode* newPlaceholder = new TreeNode(constants::ELEMENT_PLACEHOLDER,this,NULL);
+    TreeNode* newPlaceholder =
+            new TreeNode(constants::ELEMENT_PLACEHOLDER,this,NULL);
     placeHolderChild = true;
     placeholder = newPlaceholder;
 
     return newPlaceholder;
+}
+
+/* Copy a node and its children and return the copy */
+TreeNode* TreeNode::copyTree(TreeNode* original)
+{
+    TreeNode* newNode = TreeNode::copyChildren(original, newNode);
+    return newNode;
+}
+
+/* Recursively copy a node with their children */
+TreeNode* TreeNode::copyChildren(TreeNode* original, TreeNode* parent)
+{
+    TreeNode* newNode;
+    if (original->isRoot())
+        newNode = new TreeNode();
+    else if (original->isStatement())
+        newNode = new TreeNode(constants::ELEMENT_STATEMENT,
+                               parent,
+                               original->getName());
+    else if (original->isCut())
+        newNode = new TreeNode(constants::ELEMENT_CUT,
+                               parent,
+                               NULL);
+    else if (original->isPlaceHolder())
+        newNode = new TreeNode(constants::ELEMENT_PLACEHOLDER,
+                               parent,
+                               NULL);
+    else qDebug() << "This node type is not valid";
+
+    /* If there is no more children to copy then return the empty node */
+    if(original->children.isEmpty())
+        return newNode;
+    else
+        for (auto child : original->getChildren())
+            newNode->children.append(TreeNode::copyChildren(child, newNode));
+
+    return newNode;
+
 }
 
 /* Add all */
@@ -365,7 +404,6 @@ QString TreeNode::getBoxLine(int depth, int end, bool bottom, int skips, TreeNod
 
         //result += " │\n";
     }
-
     result += " │";
     if (selected == this)
             result += "(*)";

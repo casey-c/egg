@@ -46,6 +46,9 @@ public:
     TreeNode* addChildStatement(QString s);
     TreeNode* addChildPlaceholder();
 
+    static TreeNode* copyTree(TreeNode* original);
+    static TreeNode* copyChildren(TreeNode* original, TreeNode *parent);
+
     void addAll(QList<TreeNode*> list);
 
     void addExisting(TreeNode* node);
@@ -57,6 +60,7 @@ public:
     int getBoxWidth(int depth);
     QString getBoxLine(int depth, int end, bool bottom, int skips, TreeNode* selected);
     QString getTypeID();
+    QString getName() { return name; }
 
     /* TODO: fix rep. exposure (make private? friend graphstate?) */
     QList<TreeNode*> getChildren() { return children; }
