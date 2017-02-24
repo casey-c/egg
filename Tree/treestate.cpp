@@ -120,7 +120,10 @@ void TreeState::addChildDoubleCut()
 /* Adds a child statement with the string s */
 void TreeState::addChildStatement(QString s)
 {
-    selected = selected->addChildStatement(s);
+    if(this->selected == this->root)
+        selected = selected->addChildStatement(s);
+    else
+        selected = selected->getParent()->addChildStatement(s);
     qDebug() << "I have selected node " << selected->getID();
     //emit treeChanged(getFormattedString());
 

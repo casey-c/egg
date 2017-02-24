@@ -151,7 +151,7 @@ TreeNode* TreeNode::copyChildren(TreeNode* original)
     else qDebug() << "This node type is not valid";
 
     /* If there is no more children to copy then return the empty node */
-    if (original->children.isEmpty())
+    if(original->children.isEmpty())
         return newNode;
     else
         for (auto child : original->getChildren())
@@ -404,7 +404,6 @@ QString TreeNode::getBoxLine(int depth, int end, bool bottom, int skips, TreeNod
 
         //result += " │\n";
     }
-
     result += " │";
     if (selected == this)
             result += "(*)";
