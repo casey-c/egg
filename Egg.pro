@@ -28,7 +28,8 @@ SOURCES += MainWindow/main.cpp\
     Tree/treenode.cpp \
     Tree/treestate.cpp \
     TreeDisplayWidget/treedisplaywidget.cpp \
-    Utilities/Command/ctreestateaddstatement.cpp
+    Utilities/Command/ctreestateaddstatement.cpp \
+    commandinvoker.cpp
 
 HEADERS  += MainWindow/mainwindow.h \
     Utilities/constants.h \
@@ -36,7 +37,8 @@ HEADERS  += MainWindow/mainwindow.h \
     Tree/treestate.h \
     TreeDisplayWidget/treedisplaywidget.h \
     Utilities/Command/icommand.h \
-    Utilities/Command/ctreestateaddstatement.h
+    Utilities/Command/ctreestateaddstatement.h \
+    commandinvoker.h
 
 FORMS    += MainWindow/mainwindow.ui \
     TreeDisplayWidget/treedisplaywidget.ui
