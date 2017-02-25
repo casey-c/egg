@@ -156,7 +156,7 @@ QString TreeState::getBoxedString()
     int width = root->getBoxWidth(0);
 
     // Header (first row)
-    QString result = "┌";
+    QString result = "<pre>┌";
     for (int i = 0; i < width + 2; ++i)
         result += "─";
     result += "┐\n";
@@ -168,7 +168,7 @@ QString TreeState::getBoxedString()
     result += "└";
     for (int i = 0; i < width + 2; ++i)
         result += "─";
-    result += "┘";
+    result += "┘</pre>";
 
     return result;
 }
