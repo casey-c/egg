@@ -10,7 +10,6 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    timerSet(),
     keybindMode(constants::MODE_DEFAULT)
 {
     ui->setupUi(this);

@@ -27,7 +27,6 @@ private:
     CommandInvoker commandInvoker;
 
     /* Timer */
-    bool timerSet;
     int keybindMode;
 
     /* Key press handlers */
@@ -38,8 +37,6 @@ private:
 private slots:
     void endTimer();
 
-//protected:
-    //void keyPressEvent(QKeyEvent *event);
 };
 
 #endif // MAINWINDOW_MAINWINDOW_H
