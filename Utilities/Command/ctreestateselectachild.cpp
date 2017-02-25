@@ -3,17 +3,15 @@
 /* Selects a child */
 void CTreeStateSelectAChild::execute()
 {
-    // Remember the previous selection
-    previous = tree->getSelected();
-
     tree->selectAChild();
     tree->redraw();
 }
 
-/* Reverts to previous selection */
+/* Selects parent to undo the child selection */
 void CTreeStateSelectAChild::undo()
 {
-    // TODO: implementation
+    tree->selectParent();
+    tree->redraw();
 }
 
 /* Reselects a child */

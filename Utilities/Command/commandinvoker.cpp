@@ -10,7 +10,8 @@ void CommandInvoker::runCommand(ICommand* comm)
     comm->execute();
 }
 
-/* Repeats the last command on the stack
+/*
+ * Repeats the last command on the stack
  *
  * TODO: make the repeat actually a command itself, so we can undo a repetition
  * if we didn't mean to
@@ -22,4 +23,19 @@ void CommandInvoker::repeatLastCommand()
         return;
 
     commandStack.last()->execute();
+}
+
+/*
+ * Undo
+ */
+void CommandInvoker::undoLastCommand()
+{
+    // Nothing to undo
+    if (commandStack.empty())
+        return;
+
+    ICommand* command = commandStack.pop();
+    command->undo();
+
+    undoStack.append(command);
 }

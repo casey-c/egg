@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "Tree/treestate.h"
 #include "TreeDisplayWidget/treedisplaywidget.h"
+#include "Utilities/Command/commandinvoker.h"
 
 namespace Ui {
 class MainWindow;

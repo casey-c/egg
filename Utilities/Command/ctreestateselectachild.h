@@ -23,8 +23,6 @@ public:
 
 private:
     TreeState* tree;
-
-    TreeNode* previous;
 };
 
 #endif // CTREESTATESELECTACHILD_H
