@@ -33,6 +33,7 @@ class TreeNode
 public:
     /* Constructor makes a root node */
     TreeNode();
+    TreeNode(TreeNode *original);
 
     /* ID for debugging */
     static int globalID;
@@ -46,7 +47,6 @@ public:
     TreeNode* addChildStatement(QString s);
     TreeNode* addChildPlaceholder();
 
-    static TreeNode* copyTree(TreeNode* original);
     static TreeNode* copyChildren(TreeNode* original, TreeNode *parent);
 
     void addAll(QList<TreeNode*> list);
@@ -61,6 +61,7 @@ public:
     QString getBoxLine(int depth, int end, bool bottom, int skips, TreeNode* selected);
     QString getTypeID();
     QString getName() { return name; }
+    int getType(){ return type; }
 
     /* TODO: fix rep. exposure (make private? friend graphstate?) */
     QList<TreeNode*> getChildren() { return children; }

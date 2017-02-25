@@ -125,13 +125,6 @@ void TreeState::removeAndBurnTheOrphanage()
     selected->remove();
 }
 
-TreeState* TreeState::copyState(TreeState* currentTree)
-{
-    TreeNode* newRoot = TreeNode::copyTree(currentTree->getRoot());
-    TreeState* newState = new TreeState(newRoot);
-    return newState;
-}
-
 /* Surround with cut */
 void TreeState::surroundWithCut()
 {
