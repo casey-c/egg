@@ -26,8 +26,17 @@ private:
     /* Commands */
     CommandInvoker commandInvoker;
 
-protected:
+    /* Timer */
+    int keybindMode;
+
+    /* Key press handlers */
     void keyPressEvent(QKeyEvent *event);
+    void handleKeyPressDefault(QKeyEvent *event);
+    void handleKeyPressQ(QKeyEvent *event);
+
+private slots:
+    void endTimer();
+
 };
 
 #endif // MAINWINDOW_MAINWINDOW_H

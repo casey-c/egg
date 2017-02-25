@@ -5,10 +5,12 @@
 #include "Utilities/Command/allcommands.h"
 
 #include <QDebug>
+#include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    keybindMode(constants::MODE_DEFAULT)
 {
     ui->setupUi(this);
 
@@ -30,47 +32,45 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-/* Key Press */
-void MainWindow::keyPressEvent(QKeyEvent *event)
+/* End timer slot */
+void MainWindow::endTimer()
+{
+    qDebug() << "Timer finished, reverting to default mode";
+    keybindMode = constants::MODE_DEFAULT;
+}
+
+/*
+ * Handle a key press in default mode.
+ *
+ * This function will perform the default actions tied to each keybind:
+ *
+ *      Modify
+ *      A-F:    adds statement with that letter
+ *      R:      adds implication/conditional template
+ *      T:      adds biconditional template
+ *      V:      adds or template
+ *      X:      adds cut
+ *      Z:      adds double cut
+ *
+ *      Change mode
+ *      Q:      enters Q mode (press second key to add that letter to tree)
+ */
+void MainWindow::handleKeyPressDefault(QKeyEvent *event)
 {
     ICommand* command;
 
+    // A-F will add that letter as a statement
+    if (event->key() >= 65 && event->key() <= 70)
+    {
+        command = new CTreeStateAddStatement(currentTree,
+                                             event->text().at(0).toUpper());
+        commandInvoker.runCommand(command);
+        return;
+    }
+
+    // Other keys will have more specific functions
     switch (event->key())
     {
-    case Qt::Key_A:
-            qDebug() << "A is pressed";
-            command = new CTreeStateAddStatement(currentTree,"A");
-            commandInvoker.runCommand(command);
-            break;
-    case Qt::Key_Period:
-            qDebug() << ". is pressed";
-            commandInvoker.repeatLastCommand();
-            break;
-    case Qt::Key_B:
-            qDebug() << "B is pressed";
-            command = new CTreeStateAddStatement(currentTree,"B");
-            commandInvoker.runCommand(command);
-            break;
-    case Qt::Key_C:
-            qDebug() << "C is pressed";
-            command = new CTreeStateAddStatement(currentTree,"C");
-            commandInvoker.runCommand(command);
-            break;
-    case Qt::Key_D:
-            qDebug() << "D is pressed";
-            command = new CTreeStateAddStatement(currentTree,"D");
-            commandInvoker.runCommand(command);
-            break;
-    case Qt::Key_E:
-            qDebug() << "E is pressed";
-            command = new CTreeStateAddStatement(currentTree,"E");
-            commandInvoker.runCommand(command);
-            break;
-    case Qt::Key_F:
-            qDebug() << "F is pressed";
-            command = new CTreeStateAddStatement(currentTree,"F");
-            commandInvoker.runCommand(command);
-            break;
     case Qt::Key_J:
             qDebug() << "J is pressed";
             command = new CTreeStateSelectAChild(currentTree);
@@ -91,6 +91,11 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             command = new CTreeStateSelectRight(currentTree);
             commandInvoker.runCommand(command);
             break;
+    case Qt::Key_Q:
+            qDebug() << "Q is pressed";
+            keybindMode = constants::MODE_Q;
+            QTimer::singleShot(1000,this,SLOT(endTimer()));
+            break;
     case Qt::Key_U:
             qDebug() << "U is pressed";
             commandInvoker.undoLastCommand();
@@ -100,6 +105,10 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             command = new CTreeStateAddCut(currentTree);
             commandInvoker.runCommand(command);
             break;
+    case Qt::Key_Period:
+            qDebug() << ". is pressed";
+            commandInvoker.repeatLastCommand();
+            break;
     case Qt::Key_Semicolon:
             qDebug() << "; is pressed";
             command = new CTreeStateSelectRoot(currentTree);
@@ -108,4 +117,53 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     default:
             QMainWindow::keyPressEvent(event);
     }
+
+}
+
+/*
+ * Handle a key press in Q mode.
+ *
+ * Q mode will add a statement with a label corresponding to the next A-Z key
+ * pressed. After hitting any key, the mode reverts to default
+ */
+void MainWindow::handleKeyPressQ(QKeyEvent *event)
+{
+    // Revert the mode
+    keybindMode = constants::MODE_DEFAULT;
+
+    // Check A-Z
+    QString string = event->text();
+    if (string.length() == 1 && string.at(0).isLetter())
+    {
+        ICommand* command = new CTreeStateAddStatement(currentTree,
+                                                       string.toUpper());
+        commandInvoker.runCommand(command);
+        return;
+    }
+    else
+    {
+        qDebug() << "Invalid key press";
+        QMainWindow::keyPressEvent(event);
+        return;
+    }
+
+}
+
+/*
+ * All key presses go here first. The keybindMode will turn the event over to
+ * the proper function for further processing.
+ */
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    // Handle key press based on mode
+    switch (keybindMode)
+    {
+    case constants::MODE_DEFAULT:
+        handleKeyPressDefault(event);
+        break;
+    case constants::MODE_Q:
+        handleKeyPressQ(event);
+        break;
+    }
+
 }
