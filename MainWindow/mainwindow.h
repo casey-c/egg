@@ -22,6 +22,9 @@ private:
     TreeState* currentTree;
     TreeDisplayWidget* treeDisplayWidget;
 
+    /* Commands */
+    CommandInvoker commandInvoker;
+
 protected:
     void keyPressEvent(QKeyEvent *event);
 };

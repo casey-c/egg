@@ -2,6 +2,7 @@
 #define TREE_TREESTATE_H
 
 #include "treenode.h"
+#include "Utilities/Command/commandinvoker.h"
 #include <QObject>
 
 /*
@@ -45,12 +46,14 @@ public:
     void selectLeftSibling();
     void selectRightSibling();
 
+    //void selectSpecific(TreeNode* node);
+
     /* TODO: multiple selection? */
 
     /* Add */
-    void addChildCut();
+    TreeNode* addChildCut();
     void addChildDoubleCut();
-    void addChildStatement(QString s);
+    TreeNode* addChildStatement(QString s);
 
     /* Remove */
     void removeAndSaveOrphans();
@@ -72,12 +75,19 @@ public:
     /* boxed string */
     QString getBoxedString();
 
+    /* Update any views */
+    void redraw();
+
+    /* For selection commands */
+    TreeNode* getSelected() { return selected; }
+
 signals:
     void treeChanged(QString s);
 
 private:
     TreeNode* root;
     TreeNode* selected; /* TODO: List<> for multi-select? */
+
 
     QString getFormattedString();
 };

@@ -36,7 +36,6 @@ public:
 
     /* ID for debugging */
     static int globalID;
-    int myID;
     int getID() { return myID; }
 
     /* TODO: deallocate dynamic memory on destruction of a tree */
@@ -83,11 +82,12 @@ private:
 
     int type;
     TreeNode* parent;
-    QList<TreeNode*> children;
     QString name;
-
-    TreeNode* placeholder;
     bool placeHolderChild;
+    int myID;
+
+    QList<TreeNode*> children;
+    TreeNode* placeholder;
 };
 
 #endif // TREE_TREENODE_H

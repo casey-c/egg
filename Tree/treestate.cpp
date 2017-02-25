@@ -8,8 +8,6 @@ void TreeState::selectAChild()
 {
     if (!selected->getChildren().isEmpty())
         selected = selected->getChildren().first();
-
-    emit treeChanged(getBoxedString());
 }
 
 /* Selects the parent of the selected node, if not already root. */
@@ -17,8 +15,6 @@ void TreeState::selectParent()
 {
     if (!selected->isRoot())
         selected = selected->getParent();
-
-    emit treeChanged(getBoxedString());
 }
 
 
@@ -27,8 +23,6 @@ void TreeState::selectRoot()
 {
     while (!selected->isRoot())
         selected = selected->getParent();
-
-    emit treeChanged(getBoxedString());
 }
 
 /* Selects the previous sibling of the parent's getChildren list */
@@ -86,11 +80,17 @@ void TreeState::selectRightSibling()
     emit treeChanged(getBoxedString());
 }
 
+/* Select a node (used by commands) */
+//void TreeState::selectSpecific(TreeNode* node)
+//{
+    //selected = node;
+//}
+
 /* Adds a cut to the selected node's children */
-void TreeState::addChildCut()
+TreeNode* TreeState::addChildCut()
 {
     selected = selected->addChildCut();
-    emit treeChanged(getBoxedString());
+    return selected;
 }
 
 /* Adds a double cut to the selected region */
@@ -101,10 +101,10 @@ void TreeState::addChildDoubleCut()
 }
 
 /* Adds a child statement with the string s */
-void TreeState::addChildStatement(QString s)
+TreeNode* TreeState::addChildStatement(QString s)
 {
     selected = selected->addChildStatement(s);
-    emit treeChanged(getBoxedString());
+    return selected;
 }
 
 /* Remove */
@@ -180,3 +180,9 @@ QString TreeState::getBoxedString()
     return result;
 }
 
+
+/* Redraw the tree after changes */
+void TreeState::redraw()
+{
+    emit treeChanged(getBoxedString());
+}
