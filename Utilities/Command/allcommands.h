@@ -1,0 +1,4 @@
+#ifndef ALLCOMMANDS_H
+#define ALLCOMMANDS_H
+
+#endif // ALLCOMMANDS_H
