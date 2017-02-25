@@ -11,10 +11,16 @@ namespace constants
      * ...
      * int x = constants::ELEMENT_ROOT;
      */
+
+    // Tree
     const int ELEMENT_ROOT = 0;
     const int ELEMENT_CUT = 1;
     const int ELEMENT_STATEMENT = 2;
     const int ELEMENT_PLACEHOLDER = 3;
+
+    // Keybind modes
+    const int MODE_DEFAULT = 0;
+    const int MODE_Q = 1;
 }
 
 #endif // UTILITIES_CONSTANTS_H
