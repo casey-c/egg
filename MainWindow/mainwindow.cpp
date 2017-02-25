@@ -91,14 +91,18 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             command = new CTreeStateSelectRight(currentTree);
             commandInvoker.runCommand(command);
             break;
-    case Qt::Key_Semicolon:
-            qDebug() << "; is pressed";
-            command = new CTreeStateSelectRoot(currentTree);
-            commandInvoker.runCommand(command);
+    case Qt::Key_U:
+            qDebug() << "U is pressed";
+            commandInvoker.undoLastCommand();
             break;
     case Qt::Key_X:
             qDebug() << "X is pressed";
             command = new CTreeStateAddCut(currentTree);
+            commandInvoker.runCommand(command);
+            break;
+    case Qt::Key_Semicolon:
+            qDebug() << "; is pressed";
+            command = new CTreeStateSelectRoot(currentTree);
             commandInvoker.runCommand(command);
             break;
     default:

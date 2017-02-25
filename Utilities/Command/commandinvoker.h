@@ -13,13 +13,16 @@
 class CommandInvoker
 {
 public:
-    CommandInvoker();
+    CommandInvoker() {}
 
     void runCommand(ICommand* comm);
     void repeatLastCommand();
 
+    void undoLastCommand();
+
 private:
     QStack<ICommand*> commandStack;
+    QStack<ICommand*> undoStack;
 };
 
 #endif // COMMANDINVOKER_H
