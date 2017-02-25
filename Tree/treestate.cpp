@@ -125,13 +125,6 @@ void TreeState::removeAndBurnTheOrphanage()
     selected->remove();
 }
 
-TreeState* TreeState::copyState(TreeState* currentTree)
-{
-    TreeNode* newRoot = TreeNode::copyTree(currentTree->getRoot());
-    TreeState* newState = new TreeState(newRoot);
-    return newState;
-}
-
 /* Surround with cut */
 void TreeState::surroundWithCut()
 {
@@ -163,7 +156,7 @@ QString TreeState::getBoxedString()
     int width = root->getBoxWidth(0);
 
     // Header (first row)
-    QString result = "┌";
+    QString result = "<pre>┌";
     for (int i = 0; i < width + 2; ++i)
         result += "─";
     result += "┐\n";
@@ -175,7 +168,7 @@ QString TreeState::getBoxedString()
     result += "└";
     for (int i = 0; i < width + 2; ++i)
         result += "─";
-    result += "┘";
+    result += "┘</pre>";
 
     return result;
 }
