@@ -20,6 +20,22 @@ TreeNode::TreeNode()
 
 }
 
+/* Copy constructor */
+TreeNode::TreeNode(TreeNode *original):
+    type(original->getType()),
+    parent(),
+    children(),
+    name(original->getName()),
+    placeholder(),
+    placeHolderChild(),
+    myID(globalID++)
+
+{
+    if(!original->children.isEmpty())
+        for (auto child : original->getChildren())
+            this->children.append(TreeNode::copyChildren(child, this));
+}
+
 /* Add child cut */
 TreeNode* TreeNode::addChildCut()
 {
@@ -123,33 +139,11 @@ TreeNode* TreeNode::addChildPlaceholder()
     return newPlaceholder;
 }
 
-/* Copy a node and its children and return the copy */
-TreeNode* TreeNode::copyTree(TreeNode* original)
-{
-    TreeNode* newNode = TreeNode::copyChildren(original, newNode);
-    return newNode;
-}
-
 /* Recursively copy a node with their children */
 TreeNode* TreeNode::copyChildren(TreeNode* original, TreeNode* parent)
 {
-    TreeNode* newNode;
-    if (original->isRoot())
-        newNode = new TreeNode();
-    else if (original->isStatement())
-        newNode = new TreeNode(constants::ELEMENT_STATEMENT,
-                               parent,
-                               original->getName());
-    else if (original->isCut())
-        newNode = new TreeNode(constants::ELEMENT_CUT,
-                               parent,
-                               NULL);
-    else if (original->isPlaceHolder())
-        newNode = new TreeNode(constants::ELEMENT_PLACEHOLDER,
-                               parent,
-                               NULL);
-    else qDebug() << "This node type is not valid";
-
+    TreeNode* newNode = new TreeNode(original->getType(),parent,
+                                     original->getName());
     /* If there is no more children to copy then return the empty node */
     if(original->children.isEmpty())
         return newNode;
@@ -158,7 +152,6 @@ TreeNode* TreeNode::copyChildren(TreeNode* original, TreeNode* parent)
             newNode->children.append(TreeNode::copyChildren(child, newNode));
 
     return newNode;
-
 }
 
 /* Add all */
