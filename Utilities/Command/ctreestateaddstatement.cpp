@@ -1,28 +1,20 @@
 #include "ctreestateaddstatement.h"
 
-/* Constructor */
-CTreeStateAddStatement::CTreeStateAddStatement(TreeState* prev, QString s)
-{
-    previous = prev;
-
-    desired = TreeState(prev);
-    desired->addChildStatement(s);
-}
-
-/* Update the state to the one with the add */
+/* Adds child statement */
 void CTreeStateAddStatement::execute()
 {
-    current = desired;
+    node = tree->addChildStatement(statement);
+    tree->redraw();
 }
 
-/* Revert to the state before the add */
+/* Removes the added child statement */
 void CTreeStateAddStatement::undo()
 {
-    current = previous;
+    // TODO: implementation
 }
 
 /* Re-add the statement after undo */
 void CTreeStateAddStatement::redo()
 {
-    current = desired;
+    execute();
 }

@@ -2,6 +2,8 @@
 #include "ui_mainwindow.h"
 
 #include "Tree/treestate.h"
+#include "Utilities/Command/allcommands.h"
+
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -19,6 +21,8 @@ MainWindow::MainWindow(QWidget *parent) :
                      treeDisplayWidget,
                      SLOT(updateText(QString)));
 
+    // Draw the starting node on the text widget
+    currentTree->redraw();
 }
 
 MainWindow::~MainWindow()
@@ -29,55 +33,73 @@ MainWindow::~MainWindow()
 /* Key Press */
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
+    ICommand* command;
+
     switch (event->key())
     {
     case Qt::Key_A:
             qDebug() << "A is pressed";
-            currentTree->addChildStatement("A");
+            command = new CTreeStateAddStatement(currentTree,"A");
+            commandInvoker.runCommand(command);
+            break;
+    case Qt::Key_Period:
+            qDebug() << ". is pressed";
+            commandInvoker.repeatLastCommand();
             break;
     case Qt::Key_B:
             qDebug() << "B is pressed";
-            currentTree->addChildStatement("B");
+            command = new CTreeStateAddStatement(currentTree,"B");
+            commandInvoker.runCommand(command);
             break;
     case Qt::Key_C:
             qDebug() << "C is pressed";
-            currentTree->addChildStatement("C");
+            command = new CTreeStateAddStatement(currentTree,"C");
+            commandInvoker.runCommand(command);
             break;
     case Qt::Key_D:
             qDebug() << "D is pressed";
-            currentTree->addChildStatement("D");
+            command = new CTreeStateAddStatement(currentTree,"D");
+            commandInvoker.runCommand(command);
             break;
     case Qt::Key_E:
             qDebug() << "E is pressed";
-            currentTree->addChildStatement("E");
+            command = new CTreeStateAddStatement(currentTree,"E");
+            commandInvoker.runCommand(command);
             break;
     case Qt::Key_F:
             qDebug() << "F is pressed";
-            currentTree->addChildStatement("F");
+            command = new CTreeStateAddStatement(currentTree,"F");
+            commandInvoker.runCommand(command);
             break;
     case Qt::Key_J:
             qDebug() << "J is pressed";
-            currentTree->selectAChild();
+            command = new CTreeStateSelectAChild(currentTree);
+            commandInvoker.runCommand(command);
             break;
     case Qt::Key_K:
             qDebug() << "K is pressed";
-            currentTree->selectParent();
+            command = new CTreeStateSelectParent(currentTree);
+            commandInvoker.runCommand(command);
             break;
     case Qt::Key_H:
             qDebug() << "H is pressed";
-            currentTree->selectLeftSibling();
+            command = new CTreeStateSelectLeft(currentTree);
+            commandInvoker.runCommand(command);
             break;
     case Qt::Key_L:
             qDebug() << "L is pressed";
-            currentTree->selectRightSibling();
+            command = new CTreeStateSelectRight(currentTree);
+            commandInvoker.runCommand(command);
             break;
     case Qt::Key_Semicolon:
             qDebug() << "; is pressed";
-            currentTree->selectRoot();
+            command = new CTreeStateSelectRoot(currentTree);
+            commandInvoker.runCommand(command);
             break;
     case Qt::Key_X:
             qDebug() << "X is pressed";
-            currentTree->addChildCut();
+            command = new CTreeStateAddCut(currentTree);
+            commandInvoker.runCommand(command);
             break;
     default:
             QMainWindow::keyPressEvent(event);
