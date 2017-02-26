@@ -58,7 +58,7 @@ public:
 
     TreeNode* addOrTemplate();
     TreeNode* addConditionalTemplate();
-    TreeNode* addBiConditionalTemplate();
+    //TreeNode* addBiConditionalTemplate();
 
     /* Remove */
     void removeAndSaveOrphans();

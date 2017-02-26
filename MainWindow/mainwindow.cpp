@@ -96,9 +96,24 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
             keybindMode = constants::MODE_Q;
             QTimer::singleShot(1000,this,SLOT(endTimer()));
             break;
+    case Qt::Key_R:
+            qDebug() << "R is pressed.";
+            command = new CTreeStateAddConditionalTemplate(currentTree);
+            commandInvoker.runCommand(command);
+            break;
+    case Qt::Key_T:
+            qDebug() << "T is pressed";
+            command = new CTreeStateAddBiconditionalTemplate(currentTree);
+            commandInvoker.runCommand(command);
+            break;
     case Qt::Key_U:
             qDebug() << "U is pressed";
             commandInvoker.undoLastCommand();
+            break;
+    case Qt::Key_V:
+            qDebug() << "V is pressed";
+            command = new CTreeStateAddOrTemplate(currentTree);
+            commandInvoker.runCommand(command);
             break;
     case Qt::Key_X:
             qDebug() << "X is pressed";
