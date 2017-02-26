@@ -37,7 +37,7 @@ class TreeState : public QObject
 public:
     TreeState(): root(new TreeNode()), selected(root){}
     TreeState(TreeState* original):
-        root(new TreeNode(original->getCopiedRoot())), selected(root){}
+        root(new TreeNode(original->copyRoot())), selected(root){}
     ~TreeState() {}
 
     /* Change selection */
@@ -62,18 +62,15 @@ public:
 
     /* Copy */
     static TreeState* copyState(TreeState* currentTree);
-    TreeNode* getCopiedRoot(){ return new TreeNode(this->root); }
+    TreeNode* copyRoot(){ return new TreeNode(this->root); }
 
     /* Surround with cut */
     void surroundWithCut();
     void surroundWithDoubleCut();
 
-    /* Print */
-    void printTree();
-
     /* TODO: inference mode*/
 
-    /* boxed string */
+    /* Text output in tree form */
     QString getBoxedString();
 
     /* Update any views */

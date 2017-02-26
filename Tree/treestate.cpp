@@ -139,18 +139,6 @@ void TreeState::surroundWithDoubleCut()
 
 }
 
-/* Print the tree in the current state */
-void TreeState::printTree()
-{
-    root->print(QString(""), true);
-}
-
-/* Similar to print, but stores everything in a QString */
-QString TreeState::getFormattedString()
-{
-    return root->getFormattedString(QString(""),true);
-}
-
 /* Box print */
 QString TreeState::getBoxedString()
 {

@@ -7,33 +7,19 @@
 /* Debug id */
 int TreeNode::globalID = 0;
 
-/* Constructor */
-TreeNode::TreeNode()
-{
-    type = constants::ELEMENT_ROOT;
-    name = QString("Root");
-    placeHolderChild = false;
-    placeholder = NULL;
-    parent = NULL;
-
-    myID = globalID++;
-
-}
-
 /* Copy constructor */
 TreeNode::TreeNode(TreeNode *original):
     type(original->getType()),
     parent(),
-    children(),
     name(original->getName()),
-    placeholder(),
     placeHolderChild(),
-    myID(globalID++)
+    myID(globalID++),
+    children(),
+    placeholder()
 
 {
-    if(!original->children.isEmpty())
         for (auto child : original->getChildren())
-            this->children.append(TreeNode::copyChildren(child, this));
+                this->children.append(TreeNode::copyChildren(child, this));
 }
 
 /* Add child cut */
@@ -243,61 +229,6 @@ void TreeNode::remove()
 
     // Delete us permanently
     delete this;
-}
-
-void TreeNode::print(QString indent, bool last)
-{
-    QString line;
-    line += indent;
-    if (last)
-    {
-        line += "└─ ";
-        indent += "  ";
-    }
-    else
-    {
-        line += "├─ ";
-        indent += "│ ";
-    }
-
-    if (isRoot())
-        qDebug() << QString(line + "Root");
-    else
-        qDebug() << QString(line + name);
-
-    for (auto child : children)
-    {
-        child->print(indent, true);
-    }
-}
-
-QString TreeNode::getFormattedString(QString indent, bool last)
-{
-    QString line = indent;
-    if (last)
-    {
-        line += "└─ ";
-        indent += "  ";
-    }
-    else
-    {
-        line += "├─ ";
-        indent += "│ ";
-    }
-
-    if (isRoot())
-        line += "Root\n";
-    else if (isStatement())
-        line += name + "\n";
-    else if (isCut())
-        line += "Cut\n";
-    else if (isPlaceHolder())
-        line += "{?}\n";
-
-    for (auto child : children)
-        line += child->getFormattedString(indent,true) + "\n";
-
-    return line;
 }
 
 /* Returns a QString to identify this node by type */

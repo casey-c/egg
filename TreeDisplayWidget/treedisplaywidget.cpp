@@ -17,5 +17,4 @@ TreeDisplayWidget::~TreeDisplayWidget()
 void TreeDisplayWidget::updateText(QString s)
 {
     ui->textEdit->setText(s);
-    qDebug() << "Updating text";
 }
