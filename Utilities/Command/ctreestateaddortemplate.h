@@ -4,6 +4,9 @@
 #include "Tree/treenode.h"
 #include "Tree/treestate.h"
 
+/*
+ * This command adds an or template to a Tree State
+ */
 class CTreeStateAddOrTemplate : public ICommand
 {
 public:
