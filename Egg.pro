@@ -35,7 +35,10 @@ SOURCES += MainWindow/main.cpp\
     Utilities/Command/ctreestateselectparent.cpp \
     Utilities/Command/ctreestateselectachild.cpp \
     Utilities/Command/ctreestateselectleft.cpp \
-    Utilities/Command/ctreestateselectright.cpp
+    Utilities/Command/ctreestateselectright.cpp \
+    Utilities/Command/ctreestateaddconditionaltemplate.cpp \
+    Utilities/Command/ctreestateaddbiconditionaltemplate.cpp \
+    Utilities/Command/ctreestateaddortemplate.cpp
 
 HEADERS  += MainWindow/mainwindow.h \
     Utilities/constants.h \
@@ -51,7 +54,10 @@ HEADERS  += MainWindow/mainwindow.h \
     Utilities/Command/ctreestateselectachild.h \
     Utilities/Command/ctreestateselectleft.h \
     Utilities/Command/ctreestateselectright.h \
-    Utilities/Command/allcommands.h
+    Utilities/Command/allcommands.h \
+    Utilities/Command/ctreestateaddconditionaltemplate.h \
+    Utilities/Command/ctreestateaddbiconditionaltemplate.h \
+    Utilities/Command/ctreestateaddortemplate.h
 
 FORMS    += MainWindow/mainwindow.ui \
     TreeDisplayWidget/treedisplaywidget.ui
