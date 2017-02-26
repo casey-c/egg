@@ -39,9 +39,9 @@ TreeNode::TreeNode(TreeNode *original):
 /* Add child cut */
 TreeNode* TreeNode::addChildCut()
 {
-    // Check if this is allowed to have children
+    // Add as sibling instead of instantly returning
     if (isStatement())
-        return this;
+        return parent->addChildStatement(s);
 
     // Check if this is a placeholder
     if (isPlaceHolder())
