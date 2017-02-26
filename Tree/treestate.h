@@ -47,7 +47,7 @@ public:
     void selectLeftSibling();
     void selectRightSibling();
 
-    //void selectSpecific(TreeNode* node);
+    void selectSpecific(TreeNode* node);
 
     /* TODO: multiple selection? */
 

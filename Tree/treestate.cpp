@@ -81,10 +81,10 @@ void TreeState::selectRightSibling()
 }
 
 /* Select a node (used by commands) */
-//void TreeState::selectSpecific(TreeNode* node)
-//{
-    //selected = node;
-//}
+void TreeState::selectSpecific(TreeNode* node)
+{
+    selected = node;
+}
 
 /* Adds a cut to the selected node's children */
 TreeNode* TreeState::addChildCut()
@@ -122,7 +122,9 @@ void TreeState::removeAndSaveOrphans()
 /* Remove the selected node and any of its children */
 void TreeState::removeAndBurnTheOrphanage()
 {
+    TreeNode* parent = selected->getParent();
     selected->remove();
+    selected = parent;
 }
 
 /* Surround with cut */

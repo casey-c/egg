@@ -10,7 +10,8 @@ void CTreeStateAddStatement::execute()
 /* Removes the added child statement */
 void CTreeStateAddStatement::undo()
 {
-    tree->removeAndBurnTheOrphanage(node);
+    tree->selectSpecific(node);
+    tree->removeAndBurnTheOrphanage();
     tree->redraw();
 }
 
