@@ -13,7 +13,8 @@ void CTreeStateSelectRoot::execute()
 /* Returns to the previous selection */
 void CTreeStateSelectRoot::undo()
 {
-    // TODO: implementation
+    tree->selectSpecific(previous);
+    tree->redraw();
 }
 
 /* Reselects root */
