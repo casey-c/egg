@@ -120,6 +120,10 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
             command = new CTreeStateAddCut(currentTree);
             commandInvoker.runCommand(command);
             break;
+    case Qt::Key_Y:
+        qDebug() << "Y is pressed";
+        commandInvoker.redoLastCommand();
+        break;
     case Qt::Key_Z:
             qDebug() << "Z is pressed";
             command = new CTreeStateAddDoubleCut(currentTree);
