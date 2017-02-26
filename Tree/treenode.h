@@ -57,7 +57,7 @@ public:
     QString getFormattedString(QString indent, bool last);
 
     int getBoxWidth(int depth);
-    QString getBoxLine(int depth, int end, bool bottom, int skips, TreeNode* selected);
+    QString getBoxLine(int depth, int end, bool bottom, QString skips, TreeNode* selected);
     QString getTypeID();
     QString getName() { return name; }
     int getType(){ return type; }

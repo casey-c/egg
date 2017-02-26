@@ -335,7 +335,7 @@ int TreeNode::getBoxWidth(int depth)
  *              tree)
  *      skips:  an int specifying how many │ characters are ignored (WIP)
  */
-QString TreeNode::getBoxLine(int depth, int end, bool bottom, int skips, TreeNode* selected)
+QString TreeNode::getBoxLine(int depth, int end, bool bottom, QString skips, TreeNode* selected)
 {
     QString result = "│ ";
 
@@ -345,47 +345,30 @@ QString TreeNode::getBoxLine(int depth, int end, bool bottom, int skips, TreeNod
         result += "Root";
         for (int i = 0; i < end - 4; ++i)
             result += " ";
-        //result += "│";
-      //  if (selected == this)
-      //      result += "(*)";
-      //  result += "\n";
     }
     else // Non-root elements are a tad more complicated
     {
-        // Vertical spacer based on depth
-        int numTimesSkipped = 0;
-        for ( int i = 0; i < depth - 1; ++i )
+        // Use the skips string to determine whether to leave space or draw
+        // vertical line for branches to the left
+        for (int i = 0; i < skips.length(); ++i)
         {
-            if (numTimesSkipped == skips)
-                result += "│  ";
-            else
+            if (skips.at(i) == '0')
                 result += "   ";
-        }
-
-        /*
-         * TODO: rework skips to deal with issue:
-         * xxxakkbkkc
-         */
-        // Vertical lines
-        for (int i = 0; i < depth - 1; ++i)
-        {
-
-        }
-
-        // Skipped lines
-        for (int i = skips; i >= 0; --i)
-        {
-
+            else
+                result += "│  ";
         }
 
         // Start of the branch to parent
         if (bottom)
         {
-            skips++;
+            skips.append('0');
             result += "└──";
         }
         else
+        {
+            skips.append('1');
             result += "├──";
+        }
 
         // Add the label for this row
         result += getTypeID();
@@ -394,9 +377,9 @@ QString TreeNode::getBoxLine(int depth, int end, bool bottom, int skips, TreeNod
         int used = (3 * (depth - 1)) + getTypeID().size() + 3;
         for (int i = 0; i < (end - used); ++i )
             result += " ";
-
-        //result += " │\n";
     }
+
+    // End of the row
     result += " │";
     if (selected == this)
             result += "(*)";
