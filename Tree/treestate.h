@@ -36,7 +36,8 @@ class TreeState : public QObject
 
 public:
     TreeState(): root(new TreeNode()), selected(root){}
-    TreeState(TreeNode* root): root(root), selected(root){}
+    TreeState(TreeState* original):
+        root(new TreeNode(original->copyRoot())), selected(root){}
     ~TreeState() {}
 
     /* Change selection */
@@ -46,14 +47,18 @@ public:
     void selectLeftSibling();
     void selectRightSibling();
 
-    //void selectSpecific(TreeNode* node);
+    void selectSpecific(TreeNode* node);
 
     /* TODO: multiple selection? */
 
     /* Add */
     TreeNode* addChildCut();
-    void addChildDoubleCut();
+    TreeNode* addChildDoubleCut();
     TreeNode* addChildStatement(QString s);
+
+    TreeNode* addOrTemplate();
+    TreeNode* addConditionalTemplate();
+    //TreeNode* addBiConditionalTemplate();
 
     /* Remove */
     void removeAndSaveOrphans();
@@ -61,18 +66,15 @@ public:
 
     /* Copy */
     static TreeState* copyState(TreeState* currentTree);
-    TreeNode* getRoot(){ return this->root; }
+    TreeNode* copyRoot(){ return new TreeNode(this->root); }
 
     /* Surround with cut */
     void surroundWithCut();
     void surroundWithDoubleCut();
 
-    /* Print */
-    void printTree();
-
     /* TODO: inference mode*/
 
-    /* boxed string */
+    /* Text output in tree form */
     QString getBoxedString();
 
     /* Update any views */

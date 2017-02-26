@@ -16,5 +16,9 @@
 #include "Utilities/Command/ctreestateselectparent.h"
 #include "Utilities/Command/ctreestateselectright.h"
 #include "Utilities/Command/ctreestateselectroot.h"
+#include "Utilities/Command/ctreestateaddbiconditionaltemplate.h"
+#include "Utilities/Command/ctreestateaddconditionaltemplate.h"
+#include "Utilities/Command/ctreestateaddortemplate.h"
+#include "Utilities/Command/ctreestateadddoublecut.h"
 
 #endif // ALLCOMMANDS_H

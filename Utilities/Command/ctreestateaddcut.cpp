@@ -10,11 +10,13 @@ void CTreeStateAddCut::execute()
 /* Removes the added cut */
 void CTreeStateAddCut::undo()
 {
-    // TODO: implementation
+    tree->selectSpecific(node);
+    tree->removeAndBurnTheOrphanage();
+    tree->redraw();
 }
 
 /* Readds the cut */
 void CTreeStateAddCut::redo()
 {
-    // TODO: implementation
+    execute();
 }

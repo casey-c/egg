@@ -32,7 +32,16 @@ class TreeNode
 {
 public:
     /* Constructor makes a root node */
-    TreeNode();
+    TreeNode() :
+        type(constants::ELEMENT_ROOT),
+        parent(),
+        name(QString("Root")),
+        placeHolderChild(),
+        myID(globalID++),
+        placeholder() {}
+
+    /* Copy constructor */
+    TreeNode(TreeNode *original);
 
     /* ID for debugging */
     static int globalID;
@@ -41,25 +50,27 @@ public:
     /* TODO: deallocate dynamic memory on destruction of a tree */
     ~TreeNode() {}
 
+    /* Additions */
     TreeNode* addChildCut();
     TreeNode* addChildStatement(QString s);
     TreeNode* addChildPlaceholder();
-
-    static TreeNode* copyTree(TreeNode* original);
-    static TreeNode* copyChildren(TreeNode* original, TreeNode *parent);
-
     void addAll(QList<TreeNode*> list);
 
+    /* Copy and move */
+    static TreeNode* copyChildren(TreeNode* original, TreeNode *parent);
     void addExisting(TreeNode* node);
+
+    /* Deletion */
     void remove();
 
-    void print(QString indent, bool last);
-    QString getFormattedString(QString indent, bool last);
-
+    /* Text output in tree form */
     int getBoxWidth(int depth);
-    QString getBoxLine(int depth, int end, bool bottom, int skips, TreeNode* selected);
+    QString getBoxLine(int depth, int end, bool bottom, QString skips, TreeNode* selected);
     QString getTypeID();
+
+    /* Getters */
     QString getName() { return name; }
+    int getType(){ return type; }
 
     /* TODO: fix rep. exposure (make private? friend graphstate?) */
     QList<TreeNode*> getChildren() { return children; }

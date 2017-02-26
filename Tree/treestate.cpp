@@ -81,10 +81,10 @@ void TreeState::selectRightSibling()
 }
 
 /* Select a node (used by commands) */
-//void TreeState::selectSpecific(TreeNode* node)
-//{
-    //selected = node;
-//}
+void TreeState::selectSpecific(TreeNode* node)
+{
+    selected = node;
+}
 
 /* Adds a cut to the selected node's children */
 TreeNode* TreeState::addChildCut()
@@ -94,10 +94,10 @@ TreeNode* TreeState::addChildCut()
 }
 
 /* Adds a double cut to the selected region */
-void TreeState::addChildDoubleCut()
+TreeNode* TreeState::addChildDoubleCut()
 {
     addChildCut();
-    addChildCut();
+    return addChildCut();
 }
 
 /* Adds a child statement with the string s */
@@ -106,6 +106,33 @@ TreeNode* TreeState::addChildStatement(QString s)
     selected = selected->addChildStatement(s);
     return selected;
 }
+
+/* Adds an or template */
+TreeNode* TreeState::addOrTemplate()
+{
+    selected = selected->addChildCut();
+    selected->addChildCut();
+    selected = selected->addChildCut();
+    return selected;
+}
+
+/* Adds a conditional template */
+TreeNode* TreeState::addConditionalTemplate()
+{
+    selected = selected->addChildCut();
+    selected->addChildCut();
+    selected = selected->addChildPlaceholder();
+    return selected;
+}
+
+///* Adds a biconditional template */
+//TreeNode* TreeState::addBiConditionalTemplate()
+//{
+//    addConditionalTemplate();
+//    selected = selected->getParent()->getParent();
+//    return addConditionalTemplate();
+//}
+
 
 /* Remove */
 void TreeState::removeAndSaveOrphans()
@@ -122,14 +149,9 @@ void TreeState::removeAndSaveOrphans()
 /* Remove the selected node and any of its children */
 void TreeState::removeAndBurnTheOrphanage()
 {
+    TreeNode* parent = selected->getParent();
     selected->remove();
-}
-
-TreeState* TreeState::copyState(TreeState* currentTree)
-{
-    TreeNode* newRoot = TreeNode::copyTree(currentTree->getRoot());
-    TreeState* newState = new TreeState(newRoot);
-    return newState;
+    selected = parent;
 }
 
 /* Surround with cut */
@@ -144,18 +166,6 @@ void TreeState::surroundWithDoubleCut()
 
 }
 
-/* Print the tree in the current state */
-void TreeState::printTree()
-{
-    root->print(QString(""), true);
-}
-
-/* Similar to print, but stores everything in a QString */
-QString TreeState::getFormattedString()
-{
-    return root->getFormattedString(QString(""),true);
-}
-
 /* Box print */
 QString TreeState::getBoxedString()
 {
@@ -163,19 +173,19 @@ QString TreeState::getBoxedString()
     int width = root->getBoxWidth(0);
 
     // Header (first row)
-    QString result = "┌";
+    QString result = "<pre>┌";
     for (int i = 0; i < width + 2; ++i)
         result += "─";
     result += "┐\n";
 
     // Add each boxLine recursively
-    result += root->getBoxLine(0,width,true,0,selected);
+    result += root->getBoxLine(0,width,true,"",selected);
 
     // Footer (last row)
     result += "└";
     for (int i = 0; i < width + 2; ++i)
         result += "─";
-    result += "┘";
+    result += "┘</pre>";
 
     return result;
 }

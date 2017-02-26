@@ -18,7 +18,7 @@
     <widget class="QTextEdit" name="textEdit">
      <property name="font">
       <font>
-       <family>Consolas</family>
+       <family>Abyssinica SIL</family>
        <pointsize>13</pointsize>
       </font>
      </property>

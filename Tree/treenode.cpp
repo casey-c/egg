@@ -7,25 +7,27 @@
 /* Debug id */
 int TreeNode::globalID = 0;
 
-/* Constructor */
-TreeNode::TreeNode()
+/* Copy constructor */
+TreeNode::TreeNode(TreeNode *original):
+    type(original->getType()),
+    parent(),
+    name(original->getName()),
+    placeHolderChild(),
+    myID(globalID++),
+    children(),
+    placeholder()
+
 {
-    type = constants::ELEMENT_ROOT;
-    name = QString("Root");
-    placeHolderChild = false;
-    placeholder = NULL;
-    parent = NULL;
-
-    myID = globalID++;
-
+        for (auto child : original->getChildren())
+                this->children.append(TreeNode::copyChildren(child, this));
 }
 
 /* Add child cut */
 TreeNode* TreeNode::addChildCut()
 {
-    // Check if this is allowed to have children
+    // Add as sibling instead of instantly returning
     if (isStatement())
-        return this;
+        return parent->addChildCut();
 
     // Check if this is a placeholder
     if (isPlaceHolder())
@@ -123,33 +125,11 @@ TreeNode* TreeNode::addChildPlaceholder()
     return newPlaceholder;
 }
 
-/* Copy a node and its children and return the copy */
-TreeNode* TreeNode::copyTree(TreeNode* original)
-{
-    TreeNode* newNode = TreeNode::copyChildren(original, newNode);
-    return newNode;
-}
-
 /* Recursively copy a node with their children */
 TreeNode* TreeNode::copyChildren(TreeNode* original, TreeNode* parent)
 {
-    TreeNode* newNode;
-    if (original->isRoot())
-        newNode = new TreeNode();
-    else if (original->isStatement())
-        newNode = new TreeNode(constants::ELEMENT_STATEMENT,
-                               parent,
-                               original->getName());
-    else if (original->isCut())
-        newNode = new TreeNode(constants::ELEMENT_CUT,
-                               parent,
-                               NULL);
-    else if (original->isPlaceHolder())
-        newNode = new TreeNode(constants::ELEMENT_PLACEHOLDER,
-                               parent,
-                               NULL);
-    else qDebug() << "This node type is not valid";
-
+    TreeNode* newNode = new TreeNode(original->getType(),parent,
+                                     original->getName());
     /* If there is no more children to copy then return the empty node */
     if(original->children.isEmpty())
         return newNode;
@@ -158,7 +138,6 @@ TreeNode* TreeNode::copyChildren(TreeNode* original, TreeNode* parent)
             newNode->children.append(TreeNode::copyChildren(child, newNode));
 
     return newNode;
-
 }
 
 /* Add all */
@@ -252,61 +231,6 @@ void TreeNode::remove()
     delete this;
 }
 
-void TreeNode::print(QString indent, bool last)
-{
-    QString line;
-    line += indent;
-    if (last)
-    {
-        line += "└─ ";
-        indent += "  ";
-    }
-    else
-    {
-        line += "├─ ";
-        indent += "│ ";
-    }
-
-    if (isRoot())
-        qDebug() << QString(line + "Root");
-    else
-        qDebug() << QString(line + name);
-
-    for (auto child : children)
-    {
-        child->print(indent, true);
-    }
-}
-
-QString TreeNode::getFormattedString(QString indent, bool last)
-{
-    QString line = indent;
-    if (last)
-    {
-        line += "└─ ";
-        indent += "  ";
-    }
-    else
-    {
-        line += "├─ ";
-        indent += "│ ";
-    }
-
-    if (isRoot())
-        line += "Root\n";
-    else if (isStatement())
-        line += name + "\n";
-    else if (isCut())
-        line += "Cut\n";
-    else if (isPlaceHolder())
-        line += "{?}\n";
-
-    for (auto child : children)
-        line += child->getFormattedString(indent,true) + "\n";
-
-    return line;
-}
-
 /* Returns a QString to identify this node by type */
 QString TreeNode::getTypeID()
 {
@@ -342,7 +266,7 @@ int TreeNode::getBoxWidth(int depth)
  *              tree)
  *      skips:  an int specifying how many │ characters are ignored (WIP)
  */
-QString TreeNode::getBoxLine(int depth, int end, bool bottom, int skips, TreeNode* selected)
+QString TreeNode::getBoxLine(int depth, int end, bool bottom, QString skips, TreeNode* selected)
 {
     QString result = "│ ";
 
@@ -352,47 +276,30 @@ QString TreeNode::getBoxLine(int depth, int end, bool bottom, int skips, TreeNod
         result += "Root";
         for (int i = 0; i < end - 4; ++i)
             result += " ";
-        //result += "│";
-      //  if (selected == this)
-      //      result += "(*)";
-      //  result += "\n";
     }
     else // Non-root elements are a tad more complicated
     {
-        // Vertical spacer based on depth
-        int numTimesSkipped = 0;
-        for ( int i = 0; i < depth - 1; ++i )
+        // Use the skips string to determine whether to leave space or draw
+        // vertical line for branches to the left
+        for (int i = 0; i < skips.length(); ++i)
         {
-            if (numTimesSkipped == skips)
-                result += "│  ";
-            else
+            if (skips.at(i) == '0')
                 result += "   ";
-        }
-
-        /*
-         * TODO: rework skips to deal with issue:
-         * xxxakkbkkc
-         */
-        // Vertical lines
-        for (int i = 0; i < depth - 1; ++i)
-        {
-
-        }
-
-        // Skipped lines
-        for (int i = skips; i >= 0; --i)
-        {
-
+            else
+                result += "│  ";
         }
 
         // Start of the branch to parent
         if (bottom)
         {
-            skips++;
+            skips.append('0');
             result += "└──";
         }
         else
+        {
+            skips.append('1');
             result += "├──";
+        }
 
         // Add the label for this row
         result += getTypeID();
@@ -401,9 +308,9 @@ QString TreeNode::getBoxLine(int depth, int end, bool bottom, int skips, TreeNod
         int used = (3 * (depth - 1)) + getTypeID().size() + 3;
         for (int i = 0; i < (end - used); ++i )
             result += " ";
-
-        //result += " │\n";
     }
+
+    // End of the row
     result += " │";
     if (selected == this)
             result += "(*)";
