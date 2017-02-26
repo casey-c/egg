@@ -21,3 +21,9 @@ void CTreeStateAddConditionalTemplate::redo()
 {
     execute();
 }
+
+/* Copy */
+ICommand* CTreeStateAddConditionalTemplate::copy()
+{
+    return new CTreeStateAddConditionalTemplate(tree);
+}

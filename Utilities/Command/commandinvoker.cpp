@@ -2,6 +2,14 @@
 #include <QDebug>
 
 /*
+ * Destructor cleans up commands
+ */
+CommandInvoker::~CommandInvoker()
+{
+    // TODO: delete and clean commands
+}
+
+/*
  * Executes a certain command
  */
 void CommandInvoker::runCommand(ICommand* comm)
@@ -11,6 +19,8 @@ void CommandInvoker::runCommand(ICommand* comm)
 
     // Adding a new command will clear and redo-able commands
     undoStack.clear();
+
+    updated();
 }
 
 /*
@@ -25,7 +35,9 @@ void CommandInvoker::repeatLastCommand()
     if (commandStack.empty())
         return;
 
-    commandStack.last()->execute();
+    // Run a new copy of the last command
+    runCommand(commandStack.last()->copy());
+    updated();
 }
 
 /*
@@ -41,6 +53,7 @@ void CommandInvoker::undoLastCommand()
     command->undo();
 
     undoStack.append(command);
+    updated();
 }
 
 /*
@@ -56,4 +69,48 @@ void CommandInvoker::redoLastCommand()
     command->redo();
 
     commandStack.append(command);
+    updated();
+}
+
+/*
+ * Updates bookkeeping on a command change
+ */
+void CommandInvoker::updated()
+{
+    QString undo = "Undo";
+    QString redo = "Redo";
+    QString repeat = "Repeat";
+
+    // Undo
+    bool undoable = (!commandStack.isEmpty());
+
+    if (undoable)
+    {
+        // Update the undo text with the command to undo
+        ICommand* command = commandStack.top();
+        undo.append(": " + command->getText());
+    }
+
+    // Redo
+    bool redoable = (!undoStack.isEmpty());
+
+    if (redoable)
+    {
+        // Update the redo text with the command to redo
+        ICommand* command = undoStack.top();
+        redo.append(": " + command->getText());
+    }
+
+    // Repeat
+    bool repeatable = (!commandStack.isEmpty());
+
+    if (repeatable)
+    {
+        // Update the repeat text with the command to repeat
+        ICommand* command = commandStack.top();
+        repeat.append(": " + command->getText());
+    }
+
+    // Emit the signal
+    emit updateMenu(undo,redo,repeat,undoable,redoable,repeatable);
 }
