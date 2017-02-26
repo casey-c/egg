@@ -162,7 +162,7 @@ QString TreeState::getBoxedString()
     result += "┐\n";
 
     // Add each boxLine recursively
-    result += root->getBoxLine(0,width,true,0,selected);
+    result += root->getBoxLine(0,width,true,"",selected);
 
     // Footer (last row)
     result += "└";
