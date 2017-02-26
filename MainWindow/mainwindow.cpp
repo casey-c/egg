@@ -56,6 +56,8 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete treeDisplayWidget;
+    delete currentTree;
 }
 
 /* End timer slot */

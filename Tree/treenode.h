@@ -48,7 +48,7 @@ public:
     int getID() { return myID; }
 
     /* TODO: deallocate dynamic memory on destruction of a tree */
-    ~TreeNode() {}
+    ~TreeNode();
 
     /* Additions */
     TreeNode* addChildCut();

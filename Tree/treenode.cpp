@@ -22,6 +22,25 @@ TreeNode::TreeNode(TreeNode *original):
                 this->children.append(TreeNode::copyChildren(child, this));
 }
 
+/* Destructor */
+TreeNode::~TreeNode()
+{
+    if (!children.isEmpty())
+    {
+        for (auto child : children)
+        {
+            delete child;
+            child = NULL;
+        }
+    }
+    if (placeHolderChild){
+        delete placeholder;
+        placeholder = NULL;
+    }
+    parent = NULL;
+    delete this;
+}
+
 /* Add child cut */
 TreeNode* TreeNode::addChildCut()
 {

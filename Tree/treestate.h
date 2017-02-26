@@ -38,7 +38,7 @@ public:
     TreeState(): root(new TreeNode()), selected(root){}
     TreeState(TreeState* original):
         root(new TreeNode(original->copyRoot())), selected(root){}
-    ~TreeState() {}
+    ~TreeState();
 
     /* Change selection */
     void selectAChild();
@@ -89,7 +89,6 @@ signals:
 private:
     TreeNode* root;
     TreeNode* selected; /* TODO: List<> for multi-select? */
-
 
     QString getFormattedString();
 };
