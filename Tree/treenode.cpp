@@ -41,7 +41,7 @@ TreeNode* TreeNode::addChildCut()
 {
     // Add as sibling instead of instantly returning
     if (isStatement())
-        return parent->addChildStatement(s);
+        return parent->addChildCut();
 
     // Check if this is a placeholder
     if (isPlaceHolder())
