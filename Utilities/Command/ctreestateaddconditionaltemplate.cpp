@@ -4,7 +4,7 @@
 void CTreeStateAddConditionalTemplate::execute()
 {
     node = tree->addConditionalTemplate();
-    node = node->getParent()->getParent();
+    node = node->getParent();
     tree->redraw();
 }
 

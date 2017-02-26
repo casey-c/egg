@@ -4,7 +4,7 @@
 void CTreeStateAddOrTemplate::execute()
 {
     node = tree->addOrTemplate();
-    node = node->getParent()->getParent();
+    node = node->getParent();
     tree->redraw();
 }
 

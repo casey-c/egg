@@ -125,13 +125,13 @@ TreeNode* TreeState::addConditionalTemplate()
     return selected;
 }
 
-/* Adds a biconditional template */
-TreeNode* TreeState::addBiConditionalTemplate()
-{
-    addConditionalTemplate();
-    selected = selected->getParent()->getParent();
-    return addConditionalTemplate();
-}
+///* Adds a biconditional template */
+//TreeNode* TreeState::addBiConditionalTemplate()
+//{
+//    addConditionalTemplate();
+//    selected = selected->getParent()->getParent();
+//    return addConditionalTemplate();
+//}
 
 
 /* Remove */

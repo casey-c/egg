@@ -16,7 +16,8 @@ public:
 
 private:
     TreeState* tree;
-    TreeNode* node;
+    TreeNode* first;
+    TreeNode* second;
 };
 
 #endif // CTREESTATEADDBICONDITIONALTEMPLATE_H
