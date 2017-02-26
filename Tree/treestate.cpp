@@ -94,10 +94,10 @@ TreeNode* TreeState::addChildCut()
 }
 
 /* Adds a double cut to the selected region */
-void TreeState::addChildDoubleCut()
+TreeNode* TreeState::addChildDoubleCut()
 {
     addChildCut();
-    addChildCut();
+    return addChildCut();
 }
 
 /* Adds a child statement with the string s */
@@ -106,6 +106,33 @@ TreeNode* TreeState::addChildStatement(QString s)
     selected = selected->addChildStatement(s);
     return selected;
 }
+
+/* Adds an or template */
+TreeNode* TreeState::addOrTemplate()
+{
+    selected = selected->addChildCut();
+    selected->addChildCut();
+    selected = selected->addChildCut();
+    return selected;
+}
+
+/* Adds a conditional template */
+TreeNode* TreeState::addConditionalTemplate()
+{
+    selected = selected->addChildCut();
+    selected->addChildCut();
+    selected = selected->addChildPlaceholder();
+    return selected;
+}
+
+/* Adds a biconditional template */
+TreeNode* TreeState::addBiConditionalTemplate()
+{
+    addConditionalTemplate();
+    selected = selected->getParent()->getParent();
+    return addConditionalTemplate();
+}
+
 
 /* Remove */
 void TreeState::removeAndSaveOrphans()

@@ -53,8 +53,12 @@ public:
 
     /* Add */
     TreeNode* addChildCut();
-    void addChildDoubleCut();
+    TreeNode* addChildDoubleCut();
     TreeNode* addChildStatement(QString s);
+
+    TreeNode* addOrTemplate();
+    TreeNode* addConditionalTemplate();
+    TreeNode* addBiConditionalTemplate();
 
     /* Remove */
     void removeAndSaveOrphans();
