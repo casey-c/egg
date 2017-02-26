@@ -8,6 +8,9 @@ void CommandInvoker::runCommand(ICommand* comm)
 {
     commandStack.append(comm);
     comm->execute();
+
+    // Adding a new command will clear and redo-able commands
+    undoStack.clear();
 }
 
 /*
@@ -26,7 +29,7 @@ void CommandInvoker::repeatLastCommand()
 }
 
 /*
- * Undo
+ * Performs an undo on the last added command
  */
 void CommandInvoker::undoLastCommand()
 {
@@ -38,4 +41,19 @@ void CommandInvoker::undoLastCommand()
     command->undo();
 
     undoStack.append(command);
+}
+
+/*
+ * Performs a redo on the last undone command
+ */
+void CommandInvoker::redoLastCommand()
+{
+    // Nothing to redo
+    if (undoStack.empty())
+        return;
+
+    ICommand* command = undoStack.pop();
+    command->redo();
+
+    commandStack.append(command);
 }

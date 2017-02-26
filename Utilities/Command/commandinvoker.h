@@ -19,6 +19,7 @@ public:
     void repeatLastCommand();
 
     void undoLastCommand();
+    void redoLastCommand();
 
 private:
     QStack<ICommand*> commandStack;
