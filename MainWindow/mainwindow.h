@@ -36,6 +36,9 @@ private:
 
 private slots:
     void endTimer();
+public slots:
+    void updateUndoMenu(QString undo, QString redo, QString repeat,
+                        bool undoable, bool redoable, bool repeatable);
 
 };
 

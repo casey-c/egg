@@ -21,3 +21,9 @@ void CTreeStateAddOrTemplate::redo()
 {
     execute();
 }
+
+/* Copy */
+ICommand* CTreeStateAddOrTemplate::copy()
+{
+    return new CTreeStateAddOrTemplate(tree);
+}

@@ -10,12 +10,18 @@
 class CTreeStateAddBiconditionalTemplate : public ICommand
 {
 public:
+    /* Constructor */
     CTreeStateAddBiconditionalTemplate(TreeState* t) :
-        tree(t) {}
+        tree(t) { text = "Add biconditional"; }
+
+    /* Destructor */
+    ~CTreeStateAddBiconditionalTemplate() {}
 
     void execute();
     void undo();
     void redo();
+
+    ICommand* copy();
 
 private:
     TreeState* tree;

@@ -33,3 +33,9 @@ void CTreeStateAddBiconditionalTemplate::redo()
 {
     execute();
 }
+
+/* Copy */
+ICommand* CTreeStateAddBiconditionalTemplate::copy()
+{
+    return new CTreeStateAddBiconditionalTemplate(tree);
+}

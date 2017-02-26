@@ -19,3 +19,9 @@ void CTreeStateSelectAChild::redo()
 {
     execute();
 }
+
+/* Copy */
+ICommand* CTreeStateSelectAChild::copy()
+{
+    return new CTreeStateSelectAChild(tree);
+}

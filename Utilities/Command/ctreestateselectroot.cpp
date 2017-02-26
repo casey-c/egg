@@ -22,3 +22,9 @@ void CTreeStateSelectRoot::redo()
 {
     execute();
 }
+
+/* Copy */
+ICommand* CTreeStateSelectRoot::copy()
+{
+    return new CTreeStateSelectRoot(tree);
+}

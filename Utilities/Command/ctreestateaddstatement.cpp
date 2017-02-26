@@ -20,3 +20,9 @@ void CTreeStateAddStatement::redo()
 {
     execute();
 }
+
+/* Copy */
+ICommand* CTreeStateAddStatement::copy()
+{
+    return new CTreeStateAddStatement(tree,statement);
+}

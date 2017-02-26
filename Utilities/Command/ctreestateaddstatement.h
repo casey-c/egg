@@ -3,7 +3,6 @@
 
 #include "icommand.h"
 #include "Tree/treestate.h"
-#include <QDebug>
 
 /*
  * This command will add a statement to a tree state.
@@ -14,14 +13,16 @@ public:
     /* Constructor */
     CTreeStateAddStatement(TreeState* t, QString s) :
         tree(t),
-        statement(s) {}
+        statement(s) { text = "Add "+statement; }
 
     /* Destructor */
-    ~CTreeStateAddStatement();
+    ~CTreeStateAddStatement() {}
 
     void execute();
     void undo();
     void redo();
+
+    ICommand* copy();
 
 private:
     TreeState* tree;

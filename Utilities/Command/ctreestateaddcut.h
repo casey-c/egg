@@ -12,14 +12,16 @@ class CTreeStateAddCut : public ICommand
 public:
     /* Constructor */
     CTreeStateAddCut(TreeState* t) :
-        tree(t) {}
+        tree(t) { text = "Add cut"; }
 
     /* Destructor */
-    ~CTreeStateAddCut();
+    ~CTreeStateAddCut() {}
 
     void execute();
     void undo();
     void redo();
+
+    ICommand* copy();
 
 private:
     TreeState* tree;
