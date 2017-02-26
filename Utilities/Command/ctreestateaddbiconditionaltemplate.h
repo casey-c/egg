@@ -4,6 +4,9 @@
 #include "Tree/treenode.h"
 #include "Tree/treestate.h"
 
+/*
+ * This command adds a biconditional template to a TreeState
+ */
 class CTreeStateAddBiconditionalTemplate : public ICommand
 {
 public:
