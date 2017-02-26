@@ -10,13 +10,18 @@
 class CTreeStateAddOrTemplate : public ICommand
 {
 public:
+    /* Constructor */
     CTreeStateAddOrTemplate(TreeState* t) :
-       tree(t) {}
-    ~CTreeStateAddOrTemplate();
+        tree(t) { text = "Add OR template"; }
+
+    /* Destructor */
+    ~CTreeStateAddOrTemplate() {}
 
     void execute();
     void undo();
     void redo();
+
+    ICommand* copy();
 
 private:
     TreeState* tree;

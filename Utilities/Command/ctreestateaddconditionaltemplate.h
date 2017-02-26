@@ -10,18 +10,22 @@
 class CTreeStateAddConditionalTemplate : public ICommand
 {
 public:
+    /* Constructor */
     CTreeStateAddConditionalTemplate(TreeState* t) :
-        tree(t) {}
-    ~CTreeStateAddConditionalTemplate();
+        tree(t) { text = "Add conditional"; }
+
+    /* Destructor */
+    ~CTreeStateAddConditionalTemplate() {}
 
     void execute();
     void undo();
     void redo();
 
+    ICommand* copy();
+
 private:
     TreeState* tree;
     TreeNode* node;
-
 };
 
 #endif // CTREESTATEADDCONDITIONALTEMPLATE_H

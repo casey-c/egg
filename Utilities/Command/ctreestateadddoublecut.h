@@ -10,13 +10,18 @@
 class CTreeStateAddDoubleCut : public ICommand
 {
 public:
+    /* Constructor */
     CTreeStateAddDoubleCut(TreeState* t) :
-        tree(t) {}
-    ~CTreeStateAddDoubleCut();
+        tree(t) { text = "Add double cut"; }
+
+    /* Destructor */
+    ~CTreeStateAddDoubleCut() {}
 
     void execute();
     void undo();
     void redo();
+
+    ICommand* copy();
 
 private:
     TreeState* tree;

@@ -18,10 +18,36 @@ MainWindow::MainWindow(QWidget *parent) :
     treeDisplayWidget = new TreeDisplayWidget();
     ui->leftLayout->addWidget(treeDisplayWidget);
 
+    // Tell the widget to redraw when the tree updates
     QObject::connect(currentTree,
                      SIGNAL(treeChanged(QString)),
                      treeDisplayWidget,
                      SLOT(updateText(QString)));
+
+    // Update the undo/redo menu bar when the commandInvoker updates
+    QObject::connect(&commandInvoker,
+                     SIGNAL(updateMenu(QString,QString,QString,
+                                       bool,bool,bool)),
+                     this,
+                     SLOT(updateUndoMenu(QString,QString,QString,
+                                         bool,bool,bool)));
+
+    // Give functionality to the undo/redo menu options
+    QObject::connect(ui->actionUndo,
+                     &QAction::triggered,
+                     [this] {
+                         this->commandInvoker.undoLastCommand();
+                     });
+    QObject::connect(ui->actionRedo,
+                     &QAction::triggered,
+                     [this] {
+                         this->commandInvoker.redoLastCommand();
+                     });
+    QObject::connect(ui->actionRepeat,
+                     &QAction::triggered,
+                     [this] {
+                         this->commandInvoker.repeatLastCommand();
+                     });
 
     // Draw the starting node on the text widget
     currentTree->redraw();
@@ -200,4 +226,23 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         break;
     }
 
+}
+
+
+/*
+ * Update the menu bar text as needed
+ */
+void MainWindow::updateUndoMenu(QString undo, QString redo, QString repeat,
+                                bool undoable, bool redoable, bool repeatable)
+{
+    qDebug() << "Updating undo menu text";
+
+    ui->actionUndo->setEnabled(undoable);
+    ui->actionUndo->setText(undo);
+
+    ui->actionRedo->setEnabled(redoable);
+    ui->actionRedo->setText(redo);
+
+    ui->actionRepeat->setEnabled(repeatable);
+    ui->actionRepeat->setText(repeat);
 }

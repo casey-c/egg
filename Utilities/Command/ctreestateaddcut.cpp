@@ -20,3 +20,10 @@ void CTreeStateAddCut::redo()
 {
     execute();
 }
+
+/* Copy */
+ICommand* CTreeStateAddCut::copy()
+{
+    return new CTreeStateAddCut(tree);
+}
+

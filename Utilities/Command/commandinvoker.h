@@ -3,6 +3,8 @@
 
 #include "Utilities/Command/icommand.h"
 #include <QStack>
+#include <QString>
+#include <QObject>
 
 /*
  * This class is responsible for keeping track of the undo / redo list and
@@ -10,10 +12,13 @@
  * the invoker will be responsible for actually running it and keeping track of
  * which commands have been run.
  */
-class CommandInvoker
+class CommandInvoker : public QObject
 {
+    Q_OBJECT
+
 public:
     CommandInvoker() {}
+    ~CommandInvoker();
 
     void runCommand(ICommand* comm);
     void repeatLastCommand();
@@ -21,9 +26,15 @@ public:
     void undoLastCommand();
     void redoLastCommand();
 
+signals:
+    void updateMenu(QString undo, QString redo, QString repeat,
+                    bool undoable, bool redoable, bool repeatable);
+
 private:
     QStack<ICommand*> commandStack;
     QStack<ICommand*> undoStack;
+
+    void updated();
 };
 
 #endif // COMMANDINVOKER_H

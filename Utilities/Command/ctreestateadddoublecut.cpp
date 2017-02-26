@@ -22,3 +22,9 @@ void CTreeStateAddDoubleCut::redo()
 {
     execute();
 }
+
+/* Copy */
+ICommand* CTreeStateAddDoubleCut::copy()
+{
+    return new CTreeStateAddDoubleCut(tree);
+}

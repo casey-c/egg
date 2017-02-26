@@ -12,14 +12,16 @@ class CTreeStateSelectAChild : public ICommand
 public:
     /* Constructor */
     CTreeStateSelectAChild(TreeState* t) :
-        tree(t) {}
+        tree(t) { text = "Select child"; }
 
     /* Destructor */
-    ~CTreeStateSelectAChild();
+    ~CTreeStateSelectAChild() {}
 
     void execute();
     void undo();
     void redo();
+
+    ICommand* copy();
 
 private:
     TreeState* tree;
