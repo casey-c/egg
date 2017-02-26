@@ -105,6 +105,16 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
             command = new CTreeStateAddCut(currentTree);
             commandInvoker.runCommand(command);
             break;
+    case Qt::Key_0:
+            qDebug() << "0 is pressed";
+            delete(currentTree);
+            currentTree = new TreeState();
+            QObject::connect(currentTree,
+                             SIGNAL(treeChanged(QString)),
+                             treeDisplayWidget,
+                             SLOT(updateText(QString)));
+            currentTree->redraw();
+            break;
     case Qt::Key_Period:
             qDebug() << ". is pressed";
             commandInvoker.repeatLastCommand();
