@@ -1,7 +1,12 @@
 #include "Tree/treestate.h"
 #include <QDebug>
 
-/* TODO: implement graphstate.cpp */
+TreeState::~TreeState()
+{
+    selected = NULL;
+    delete root;
+    delete this;
+}
 
 /* Selects the first child of the selected region, if it exists */
 void TreeState::selectAChild()
