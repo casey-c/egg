@@ -6,14 +6,14 @@
 #include <QObject>
 
 /*
- * A graph state stores the root element of an existential graph tree. It also
+ * A TreeState stores the root element of an existential graph tree. It also
  * provides an interface to interact with the graph itself (such as selecting a
  * region and handling a modify command), which will handle any substantial
  * changes within the graph.
  *
  * The constructor makes a new root node and selects it.
  *
- * Change selection will update the selected graph element (which will serve as
+ * Change selection will update the selected tree node (which will serve as
  * the source of modifications, additions, and removals).
  *
  * Additions will try and add a child of a specific type to the selected
