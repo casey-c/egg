@@ -12,14 +12,18 @@ TreeNode::TreeNode(TreeNode *original):
     type(original->getType()),
     parent(),
     name(original->getName()),
-    placeHolderChild(),
+    placeHolderChild(false),
     myID(globalID++),
     children(),
     placeholder()
 
 {
-        for (auto child : original->getChildren())
-                this->children.append(TreeNode::copyChildren(child, this));
+    if(original->hasPlaceHolder()){
+        placeHolderChild = true;
+        placeholder = TreeNode::copyChildren(original->getPlaceHolder(),this);
+    }
+    for (auto child : original->getChildren())
+        this->children.append(TreeNode::copyChildren(child, this));
 }
 
 /* Destructor */
@@ -149,12 +153,9 @@ TreeNode* TreeNode::copyChildren(TreeNode* original, TreeNode* parent)
 {
     TreeNode* newNode = new TreeNode(original->getType(),parent,
                                      original->getName());
-    /* If there is no more children to copy then return the empty node */
-    if(original->children.isEmpty())
-        return newNode;
-    else
-        for (auto child : original->getChildren())
-            newNode->children.append(TreeNode::copyChildren(child, newNode));
+
+    for (auto child : original->getChildren())
+        newNode->children.append(TreeNode::copyChildren(child, newNode));
 
     return newNode;
 }
