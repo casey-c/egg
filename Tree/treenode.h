@@ -7,12 +7,12 @@
 #include "Utilities/constants.h"
 
 /*
- * A GraphElement is the basic node of an existential graph tree. These elements
+ * A TreeNode is the basic node of an existential graph tree. These elements
  * can be one of four types: root, cut, statement, or placeholder.
  *
  * Out of these four, only the placeholder is allowed to change its type after
  * creation. The placeholder is special: calling one of the addChild functions
- * will simply replace the current GraphElement instead of creating a new node
+ * will simply replace the current TreeNode instead of creating a new node
  * further down the tree.
  *
  * Root and cut elements are allowed to have children of their own. These
@@ -23,7 +23,7 @@
  * tree. Every other node in the tree extends from some branching off of the
  * root.
  *
- * GraphElements are only allowed to have zero or one child placeholders at
+ * TreeNodes are only allowed to have zero or one child placeholders at
  * any time. Placeholders are automatically leaves of the tree and may not
  * have placeholders of their own.
  */
