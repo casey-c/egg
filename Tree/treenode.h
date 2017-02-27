@@ -67,6 +67,7 @@ public:
     int getBoxWidth(int depth);
     QString getBoxLine(int depth, int end, bool bottom, QString skips, TreeNode* selected);
     QString getTypeID();
+    bool hasPlaceHolder() { return placeHolderChild; }
 
     /* Getters */
     QString getName() { return name; }
@@ -75,6 +76,7 @@ public:
     /* TODO: fix rep. exposure (make private? friend graphstate?) */
     QList<TreeNode*> getChildren() { return children; }
     TreeNode* getParent() { return parent; }
+    TreeNode* getPlaceHolder() { return placeholder; }
 
     /* Boolean identifiers */
     bool isRoot() { return type == constants::ELEMENT_ROOT; }
