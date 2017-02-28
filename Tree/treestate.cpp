@@ -5,7 +5,6 @@ TreeState::~TreeState()
 {
     selected = NULL;
     delete root;
-    delete this;
 }
 
 /* Selects the first child of the selected region, if it exists */
@@ -130,15 +129,6 @@ TreeNode* TreeState::addConditionalTemplate()
     return selected;
 }
 
-///* Adds a biconditional template */
-//TreeNode* TreeState::addBiConditionalTemplate()
-//{
-//    addConditionalTemplate();
-//    selected = selected->getParent()->getParent();
-//    return addConditionalTemplate();
-//}
-
-
 /* Remove */
 void TreeState::removeAndSaveOrphans()
 {
@@ -148,14 +138,16 @@ void TreeState::removeAndSaveOrphans()
     parent->addAll(children);
 
     // Delete the selected node
-    selected->remove();
+    //selected->remove();
+    delete selected;
 }
 
 /* Remove the selected node and any of its children */
 void TreeState::removeAndBurnTheOrphanage()
 {
     TreeNode* parent = selected->getParent();
-    selected->remove();
+    //selected->remove();
+    delete selected;
     selected = parent;
 }
 

@@ -43,12 +43,12 @@ public:
     /* Copy constructor */
     TreeNode(TreeNode *original);
 
+    /* Destructor */
+    ~TreeNode();
+
     /* ID for debugging */
     static int globalID;
     int getID() { return myID; }
-
-    /* TODO: deallocate dynamic memory on destruction of a tree */
-    ~TreeNode();
 
     /* Additions */
     TreeNode* addChildCut();
@@ -59,9 +59,6 @@ public:
     /* Copy and move */
     static TreeNode* copyChildren(TreeNode* original, TreeNode *parent);
     void addExisting(TreeNode* node);
-
-    /* Deletion */
-    void remove();
 
     /* Text output in tree form */
     int getBoxWidth(int depth);
@@ -85,7 +82,7 @@ public:
     bool isPlaceHolder() { return type == constants::ELEMENT_PLACEHOLDER; }
 
 private:
-    /* Private default constructor */
+    /* Constructor for non-root nodes */
     TreeNode(const int t, TreeNode* p, QString n)
             : type(t)
             , parent(p)
@@ -95,7 +92,9 @@ private:
 
     int type;
     TreeNode* parent;
+
     QString name;
+
     bool placeHolderChild;
     int myID;
 

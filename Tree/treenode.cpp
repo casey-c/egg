@@ -26,26 +26,27 @@ TreeNode::TreeNode(TreeNode *original):
         this->children.append(TreeNode::copyChildren(child, this));
 }
 
-/* Destructor */
+/*
+ * Destructor will free up any memory allocated for this node
+ */
 TreeNode::~TreeNode()
 {
-    if (!children.isEmpty())
-    {
-        for (auto child : children)
-        {
-            delete child;
-            child = NULL;
-        }
-    }
-    if (placeHolderChild){
+    // Remove us from our parent's list of children
+    if (!isRoot())
+        parent->children.removeOne(this);
+
+    // Remove our children
+    for (auto child : children)
+        delete child;
+
+    // Remove a placeholder
+    if (placeHolderChild)
         delete placeholder;
-        placeholder = NULL;
-    }
-    parent = NULL;
-    delete this;
 }
 
-/* Add child cut */
+/*
+ * Adds a child cut to this node
+ */
 TreeNode* TreeNode::addChildCut()
 {
     // Add as sibling instead of instantly returning
@@ -82,7 +83,12 @@ TreeNode* TreeNode::addChildCut()
     return newCut;
 }
 
-/* Add child statement */
+/*
+ * Adds a child statement to this node.
+ *
+ * Params:
+ *      s: the string that describes this statement
+ */
 TreeNode* TreeNode::addChildStatement(QString s)
 {
     // Add as sibling instead of instantly returning
@@ -139,9 +145,10 @@ TreeNode* TreeNode::addChildPlaceholder()
     if (placeHolderChild)
         return placeholder;
 
-    // We should be good to add a new child placeholder
-    TreeNode* newPlaceholder =
-            new TreeNode(constants::ELEMENT_PLACEHOLDER,this,NULL);
+    // Okay to add new placeholder as a child
+    TreeNode* newPlaceholder = new TreeNode(constants::ELEMENT_PLACEHOLDER,
+                                            this,
+                                            NULL);
     placeHolderChild = true;
     placeholder = newPlaceholder;
 
@@ -151,16 +158,24 @@ TreeNode* TreeNode::addChildPlaceholder()
 /* Recursively copy a node with their children */
 TreeNode* TreeNode::copyChildren(TreeNode* original, TreeNode* parent)
 {
-    TreeNode* newNode = new TreeNode(original->getType(),parent,
+    // Copy the original node into a new node
+    TreeNode* newNode = new TreeNode(original->getType(),
+                                     parent,
                                      original->getName());
 
+    // Recurse on the original's children
     for (auto child : original->getChildren())
         newNode->children.append(TreeNode::copyChildren(child, newNode));
 
     return newNode;
 }
 
-/* Add all */
+/*
+ * Adds all the TreeNodes in list as children of our own
+ *
+ * Params:
+ *      list: pointers to the nodes to add
+ */
 void TreeNode::addAll(QList<TreeNode *> list)
 {
     // Check for empty list
@@ -214,8 +229,12 @@ void TreeNode::addAll(QList<TreeNode *> list)
 
 }
 
-
-/* Add an existing node as a child */
+/*
+ * Copies the node and adds the copy as a child to this one.
+ *
+ * Params:
+ *      node: a pointer to the node that needs to be copied
+ */
 void TreeNode::addExisting(TreeNode *node)
 {
     // Check to make sure the existing node doesn't conflict with placeholder
@@ -238,20 +257,8 @@ void TreeNode::addExisting(TreeNode *node)
 }
 
 /*
- * Remove this node from the tree
- *
- * Warning: removing a node will DELETE it from the heap
+ * Changes the type int into a readable QString
  */
-void TreeNode::remove()
-{
-    // Remove us from our parent's list of children
-    parent->children.removeOne(this);
-
-    // Delete us permanently
-    delete this;
-}
-
-/* Returns a QString to identify this node by type */
 QString TreeNode::getTypeID()
 {
     if (isRoot())
@@ -264,7 +271,13 @@ QString TreeNode::getTypeID()
     return QString("{?}");
 }
 
-/* For determining how large the box should be */
+/*
+ * Returns the total width of this line, for determining how wide to make the
+ * box
+ *
+ * Params:
+ *      depth: how many parents you need to traverse until root
+ */
 int TreeNode::getBoxWidth(int depth)
 {
     int myRowLength = (depth * 3) + getTypeID().size();
@@ -277,16 +290,28 @@ int TreeNode::getBoxWidth(int depth)
     return std::max(myRowLength,childLength);
 }
 
-/* For getting this node's line
+/*
+ * Returns a correctly formatted QString of this node's line in the box-drawing
+ * form.
+ *
  * Params:
  *      depth:  how many parents you need to traverse until root
  *      end:    where the line should end (calculated by getBoxWidth beforehand)
  *      bottom: if this node is the last child of our parent (this is for
  *              differentiating between └ and ├ characters when displaying the
  *              tree)
- *      skips:  an int specifying how many │ characters are ignored (WIP)
+ *      skips:  binary string to determine whether to draw a branch upward or
+ *              to skip that vertical line. this is inherited from parent, with
+ *              an appended 0 or 1 based on whether the parent itself was a
+ *              bottom piece, respectively
+ *      selected: a pointer to the treestate's selceted node; this determines
+ *              when to apply a (*) to a row
  */
-QString TreeNode::getBoxLine(int depth, int end, bool bottom, QString skips, TreeNode* selected)
+QString TreeNode::getBoxLine(int depth,
+                             int end,
+                             bool bottom,
+                             QString skips,
+                             TreeNode* selected)
 {
     QString result = "│ ";
 
@@ -340,9 +365,12 @@ QString TreeNode::getBoxLine(int depth, int end, bool bottom, QString skips, Tre
     QList<QString> childRows;
     for (int i = 0; i < children.size(); ++i)
     {
-        bool childIsBottom = (i == children.size() - 1);
         TreeNode* child = children.at(i);
-        QString childRow = child->getBoxLine(depth + 1, end, childIsBottom, skips,selected);
+        QString childRow = child->getBoxLine(depth + 1,
+                                             end,
+                                             i == children.size() - 1,
+                                             skips,
+                                             selected);
         childRows.append(childRow);
     }
 
