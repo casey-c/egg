@@ -92,3 +92,6 @@ test {
     message(Normal build)
 }
 
+RESOURCES += \
+    resouces.qrc
+

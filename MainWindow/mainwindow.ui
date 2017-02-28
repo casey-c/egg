@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>EGG</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../resouces.qrc">
+    <normaloff>:/Resources/egg.ico</normaloff>:/Resources/egg.ico</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout" columnstretch="1618,1000,0">
     <item row="0" column="0">
@@ -46,7 +50,7 @@
          <x>0</x>
          <y>0</y>
          <width>250</width>
-         <height>443</height>
+         <height>444</height>
         </rect>
        </property>
       </widget>
@@ -70,7 +74,7 @@
      <x>0</x>
      <y>0</y>
      <width>697</width>
-     <height>26</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -117,21 +121,37 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionNew">
+   <property name="icon">
+    <iconset resource="../resouces.qrc">
+     <normaloff>:/Resources/new.svg</normaloff>:/Resources/new.svg</iconset>
+   </property>
    <property name="text">
-    <string>New Graph</string>
+    <string>New</string>
    </property>
   </action>
   <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="../resouces.qrc">
+     <normaloff>:/Resources/open.svg</normaloff>:/Resources/open.svg</iconset>
+   </property>
    <property name="text">
     <string>Open</string>
    </property>
   </action>
   <action name="actionSave">
+   <property name="icon">
+    <iconset resource="../resouces.qrc">
+     <normaloff>:/Resources/save.svg</normaloff>:/Resources/save.svg</iconset>
+   </property>
    <property name="text">
     <string>Save</string>
    </property>
   </action>
   <action name="actionExit">
+   <property name="icon">
+    <iconset resource="../resouces.qrc">
+     <normaloff>:/Resources/x.svg</normaloff>:/Resources/x.svg</iconset>
+   </property>
    <property name="text">
     <string>Exit</string>
    </property>
@@ -150,6 +170,10 @@
    <property name="enabled">
     <bool>false</bool>
    </property>
+   <property name="icon">
+    <iconset resource="../resouces.qrc">
+     <normaloff>:/Resources/undo.svg</normaloff>:/Resources/undo.svg</iconset>
+   </property>
    <property name="text">
     <string>Undo</string>
    </property>
@@ -158,16 +182,28 @@
    <property name="enabled">
     <bool>false</bool>
    </property>
+   <property name="icon">
+    <iconset resource="../resouces.qrc">
+     <normaloff>:/Resources/redo.svg</normaloff>:/Resources/redo.svg</iconset>
+   </property>
    <property name="text">
     <string>Redo</string>
    </property>
   </action>
   <action name="actionOptions">
+   <property name="icon">
+    <iconset resource="../resouces.qrc">
+     <normaloff>:/Resources/gear.svg</normaloff>:/Resources/gear.svg</iconset>
+   </property>
    <property name="text">
     <string>Preferences</string>
    </property>
   </action>
   <action name="actionTutorial">
+   <property name="icon">
+    <iconset resource="../resouces.qrc">
+     <normaloff>:/Resources/help.svg</normaloff>:/Resources/help.svg</iconset>
+   </property>
    <property name="text">
     <string>Tutorial</string>
    </property>
@@ -187,6 +223,8 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="../resouces.qrc"/>
+ </resources>
  <connections/>
 </ui>
