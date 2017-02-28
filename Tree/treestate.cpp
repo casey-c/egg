@@ -154,13 +154,58 @@ void TreeState::removeAndBurnTheOrphanage()
 /* Surround with cut */
 void TreeState::surroundWithCut()
 {
-    // TODO: implementation
+    // Roots and placeholders cannot be surrounded
+    if (selected->isRoot() || selected->isPlaceHolder())
+        return;
+
+    // Otherwise, get the old parent
+    TreeNode* oldParent = selected->getParent();
+    TreeNode* newCut = oldParent->addChildCut();
+
+    // Move the selection into the new cut
+    move(selected,newCut);
 }
 
 /* Surround with double cut */
 void TreeState::surroundWithDoubleCut()
 {
-    // TODO: implementation
+    surroundWithCut();
+    surroundWithCut();
+}
+
+/* Move target to the new parent */
+void TreeState::move(TreeNode *target, TreeNode *targetParent)
+{
+    // Make sure the target is movable
+    if (target->isRoot())
+        return;
+
+    // Move actually needs a new location
+    if (target->parent == targetParent)
+        return;
+
+    // Placeholders not allowed to move at this time (too messy)
+    if (target->isPlaceHolder())
+        return;
+
+    // Verify parent can house the node
+    if (targetParent->isStatement())
+        return;
+
+    // Parent node as placeholder will be messy, so forbid it for now
+    if (targetParent->isPlaceHolder())
+        return;
+
+    /* Should be okay to proceed with the move */
+
+    // Remove the target from its old parent
+    target->parent->children.removeOne(target);
+
+    // Append it to the new parent's children
+    targetParent->children.append(target);
+
+    // Update the target's parent
+    target->parent = targetParent;
 }
 
 /* Modification mode commands */
@@ -176,7 +221,7 @@ void TreeState::surroundWithDoubleCut()
  * Not sure if the above TODO is necessary, but it might be a quality of life
  * addition later on.
  */
-TreeNode* TreeState::doubleCutRemoval()
+void TreeState::doubleCutRemoval()
 {
 
 }
@@ -185,7 +230,7 @@ TreeNode* TreeState::doubleCutRemoval()
  * Adds a double cut around the current selection. This will work against every
  * selected node type except for root nodes and placeholders.
  */
-TreeNode* TreeState::doubleCutAddition()
+void TreeState::doubleCutAddition()
 {
 
 }
@@ -195,7 +240,7 @@ TreeNode* TreeState::doubleCutAddition()
  * store a node pointer to be compared against when performIteration and
  * performDeiteration are called afterwards.
  */
-TreeNode* TreeState::setIterationTarget()
+void TreeState::setIterationTarget()
 {
 
 }
@@ -204,7 +249,7 @@ TreeNode* TreeState::setIterationTarget()
  * Takes the current iteration target and copies it into the selected region if
  * allowed to do so.
  */
-TreeNode* TreeState::performIteration()
+void TreeState::performIteration()
 {
 
 }
@@ -213,7 +258,7 @@ TreeNode* TreeState::performIteration()
  * Determines if the selection is equivalent to the current iteration target. If
  * it is, remove the selection from the graph.
  */
-TreeNode* TreeState::performDeiteration()
+void TreeState::performDeiteration()
 {
 
 }
