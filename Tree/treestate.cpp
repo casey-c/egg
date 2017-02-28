@@ -154,11 +154,66 @@ void TreeState::removeAndBurnTheOrphanage()
 /* Surround with cut */
 void TreeState::surroundWithCut()
 {
-
+    // TODO: implementation
 }
 
 /* Surround with double cut */
 void TreeState::surroundWithDoubleCut()
+{
+    // TODO: implementation
+}
+
+/* Modification mode commands */
+
+/*
+ * Removes a double cut from around the current selection, if it exists.
+ *
+ * TODO: make it a little bit more intelligent by allowing the removal to
+ * "fuzzy detect" an acceptable region. So you don't have to exactly select the
+ * node itself that the double cut surrounds, you can select maybe one of the
+ * cuts themselves and it will figure out what you want to do automatically.
+ *
+ * Not sure if the above TODO is necessary, but it might be a quality of life
+ * addition later on.
+ */
+TreeNode* TreeState::doubleCutRemoval()
+{
+
+}
+
+/*
+ * Adds a double cut around the current selection. This will work against every
+ * selected node type except for root nodes and placeholders.
+ */
+TreeNode* TreeState::doubleCutAddition()
+{
+
+}
+
+/*
+ * Sets the subgraph that will be used in iterations and deiterations. This will
+ * store a node pointer to be compared against when performIteration and
+ * performDeiteration are called afterwards.
+ */
+TreeNode* TreeState::setIterationTarget()
+{
+
+}
+
+/*
+ * Takes the current iteration target and copies it into the selected region if
+ * allowed to do so.
+ */
+TreeNode* TreeState::performIteration()
+{
+
+}
+
+/*
+ * Determines if the selection is equivalent to the current iteration target. If
+ * it is, remove the selection from the graph.
+ */
+TreeNode* TreeState::performDeiteration()
 {
 
 }
