@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Resources/egg.ico</file>
+        <file>Resources/gear.svg</file>
+        <file>Resources/help.svg</file>
+        <file>Resources/new.svg</file>
+        <file>Resources/open.svg</file>
+        <file>Resources/redo.svg</file>
+        <file>Resources/save.svg</file>
+        <file>Resources/undo.svg</file>
+        <file>Resources/x.svg</file>
+    </qresource>
+</RCC>
