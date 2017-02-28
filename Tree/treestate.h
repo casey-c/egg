@@ -72,12 +72,15 @@ public:
     void surroundWithCut();
     void surroundWithDoubleCut();
 
+    /* Move */
+    void move(TreeNode* target, TreeNode* targetParent);
+
     /* Modification mode */
-    TreeNode* doubleCutRemoval();
-    TreeNode* doubleCutAddition();
-    TreeNode* setIterationTarget();
-    TreeNode* performIteration();
-    TreeNode* performDeiteration();
+    void doubleCutRemoval();
+    void doubleCutAddition();
+    void setIterationTarget();
+    void performIteration();
+    void performDeiteration();
 
     /* Text output in tree form */
     QString getBoxedString();
@@ -94,6 +97,8 @@ signals:
 private:
     TreeNode* root;
     TreeNode* selected; /* TODO: List<> for multi-select? */
+
+    TreeNode* iterationTarget;
 
     QString getFormattedString();
 };
