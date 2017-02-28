@@ -72,7 +72,12 @@ public:
     void surroundWithCut();
     void surroundWithDoubleCut();
 
-    /* TODO: inference mode*/
+    /* Modification mode */
+    TreeNode* doubleCutRemoval();
+    TreeNode* doubleCutAddition();
+    TreeNode* setIterationTarget();
+    TreeNode* performIteration();
+    TreeNode* performDeiteration();
 
     /* Text output in tree form */
     QString getBoxedString();
