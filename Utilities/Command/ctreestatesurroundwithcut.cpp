@@ -11,10 +11,6 @@ void CTreeStateSurroundWithCut::execute()
 /* Moves the inside node back to the parent and deletes the cut */
 void CTreeStateSurroundWithCut::undo()
 {
-    // TODO:
-    // use the other removeAndSaveTheorphans func,
-    // so we don't need to perform any moves!
-
     // No cut was performed, so nothing to undo!
     if (cut == NULL)
         return;

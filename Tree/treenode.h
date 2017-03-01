@@ -58,12 +58,8 @@ public:
 
     /* Copy and move */
     static TreeNode* copyChildren(TreeNode* original, TreeNode *parent);
-    void addExisting(TreeNode* node);
-    void appendExistingToChildren(TreeNode* node);
-
-    // TODO: make these two less dangerous!
-    void removeAChildWithoutDelete(TreeNode* child);
-    void setParent(TreeNode* newParent);
+    void addExistingByCopy(TreeNode* node);
+    static void move(TreeNode* node, TreeNode* targetParent);
 
     /* Text output in tree form */
     int getBoxWidth(int depth);
@@ -75,7 +71,7 @@ public:
     QString getName() { return name; }
     int getType(){ return type; }
 
-    /* TODO: fix rep. exposure (make private? friend graphstate?) */
+    /* TODO: fix rep. exposure (make private? friend TreeState?) */
     QList<TreeNode*> getChildren() { return children; }
     TreeNode* getParent() { return parent; }
     TreeNode* getPlaceHolder() { return placeholder; }
