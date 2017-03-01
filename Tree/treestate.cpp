@@ -203,46 +203,162 @@ void TreeState::move(TreeNode *target, TreeNode *targetParent)
  * Not sure if the above TODO is necessary, but it might be a quality of life
  * addition later on.
  */
-void TreeState::doubleCutRemoval()
+TreeState* TreeState::doubleCutRemoval()
 {
+    /* First, check if the selection has a double cut surrounding it */
+    // Root and placeholders are disallowed
+    if (selected->isRoot() || selected->isPlaceHolder())
+    {
+        qDebug() << "ERROR: function not allowed for root and placeholders";
+        return this;
+    }
 
+    // Parent must be a cut
+    TreeNode* parent = selected->getParent();
+    if (!parent->isCut())
+    {
+        qDebug() << "ERROR: parent not cut";
+        return this;
+    }
+
+    // Grandparent must be a cut.
+    TreeNode* grandparent = parent->getParent();
+    if (!grandparent->isCut())
+    {
+        qDebug() << "ERROR: grandparent not cut";
+        return this;
+    }
+
+    // The selected node is surrounded by a double cut, but make sure the parent
+    // doesn't have any siblings
+    if (grandparent->children.size() != 1)
+    {
+        qDebug() << "ERROR: outer cut must only contain the inner cut";
+        return this;
+    }
+
+    // Copy the tree state
+    TreeState* newState = new TreeState(this);
+
+    // Determine what nodes need changing
+    TreeNode* newSelection = newState->getSelected();
+    TreeNode* newParent = newSelection->getParent();
+    TreeNode* newGrandparent = newParent->getParent();
+
+    // Delete the double cuts, but update the children
+    newState->selectSpecific(newParent);
+    newState->removeAndSaveOrphans();
+    newState->selectSpecific(newGrandparent);
+    newState->removeAndSaveOrphans();
+
+    // Return the new state with the double cut removed
+    return newState;
 }
 
 /*
  * Adds a double cut around the current selection. This will work against every
  * selected node type except for root nodes and placeholders.
+ *
+ * TODO: this function really needs multiple selection support. We need to
+ * rework how selection is handled so we can surround a set of statements with a
+ * double cut. As it is now, only a single statement can be the target, and that
+ * is not good / what we want.
  */
-void TreeState::doubleCutAddition()
+TreeState* TreeState::doubleCutAddition()
 {
+    // Verify that the selection can be surrounded with a double cut
+    if (selected->isRoot())
+    {
+        qDebug() << "ERROR: can't surround the root with a double cut";
+        return this;
+    }
 
+    // Make a new tree state
+    TreeState* newState = new TreeState(this);
+
+    // Perform the addition
+    TreeNode* newSelected = newState->getSelected();
+    TreeNode* parent = newSelected->getParent();
+
+    TreeNode* newOuterCut = parent->addChildCut();
+    TreeNode* newInnerCut = newOuterCut->addChildCut();
+
+    // Perform the move
+    TreeNode::move(newSelected,newInnerCut);
+
+    // Return the new state with the added double cut
+    return newState;
 }
 
 /*
  * Sets the subgraph that will be used in iterations and deiterations. This will
  * store a node pointer to be compared against when performIteration and
  * performDeiteration are called afterwards.
+ *
+ * TODO: multiple selection, right now only a single node can be the iteration
+ * target. We need to be able to select multiple nodes and iterate all of them
+ * at once.
  */
 void TreeState::setIterationTarget()
 {
-
+    iterationTarget = selected;
 }
 
 /*
  * Takes the current iteration target and copies it into the selected region if
  * allowed to do so.
+ *
+ * TODO: test this code (I don't think it works as intended)
  */
-void TreeState::performIteration()
+TreeState* TreeState::performIteration()
 {
+    // First, verify if the new selection is a valid space to iterate into
+    if (selected->isPlaceHolder() || selected->isStatement())
+        return;
 
+    // Make sure the target is some child of the selected region
+    TreeNode* node = selected;
+    bool valid = false;
+
+    while (node != NULL)
+    {
+        if (node == iterationTarget)
+        {
+            valid = true;
+            break;
+        }
+
+        node = node->getParent();
+    }
+
+    // Unable to find the iteration target as an ancestor to the movable node
+    if (!valid)
+    {
+        qDebug() << "ERROR: invalid iteration target";
+        return this;
+    }
+
+    // Otherwise, we should be able to copy the treestate and do the iteration
+    TreeState newState = new TreeState(this);
+
+    // Perform the copy
+    TreeNode* newSelected = newState.getSelected();
+    TreeNode* newTarget = newState.getIterationTarget();
+
+    newSelected->addExistingByCopy(newTarget);
+
+    return newState;
 }
+
 
 /*
  * Determines if the selection is equivalent to the current iteration target. If
  * it is, remove the selection from the graph.
  */
-void TreeState::performDeiteration()
+TreeState* TreeState::performDeiteration()
 {
-
+    // Determine if the selection is logically equivalent to the target
+    // TODO: implement an .equals() to compare TreeNodes
 }
 
 /* Box print */

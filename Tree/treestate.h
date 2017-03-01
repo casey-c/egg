@@ -58,7 +58,6 @@ public:
 
     TreeNode* addOrTemplate();
     TreeNode* addConditionalTemplate();
-    //TreeNode* addBiConditionalTemplate();
 
     /* Remove */
     void removeAndSaveOrphans();
@@ -76,11 +75,12 @@ public:
     void move(TreeNode* target, TreeNode* targetParent);
 
     /* Modification mode */
-    void doubleCutRemoval();
-    void doubleCutAddition();
+    TreeState* doubleCutRemoval();
+    TreeState* doubleCutAddition();
     void setIterationTarget();
-    void performIteration();
-    void performDeiteration();
+    TreeNode* getIterationTarget() { return iterationTarget; }
+    TreeState* performIteration();
+    TreeState* performDeiteration();
 
     /* Text output in tree form */
     QString getBoxedString();
