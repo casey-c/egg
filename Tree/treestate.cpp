@@ -129,24 +129,33 @@ TreeNode* TreeState::addConditionalTemplate()
     return selected;
 }
 
-/* Remove */
+/* Remove the node, but give its children to their grandparent */
 void TreeState::removeAndSaveOrphans()
 {
-    QList<TreeNode*> children = selected->getChildren();
-    TreeNode* parent = selected->getParent();
+    // Undefined behavior
+    if (selected->isRoot() || selected->isPlaceHolder())
+        return;
 
-    parent->addAll(children);
+    // The grandparent who will inherit the orphans
+    TreeNode* grandparent = selected->getParent();
 
-    // Delete the selected node
-    //selected->remove();
+    // Move the children
+    for (auto child : selected->getChildren())
+        TreeNode::move(child,grandparent);
+
+    // If the selected has a placeholder, but the grandparent doesn't yet
+    if (selected->hasPlaceHolder() && !grandparent->hasPlaceHolder())
+        grandparent->addChildPlaceholder();
+
+    // Delete and update the selected region
     delete selected;
+    selected = grandparent;
 }
 
 /* Remove the selected node and any of its children */
 void TreeState::removeAndBurnTheOrphanage()
 {
     TreeNode* parent = selected->getParent();
-    //selected->remove();
     delete selected;
     selected = parent;
 }
@@ -178,34 +187,7 @@ void TreeState::surroundWithDoubleCut()
 /* Move target to the new parent */
 void TreeState::move(TreeNode *target, TreeNode *targetParent)
 {
-    // Make sure the target is movable
-    if (target->isRoot())
-        return;
-
-    // Move actually needs a new location
-    if (target->getParent() == targetParent)
-        return;
-
-    // Placeholders not allowed to move at this time (too messy)
-    if (target->isPlaceHolder())
-        return;
-
-    // Verify parent can house the node
-    if (targetParent->isStatement())
-        return;
-
-    // Parent node as placeholder will be messy, so forbid it for now
-    if (targetParent->isPlaceHolder())
-        return;
-
-    /* Should be okay to proceed with the move */
-
-    // Remove the target from its old parent
-    target->getParent()->removeAChildWithoutDelete(target);
-
-    // Append it to the new parent's children
-    targetParent->appendExistingToChildren(target);
-
+    TreeNode::move(target,targetParent);
 }
 
 /* Modification mode commands */

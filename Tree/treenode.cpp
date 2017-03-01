@@ -44,27 +44,6 @@ TreeNode::~TreeNode()
         delete placeholder;
 }
 
-/* Removes a child without deleting it
- *
- * TODO: fix this to be less dangerous!
- */
-void TreeNode::removeAChildWithoutDelete(TreeNode *child)
-{
-    qDebug() << "Originally children size was "<<children.size();
-    children.removeOne(child);
-
-    qDebug() << "New children size is "<<children.size();
-}
-
-/* Sets the parent
- *
- * TODO: fix this to be less dangerous!
- */
-void TreeNode::setParent(TreeNode *newParent)
-{
-    parent = newParent;
-}
-
 /*
  * Adds a child cut to this node
  */
@@ -223,7 +202,7 @@ void TreeNode::addAll(QList<TreeNode *> list)
 
         // Add the rest as siblings to this node
         for (TreeNode* node : list)
-            parent->addExisting(node);
+            parent->addExistingByCopy(node);
 
         // Finished
         return;
@@ -245,7 +224,7 @@ void TreeNode::addAll(QList<TreeNode *> list)
 
         // Then add the other items as additional children
         for (TreeNode* node : list)
-            this->addExisting(node);
+            this->addExistingByCopy(node);
     }
 
 }
@@ -256,7 +235,7 @@ void TreeNode::addAll(QList<TreeNode *> list)
  * Params:
  *      node: a pointer to the node that needs to be copied
  */
-void TreeNode::addExisting(TreeNode *node)
+void TreeNode::addExistingByCopy(TreeNode *node)
 {
     // Check to make sure the existing node doesn't conflict with placeholder
     // restrictions
@@ -278,14 +257,45 @@ void TreeNode::addExisting(TreeNode *node)
 }
 
 /*
- * Appends the existing node to this node's children
+ * Move will update pointers to move target in the tree structure, with a couple
+ * restrictions on what types of operations are allowed.
+ *
+ * Params:
+ *      target: the node to move (must not be root or placeholder)
+ *      targetParent: what new parent the target needs to have
+ *
+ * Undefined behavior:
+ * Moving a target to one of its children is a dangerous edge case not currently
+ * accounted for. This function assumes that it won't happen, and performs no
+ * checks to verify that it won't. Target must only be moved either up the tree
+ * or on a different branch sideways, never down.
  */
-void TreeNode::appendExistingToChildren(TreeNode *node)
+void TreeNode::move(TreeNode *target, TreeNode *targetParent)
 {
-    children.append(node);
+    // Make sure the target is movable
+    if (target->isRoot())
+        return;
 
-    // Update the target's parent
-    node->setParent(this);
+    // Move actually needs a new location
+    if (target->getParent() == targetParent)
+        return;
+
+    // Placeholders not allowed to move at this time (too messy)
+    if (target->isPlaceHolder())
+        return;
+
+    // Verify parent can house the node
+    if (targetParent->isStatement())
+        return;
+
+    // Parent node as placeholder will be messy, so forbid it for now
+    if (targetParent->isPlaceHolder())
+        return;
+
+    /* Should be okay to proceed with the move */
+    target->getParent()->children.removeOne(target);
+    targetParent->children.append(target);
+    target->parent = targetParent;
 }
 
 /*
