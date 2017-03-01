@@ -44,6 +44,27 @@ TreeNode::~TreeNode()
         delete placeholder;
 }
 
+/* Removes a child without deleting it
+ *
+ * TODO: fix this to be less dangerous!
+ */
+void TreeNode::removeAChildWithoutDelete(TreeNode *child)
+{
+    qDebug() << "Originally children size was "<<children.size();
+    children.removeOne(child);
+
+    qDebug() << "New children size is "<<children.size();
+}
+
+/* Sets the parent
+ *
+ * TODO: fix this to be less dangerous!
+ */
+void TreeNode::setParent(TreeNode *newParent)
+{
+    parent = newParent;
+}
+
 /*
  * Adds a child cut to this node
  */
@@ -254,6 +275,17 @@ void TreeNode::addExisting(TreeNode *node)
     // Otherwise, we should be free to add a new child
     TreeNode* newNode = new TreeNode(node->type,this,node->name);
     children.append(newNode);
+}
+
+/*
+ * Appends the existing node to this node's children
+ */
+void TreeNode::appendExistingToChildren(TreeNode *node)
+{
+    children.append(node);
+
+    // Update the target's parent
+    node->setParent(this);
 }
 
 /*

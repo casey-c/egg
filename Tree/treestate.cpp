@@ -152,11 +152,11 @@ void TreeState::removeAndBurnTheOrphanage()
 }
 
 /* Surround with cut */
-void TreeState::surroundWithCut()
+TreeNode* TreeState::surroundWithCut()
 {
     // Roots and placeholders cannot be surrounded
     if (selected->isRoot() || selected->isPlaceHolder())
-        return;
+        return NULL;
 
     // Otherwise, get the old parent
     TreeNode* oldParent = selected->getParent();
@@ -164,6 +164,8 @@ void TreeState::surroundWithCut()
 
     // Move the selection into the new cut
     move(selected,newCut);
+
+    return newCut;
 }
 
 /* Surround with double cut */
@@ -181,7 +183,7 @@ void TreeState::move(TreeNode *target, TreeNode *targetParent)
         return;
 
     // Move actually needs a new location
-    if (target->parent == targetParent)
+    if (target->getParent() == targetParent)
         return;
 
     // Placeholders not allowed to move at this time (too messy)
@@ -199,13 +201,11 @@ void TreeState::move(TreeNode *target, TreeNode *targetParent)
     /* Should be okay to proceed with the move */
 
     // Remove the target from its old parent
-    target->parent->children.removeOne(target);
+    target->getParent()->removeAChildWithoutDelete(target);
 
     // Append it to the new parent's children
-    targetParent->children.append(target);
+    targetParent->appendExistingToChildren(target);
 
-    // Update the target's parent
-    target->parent = targetParent;
 }
 
 /* Modification mode commands */
