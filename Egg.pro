@@ -41,7 +41,9 @@ SOURCES += MainWindow/main.cpp\
     Utilities/Command/ctreestateaddconditionaltemplate.cpp \
     Utilities/Command/ctreestateaddbiconditionaltemplate.cpp \
     Utilities/Command/ctreestateaddortemplate.cpp \
-    Utilities/Command/ctreestateadddoublecut.cpp
+    Utilities/Command/ctreestateadddoublecut.cpp \
+    Utilities/Command/ctreestatesurroundwithcut.cpp \
+    Utilities/Command/ctreestatesurroundwithdoublecut.cpp
 
 HEADERS  += MainWindow/mainwindow.h \
     Utilities/constants.h \
@@ -61,7 +63,9 @@ HEADERS  += MainWindow/mainwindow.h \
     Utilities/Command/ctreestateaddconditionaltemplate.h \
     Utilities/Command/ctreestateaddbiconditionaltemplate.h \
     Utilities/Command/ctreestateaddortemplate.h \
-    Utilities/Command/ctreestateadddoublecut.h
+    Utilities/Command/ctreestateadddoublecut.h \
+    Utilities/Command/ctreestatesurroundwithcut.h \
+    Utilities/Command/ctreestatesurroundwithdoublecut.h
 
 FORMS    += MainWindow/mainwindow.ui \
     TreeDisplayWidget/treedisplaywidget.ui

@@ -69,7 +69,7 @@ public:
     TreeNode* copyRoot(){ return new TreeNode(this->root); }
 
     /* Surround with cut */
-    void surroundWithCut();
+    TreeNode* surroundWithCut();
     void surroundWithDoubleCut();
 
     /* Move */

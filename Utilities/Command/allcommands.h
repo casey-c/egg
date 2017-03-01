@@ -20,5 +20,7 @@
 #include "Utilities/Command/ctreestateaddconditionaltemplate.h"
 #include "Utilities/Command/ctreestateaddortemplate.h"
 #include "Utilities/Command/ctreestateadddoublecut.h"
+#include "Utilities/Command/ctreestatesurroundwithcut.h"
+#include "Utilities/Command/ctreestatesurroundwithdoublecut.h"
 
 #endif // ALLCOMMANDS_H

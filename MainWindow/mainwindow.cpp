@@ -100,84 +100,94 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
     switch (event->key())
     {
     case Qt::Key_J:
-            qDebug() << "J is pressed";
-            command = new CTreeStateSelectAChild(currentTree);
-            commandInvoker.runCommand(command);
-            break;
+        qDebug() << "J is pressed";
+        command = new CTreeStateSelectAChild(currentTree);
+        commandInvoker.runCommand(command);
+        break;
     case Qt::Key_K:
-            qDebug() << "K is pressed";
-            command = new CTreeStateSelectParent(currentTree);
-            commandInvoker.runCommand(command);
-            break;
+        qDebug() << "K is pressed";
+        command = new CTreeStateSelectParent(currentTree);
+        commandInvoker.runCommand(command);
+        break;
     case Qt::Key_H:
-            qDebug() << "H is pressed";
-            command = new CTreeStateSelectLeft(currentTree);
-            commandInvoker.runCommand(command);
-            break;
+        qDebug() << "H is pressed";
+        command = new CTreeStateSelectLeft(currentTree);
+        commandInvoker.runCommand(command);
+        break;
     case Qt::Key_L:
-            qDebug() << "L is pressed";
-            command = new CTreeStateSelectRight(currentTree);
-            commandInvoker.runCommand(command);
-            break;
+        qDebug() << "L is pressed";
+        command = new CTreeStateSelectRight(currentTree);
+        commandInvoker.runCommand(command);
+        break;
+    case Qt::Key_O:
+        qDebug() << "O is pressed";
+        command = new CTreeStateSurroundWithCut(currentTree);
+        commandInvoker.runCommand(command);
+        break;
+    case Qt::Key_P:
+        qDebug() << "P is pressed";
+        command = new CTreeStateSurroundWithDoubleCut(currentTree);
+        commandInvoker.runCommand(command);
+        break;
     case Qt::Key_Q:
-            qDebug() << "Q is pressed";
-            keybindMode = constants::MODE_Q;
-            QTimer::singleShot(1000,this,SLOT(endTimer()));
-            break;
+        qDebug() << "Q is pressed";
+        keybindMode = constants::MODE_Q;
+        QTimer::singleShot(1000,this,SLOT(endTimer()));
+        break;
     case Qt::Key_R:
-            qDebug() << "R is pressed.";
-            command = new CTreeStateAddConditionalTemplate(currentTree);
-            commandInvoker.runCommand(command);
-            break;
+        qDebug() << "R is pressed.";
+        command = new CTreeStateAddConditionalTemplate(currentTree);
+        commandInvoker.runCommand(command);
+        break;
     case Qt::Key_T:
-            qDebug() << "T is pressed";
-            command = new CTreeStateAddBiconditionalTemplate(currentTree);
-            commandInvoker.runCommand(command);
-            break;
+        qDebug() << "T is pressed";
+        command = new CTreeStateAddBiconditionalTemplate(currentTree);
+        commandInvoker.runCommand(command);
+        break;
     case Qt::Key_U:
-            qDebug() << "U is pressed";
-            commandInvoker.undoLastCommand();
-            break;
+        qDebug() << "U is pressed";
+        commandInvoker.undoLastCommand();
+        break;
     case Qt::Key_V:
-            qDebug() << "V is pressed";
-            command = new CTreeStateAddOrTemplate(currentTree);
-            commandInvoker.runCommand(command);
-            break;
+        qDebug() << "V is pressed";
+        command = new CTreeStateAddOrTemplate(currentTree);
+        commandInvoker.runCommand(command);
+        break;
     case Qt::Key_X:
-            qDebug() << "X is pressed";
-            command = new CTreeStateAddCut(currentTree);
-            commandInvoker.runCommand(command);
-            break;
+        qDebug() << "X is pressed";
+        command = new CTreeStateAddCut(currentTree);
+        commandInvoker.runCommand(command);
+        break;
     case Qt::Key_Y:
         qDebug() << "Y is pressed";
         commandInvoker.redoLastCommand();
         break;
     case Qt::Key_Z:
-            qDebug() << "Z is pressed";
-            command = new CTreeStateAddDoubleCut(currentTree);
-            commandInvoker.runCommand(command);
-            break;
+        qDebug() << "Z is pressed";
+        command = new CTreeStateAddDoubleCut(currentTree);
+        commandInvoker.runCommand(command);
+        break;
     case Qt::Key_0:
-            qDebug() << "0 is pressed";
-            delete(currentTree);
-            currentTree = new TreeState();
-            QObject::connect(currentTree,
-                             SIGNAL(treeChanged(QString)),
-                             treeDisplayWidget,
-                             SLOT(updateText(QString)));
-            currentTree->redraw();
-            break;
+        qDebug() << "0 is pressed";
+        delete(currentTree);
+        currentTree = new TreeState();
+        QObject::connect(currentTree,
+                         SIGNAL(treeChanged(QString)),
+                         treeDisplayWidget,
+                         SLOT(updateText(QString)));
+        currentTree->redraw();
+        break;
     case Qt::Key_Period:
-            qDebug() << ". is pressed";
-            commandInvoker.repeatLastCommand();
-            break;
+        qDebug() << ". is pressed";
+        commandInvoker.repeatLastCommand();
+        break;
     case Qt::Key_Semicolon:
-            qDebug() << "; is pressed";
-            command = new CTreeStateSelectRoot(currentTree);
-            commandInvoker.runCommand(command);
-            break;
+        qDebug() << "; is pressed";
+        command = new CTreeStateSelectRoot(currentTree);
+        commandInvoker.runCommand(command);
+        break;
     default:
-            QMainWindow::keyPressEvent(event);
+        QMainWindow::keyPressEvent(event);
     }
 
 }

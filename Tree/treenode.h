@@ -59,6 +59,11 @@ public:
     /* Copy and move */
     static TreeNode* copyChildren(TreeNode* original, TreeNode *parent);
     void addExisting(TreeNode* node);
+    void appendExistingToChildren(TreeNode* node);
+
+    // TODO: make these two less dangerous!
+    void removeAChildWithoutDelete(TreeNode* child);
+    void setParent(TreeNode* newParent);
 
     /* Text output in tree form */
     int getBoxWidth(int depth);
