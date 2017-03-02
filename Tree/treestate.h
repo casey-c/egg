@@ -41,20 +41,17 @@ public:
     ~TreeState();
 
     /* Change selection */
-    void selectAChild();
-    void selectParent();
-    void selectRoot();
-    void selectLeftSibling();
-    void selectRightSibling();
-
-    void selectSpecific(TreeNode* node);
-
-    /* TODO: multiple selection? */
+    void highlightChild();
+    void highlightParent();
+    void highlightRoot();
+    void highlightRightSibling();
+    void highlightLeftSibling();
+    void highlightSpecific(TreeNode* node);
 
     /* Add */
-    TreeNode* addChildCut();
-    TreeNode* addChildDoubleCut();
-    TreeNode* addChildStatement(QString s);
+    bool addChildCut();
+    bool addChildDoubleCut();
+    bool addChildStatement(QString s);
 
     TreeNode* addOrTemplate();
     TreeNode* addConditionalTemplate();
@@ -89,7 +86,8 @@ public:
     void redraw();
 
     /* For selection commands */
-    TreeNode* getSelected() { return selected; }
+    //TreeNode* getSelected() { return selected; }
+    QList<TreeNode*> getSelectionList() { return selectionList; }
 
     void clearSelection();
     void addToSelectionList();
@@ -100,7 +98,6 @@ signals:
 
 private:
     TreeNode* root;
-    TreeNode* selected; /* TODO: List<> for multi-select? */
 
     /* Multiselect */
     QList<TreeNode*> selectionList; // All nodes selected
