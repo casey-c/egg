@@ -17,7 +17,7 @@ class ICommand
 public:
     virtual bool execute() = 0;
     virtual void undo() = 0;
-    virtual void redo() = 0;
+    virtual bool redo() { return execute(); }
 
     virtual ICommand* copy() = 0;
 

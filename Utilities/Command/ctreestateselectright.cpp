@@ -21,12 +21,6 @@ void CTreeStateSelectRight::undo()
     tree->redraw();
 }
 
-/* Reselects right */
-void CTreeStateSelectRight::redo()
-{
-    execute();
-}
-
 /* Copy */
 ICommand* CTreeStateSelectRight::copy()
 {

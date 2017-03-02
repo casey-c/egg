@@ -23,12 +23,6 @@ void CTreeStateAddConditionalTemplate::undo()
     tree->redraw();
 }
 
-/* Readds the template */
-void CTreeStateAddConditionalTemplate::redo()
-{
-    execute();
-}
-
 /* Copy */
 ICommand* CTreeStateAddConditionalTemplate::copy()
 {

@@ -23,12 +23,6 @@ void CTreeStateSelectParent::undo()
     tree->redraw();
 }
 
-/* Reselects the parent */
-void CTreeStateSelectParent::redo()
-{
-    execute();
-}
-
 /* Copy */
 ICommand* CTreeStateSelectParent::copy()
 {

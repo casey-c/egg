@@ -22,12 +22,6 @@ void CTreeStateAddCut::undo()
     tree->redraw();
 }
 
-/* Readds the cut */
-void CTreeStateAddCut::redo()
-{
-    execute();
-}
-
 /* Copy */
 ICommand* CTreeStateAddCut::copy()
 {

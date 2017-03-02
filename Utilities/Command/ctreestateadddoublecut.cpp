@@ -23,12 +23,6 @@ void CTreeStateAddDoubleCut::undo()
     tree->redraw();
 }
 
-/* Readds the double cut */
-void CTreeStateAddDoubleCut::redo()
-{
-    execute();
-}
-
 /* Copy */
 ICommand* CTreeStateAddDoubleCut::copy()
 {

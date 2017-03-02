@@ -34,12 +34,6 @@ void CTreeStateSurroundWithCut::undo()
     tree->redraw();
 }
 
-/* Resurrounds the node with the cut */
-void CTreeStateSurroundWithCut::redo()
-{
-    execute();
-}
-
 /* Copy */
 ICommand* CTreeStateSurroundWithCut::copy()
 {

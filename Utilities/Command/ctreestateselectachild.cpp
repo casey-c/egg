@@ -21,12 +21,6 @@ void CTreeStateSelectAChild::undo()
     tree->redraw();
 }
 
-/* Reselects a child */
-void CTreeStateSelectAChild::redo()
-{
-    execute();
-}
-
 /* Copy */
 ICommand* CTreeStateSelectAChild::copy()
 {

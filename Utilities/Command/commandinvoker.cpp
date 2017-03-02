@@ -69,10 +69,16 @@ void CommandInvoker::redoLastCommand()
         return;
 
     ICommand* command = undoStack.pop();
-    command->redo();
-
-    commandStack.append(command);
-    updated();
+    if (command->redo())
+    {
+        commandStack.append(command);
+        updated();
+    }
+    else
+    {
+        // Put it back on the undo stack since nothing changed
+        undoStack.append(command);
+    }
 }
 
 /*

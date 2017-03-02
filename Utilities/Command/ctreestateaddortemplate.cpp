@@ -24,12 +24,6 @@ void CTreeStateAddOrTemplate::undo()
     tree->redraw();
 }
 
-/* Readds the template */
-void CTreeStateAddOrTemplate::redo()
-{
-    execute();
-}
-
 /* Copy */
 ICommand* CTreeStateAddOrTemplate::copy()
 {

@@ -36,12 +36,6 @@ void CTreeStateAddBiconditionalTemplate::undo()
     tree->redraw();
 }
 
-/* Readds the template */
-void CTreeStateAddBiconditionalTemplate::redo()
-{
-    execute();
-}
-
 /* Copy */
 ICommand* CTreeStateAddBiconditionalTemplate::copy()
 {
