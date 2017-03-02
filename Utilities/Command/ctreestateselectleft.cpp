@@ -21,12 +21,6 @@ void CTreeStateSelectLeft::undo()
     tree->redraw();
 }
 
-/* Selects left again */
-void CTreeStateSelectLeft::redo()
-{
-    execute();
-}
-
 /* Copy */
 ICommand* CTreeStateSelectLeft::copy()
 {

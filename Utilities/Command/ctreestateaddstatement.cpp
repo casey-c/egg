@@ -22,12 +22,6 @@ void CTreeStateAddStatement::undo()
     tree->redraw();
 }
 
-/* Re-add the statement after undo */
-void CTreeStateAddStatement::redo()
-{
-    execute();
-}
-
 /* Copy */
 ICommand* CTreeStateAddStatement::copy()
 {

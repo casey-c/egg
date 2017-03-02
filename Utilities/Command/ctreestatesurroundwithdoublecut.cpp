@@ -35,12 +35,6 @@ void CTreeStateSurroundWithDoubleCut::undo()
     tree->redraw();
 }
 
-/* Readds the double cut */
-void CTreeStateSurroundWithDoubleCut::redo()
-{
-    execute();
-}
-
 /* Copy */
 ICommand* CTreeStateSurroundWithDoubleCut::copy()
 {

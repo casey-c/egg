@@ -20,7 +20,6 @@ public:
 
     bool execute();
     void undo();
-    void redo();
 
     ICommand* copy();
 
