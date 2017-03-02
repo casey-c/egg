@@ -17,7 +17,7 @@ public:
     /* Destructor */
     ~CTreeStateAddConditionalTemplate() {}
 
-    void execute();
+    bool execute();
     void undo();
     void redo();
 

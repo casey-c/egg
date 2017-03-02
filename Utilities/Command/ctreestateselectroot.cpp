@@ -1,13 +1,18 @@
 #include "ctreestateselectroot.h"
 
 /* Selects root */
-void CTreeStateSelectRoot::execute()
+bool CTreeStateSelectRoot::execute()
 {
     // Remember the previous selection
     previous = tree->getSelected();
 
+    // Already at root
+    if (previous->isRoot())
+        return false;
+
     tree->selectRoot();
     tree->redraw();
+    return true;
 }
 
 /* Returns to the previous selection */

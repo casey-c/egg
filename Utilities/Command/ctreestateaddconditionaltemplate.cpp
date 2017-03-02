@@ -1,11 +1,18 @@
 #include "ctreestateaddconditionaltemplate.h"
 
 /* Adds conditional template */
-void CTreeStateAddConditionalTemplate::execute()
+bool CTreeStateAddConditionalTemplate::execute()
 {
+    TreeNode* previous = tree->getSelected();
     node = tree->addConditionalTemplate();
+
+    // No change
+    if (previous == node)
+        return false;
+
     node = node->getParent();
     tree->redraw();
+    return true;
 }
 
 /* Removes the added template */

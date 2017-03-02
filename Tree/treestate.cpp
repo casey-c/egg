@@ -231,7 +231,7 @@ TreeState* TreeState::doubleCutRemoval()
 
     // The selected node is surrounded by a double cut, but make sure the parent
     // doesn't have any siblings
-    if (grandparent->children.size() != 1)
+    if (grandparent->getChildren().size() != 1)
     {
         qDebug() << "ERROR: outer cut must only contain the inner cut";
         return this;
@@ -314,7 +314,7 @@ TreeState* TreeState::performIteration()
 {
     // First, verify if the new selection is a valid space to iterate into
     if (selected->isPlaceHolder() || selected->isStatement())
-        return;
+        return this;
 
     // Make sure the target is some child of the selected region
     TreeNode* node = selected;
@@ -339,11 +339,11 @@ TreeState* TreeState::performIteration()
     }
 
     // Otherwise, we should be able to copy the treestate and do the iteration
-    TreeState newState = new TreeState(this);
+    TreeState* newState = new TreeState(this);
 
     // Perform the copy
-    TreeNode* newSelected = newState.getSelected();
-    TreeNode* newTarget = newState.getIterationTarget();
+    TreeNode* newSelected = newState->getSelected();
+    TreeNode* newTarget = newState->getIterationTarget();
 
     newSelected->addExistingByCopy(newTarget);
 

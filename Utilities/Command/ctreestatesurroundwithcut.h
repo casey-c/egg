@@ -17,7 +17,7 @@ public:
     /* Destructor */
     ~CTreeStateSurroundWithCut();
 
-    void execute();
+    bool execute();
     void undo();
     void redo();
 
