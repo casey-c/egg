@@ -91,12 +91,22 @@ public:
     /* For selection commands */
     TreeNode* getSelected() { return selected; }
 
+    void clearSelection();
+    void addToSelectionList();
+    void removeFromSelectionList();
+
 signals:
     void treeChanged(QString s);
 
 private:
     TreeNode* root;
     TreeNode* selected; /* TODO: List<> for multi-select? */
+
+    /* Multiselect */
+    QList<TreeNode*> selectionList; // All nodes selected
+    TreeNode* highlighted; // Node underneath the cursor
+    /* By default, the highlighted node will be included in the selection */
+
 
     TreeNode* iterationTarget;
 

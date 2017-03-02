@@ -391,3 +391,47 @@ void TreeState::redraw()
 {
     emit treeChanged(getBoxedString());
 }
+
+
+//////////////////////////
+/// Multiple selection ///
+//////////////////////////
+/*
+ * Clears all selected nodes
+ */
+void TreeState::clearSelection()
+{
+    selectionList.clear();
+}
+
+/*
+ * Adds the highlighted node to selection
+ */
+void TreeState::addToSelectionList()
+{
+    // Root nodes replace any previous selection
+    if (highlighted->isRoot())
+    {
+        clearSelection();
+        selectionList.append(highlighted);
+        return;
+    }
+
+    // Check if highlighted object is already in selection list or if it's
+    // allowed to join (selections must be siblings)
+    for (TreeNode* node : selectionList)
+        if (    node == highlighted ||
+                node->getParent() != highlighted->getParent())
+            return;
+
+    // We should be okay to add the highlighted node
+    selectionList.append(highlighted);
+}
+
+/*
+ * Removes the highlighted node from selection list
+ */
+void TreeState::removeFromSelectionList()
+{
+    selectionList.removeOne(highlighted);
+}
