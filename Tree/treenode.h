@@ -51,8 +51,8 @@ public:
     int getID() { return myID; }
 
     /* Additions */
-    TreeNode* addChildCut();
-    TreeNode* addChildStatement(QString s);
+    bool addChildCut();
+    bool addChildStatement(QString s);
     TreeNode* addChildPlaceholder();
     void addAll(QList<TreeNode*> list);
 

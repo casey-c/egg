@@ -3,112 +3,189 @@
 
 TreeState::~TreeState()
 {
-    selected = NULL;
     delete root;
 }
 
-/* Selects the first child of the selected region, if it exists */
-void TreeState::selectAChild()
+/*
+ * Highlights a child of the current highlighted node, if it exists
+ */
+void TreeState::highlightChild()
 {
-    if (!selected->getChildren().isEmpty())
-        selected = selected->getChildren().first();
+    if (!highlighted->getChildren().isEmpty())
+            highlightSpecific(highlighted->getChildren().first());
 }
 
-/* Selects the parent of the selected node, if not already root. */
-void TreeState::selectParent()
+/*
+ * Highlights the parent of the current highlighted node
+ */
+void TreeState::highlightParent()
 {
-    if (!selected->isRoot())
-        selected = selected->getParent();
+    if (!highlighted->isRoot())
+        highlightSpecific(highlighted->getParent());
 }
 
 
-/* Recursively selects the parent of the selection until we reach root */
-void TreeState::selectRoot()
+/*
+ * Highlights the root node
+ */
+void TreeState::highlightRoot()
 {
-    while (!selected->isRoot())
-        selected = selected->getParent();
+    highlightSpecific(root);
 }
 
-/* Selects the previous sibling of the parent's getChildren list */
-void TreeState::selectLeftSibling()
+/*
+ * Highlights the left sibling of the current highlighted node
+ */
+void TreeState::highlightLeftSibling()
 {
-    /* Root doesn't have any siblings */
-    if (selected->isRoot())
+    // Root doesn't have any siblings
+    if (highlighted->isRoot())
         return;
 
-    /* List has the selected item and all its siblings */
-    QList<TreeNode*> list = selected->getParent()->getChildren();
+    // List contains the highlighted item and all its siblings
+    QList<TreeNode*> list = highlighted->getParent()->getChildren();
     TreeNode* previous = NULL;
 
-    for (TreeNode* prev : list)
+    // Look for a node to the left
+    for (TreeNode* curr : list)
     {
-        if (prev == selected)
+        if (curr == highlighted)
             break;
-        previous = prev;
+        previous = curr;
     }
 
-    /* Nothing to the left */
+    // Nothing to the left
     if (previous == NULL)
-       selected = list.last();
-    else /* Choose the previous as the new selection */
-        selected = previous;
-
-    emit treeChanged(getBoxedString());
+        highlightSpecific(list.last());
+    else // Highlight the node to the left
+        highlightSpecific(previous);
 }
 
-/* Select the next right sibling */
-void TreeState::selectRightSibling()
+/*
+ * Highlights the right sibling of the currently highlighted node
+ */
+void TreeState::highlightRightSibling()
 {
-    /* Root doesn't have any siblings */
-    if (selected->isRoot())
+    // Root doesn't have any siblings
+    if (highlighted->isRoot())
         return;
 
-    /* List has the selected item and all its siblings */
-    QList<TreeNode*> list = selected->getParent()->getChildren();
+    // List contains the highlighted node and all its siblings
+    QList<TreeNode*> list = highlighted->getParent()->getChildren();
 
     TreeNode* next = NULL;
     QList<TreeNode*>::const_reverse_iterator it = list.rbegin();
     for (; it != list.rend(); ++it)
     {
-        if (*it == selected)
+        if (*it == highlighted)
             break;
         next = *it;
     }
 
-    /* Nothing to the right */
+    // Nothing to the right
     if (next == NULL)
-       selected = list.front();
-    else /* Choose the next as the new selection */
-        selected = next;
-
-    emit treeChanged(getBoxedString());
+        highlightSpecific(list.front());
+    else // Found something to the right
+        highlightSpecific(next);
 }
 
-/* Select a node (used by commands) */
-void TreeState::selectSpecific(TreeNode* node)
+/*
+ * Highlights a specific node
+ *
+ * Params:
+ *      node: the node to be highlighted
+ */
+void TreeState::highlightSpecific(TreeNode* node)
 {
-    selected = node;
+    highlighted = node;
 }
 
-/* Adds a cut to the selected node's children */
-TreeNode* TreeState::addChildCut()
+/*
+ * Adds a child cut to all valid nodes in the current selection. If any nodes
+ * are successfully added, the selection will be cleared and the highlighted
+ * node will remain untouched.
+ *
+ * Returns:
+ *      true: if any child cuts were added
+ *      false: otherwise
+ */
+bool TreeState::addChildCut()
 {
-    selected = selected->addChildCut();
-    return selected;
+    bool anyAdded = false;
+
+    for (TreeNode* node : selectionList)
+    {
+        if (node->addChildCut())
+            anyAdded = true;
+    }
+
+    if (!anyAdded)
+        return false;
+
+    clearSelection();
+    return true;
 }
 
-/* Adds a double cut to the selected region */
-TreeNode* TreeState::addChildDoubleCut()
+/*
+ * Adds a double cut to all valid nodes in the current selection. All double
+ * cuts that have been successfully added will have their inner cut selected.
+ * The selection list will be cleared if any cuts are added.
+ *
+ * Returns:
+ *      true: if any double cuts are added
+ *      false: otherwise
+ */
+bool TreeState::addChildDoubleCut()
 {
-    addChildCut();
-    return addChildCut();
+    QList<TreeNode*> outerCuts;
+
+    // Add the outer cuts
+    for (TreeNode* node : selectionList)
+    {
+        if (node->addChildCut())
+            outerCuts.append(node->getChildren().last());
+    }
+
+    // Add the inner cuts
+    for (TreeNode* node : outerCuts)
+        node->addChildCut();
+
+    // No cuts were added
+    if (outerCuts.isEmpty())
+        return false;
+
+    // Everything was successful
+    clearSelection();
+    return true;
 }
 
-/* Adds a child statement with the string s */
-TreeNode* TreeState::addChildStatement(QString s)
+/*
+ * Adds a child statement to all the selected nodes if possible. If any
+ * statements are added, the selection is cleared and the function returns true.
+ *
+ * Params:
+ *      s: the string representation of the statement
+ *
+ * Returns:
+ *      true: if at least one statement was successfully added
+ *      false: otherwise
+ */
+bool TreeState::addChildStatement(QString s)
 {
-    selected = selected->addChildStatement(s);
-    return selected;
+    bool anyAdded = false;
+    for (TreeNode* node : selectionList)
+    {
+        if (node->addChildStatement(s))
+            anyAdded = true;
+    }
+
+    // Nothing added
+    if (!anyAdded)
+        return false;
+
+    // Everything was successful
+    clearSelection();
+    return true;
 }
 
 /* Adds an or template */
