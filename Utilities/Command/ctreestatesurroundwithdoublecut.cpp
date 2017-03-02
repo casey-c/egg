@@ -1,12 +1,18 @@
 #include "ctreestatesurroundwithdoublecut.h"
 
 /* Surrounds with double cut */
-void CTreeStateSurroundWithDoubleCut::execute()
+bool CTreeStateSurroundWithDoubleCut::execute()
 {
     node = tree->getSelected();
     outerCut = tree->surroundWithCut();
+
+    // Couldn't surround with cut
+    if (outerCut == NULL)
+        return false;
+
     innerCut = tree->surroundWithCut();
     tree->redraw();
+    return true;
 }
 
 /* Moves the inside node back to its grandparent and deletes both cuts */

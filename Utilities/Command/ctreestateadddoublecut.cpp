@@ -1,12 +1,18 @@
 #include "ctreestateadddoublecut.h"
 
 /* Adds double cut */
-void CTreeStateAddDoubleCut::execute()
+bool CTreeStateAddDoubleCut::execute()
 {
+    TreeNode* previous = tree->getSelected();
     node = tree->addChildCut();
-    tree->addChildCut();
 
+    // No change
+    if (node == previous)
+        return false;
+
+    tree->addChildCut();
     tree->redraw();
+    return true;
 }
 
 /* Removes the added double cut */

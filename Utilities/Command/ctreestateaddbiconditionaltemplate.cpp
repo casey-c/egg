@@ -1,10 +1,17 @@
 #include "ctreestateaddbiconditionaltemplate.h"
 
 /* Adds a biconditional template */
-void CTreeStateAddBiconditionalTemplate::execute()
+bool CTreeStateAddBiconditionalTemplate::execute()
 {
     // Add the first conditional; entry is where to put the second
+    TreeNode* previous = tree->getSelected();
+
     first = tree->addConditionalTemplate();
+
+    // Couldn't add the first template
+    if (first == previous)
+        return false;
+
     TreeNode* entry = first->getParent()->getParent();
     first = first->getParent();
 
@@ -14,6 +21,7 @@ void CTreeStateAddBiconditionalTemplate::execute()
     second = second->getParent();
 
     tree->redraw();
+    return true;
 }
 
 /* Removes the added template */

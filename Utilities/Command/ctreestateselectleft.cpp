@@ -1,10 +1,17 @@
 #include "ctreestateselectleft.h"
 
 /* Selects left */
-void CTreeStateSelectLeft::execute()
+bool CTreeStateSelectLeft::execute()
 {
+    TreeNode* previous = tree->getSelected();
     tree->selectLeftSibling();
+
+    // No change
+    if (previous == tree->getSelected())
+        return false;
+
     tree->redraw();
+    return true;
 }
 
 /* Reverts the selection by selecting right */

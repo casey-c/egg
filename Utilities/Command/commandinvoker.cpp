@@ -14,13 +14,16 @@ CommandInvoker::~CommandInvoker()
  */
 void CommandInvoker::runCommand(ICommand* comm)
 {
-    commandStack.append(comm);
-    comm->execute();
+    // Run the command, using the return value to see if it did anything
+    if (comm->execute())
+    {
+        commandStack.append(comm);
 
-    // Adding a new command will clear and redo-able commands
-    undoStack.clear();
+        // Adding a new command will clear and redo-able commands
+        undoStack.clear();
 
-    updated();
+        updated();
+    }
 }
 
 /*

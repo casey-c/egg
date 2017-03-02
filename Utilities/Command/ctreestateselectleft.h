@@ -17,7 +17,7 @@ public:
     /* Destructor */
     ~CTreeStateSelectLeft() {}
 
-    void execute();
+    bool execute();
     void undo();
     void redo();
 

@@ -1,11 +1,19 @@
 #include "ctreestateaddortemplate.h"
 
 /* Adds or template */
-void CTreeStateAddOrTemplate::execute()
+bool CTreeStateAddOrTemplate::execute()
 {
+    TreeNode* previous = tree->getSelected();
     node = tree->addOrTemplate();
+
+    // No change
+    if (node == previous)
+        return false;
+
     node = node->getParent();
+
     tree->redraw();
+    return true;
 }
 
 /* Removes the added template */

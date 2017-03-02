@@ -18,7 +18,7 @@ public:
     /* Destructor */
     ~CTreeStateAddStatement() {}
 
-    void execute();
+    bool execute();
     void undo();
     void redo();
 

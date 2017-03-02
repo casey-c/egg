@@ -1,11 +1,17 @@
 #include "ctreestatesurroundwithcut.h"
 
 /* Surrounds with cut */
-void CTreeStateSurroundWithCut::execute()
+bool CTreeStateSurroundWithCut::execute()
 {
     node = tree->getSelected();
     cut = tree->surroundWithCut();
+
+    // Couldn't surround with cut
+    if (cut == NULL)
+        return false;
+
     tree->redraw();
+    return true;
 }
 
 /* Moves the inside node back to the parent and deletes the cut */

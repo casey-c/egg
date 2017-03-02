@@ -1,10 +1,17 @@
 #include "ctreestateaddcut.h"
 
 /* Adds child cut */
-void CTreeStateAddCut::execute()
+bool CTreeStateAddCut::execute()
 {
+    TreeNode* previous = tree->getSelected();
     node = tree->addChildCut();
+
+    // No change
+    if (previous == node)
+        return false;
+
     tree->redraw();
+    return true;
 }
 
 /* Removes the added cut */

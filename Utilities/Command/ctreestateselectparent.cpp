@@ -1,13 +1,19 @@
 #include "ctreestateselectparent.h"
 
 /* Selects the parent */
-void CTreeStateSelectParent::execute()
+bool CTreeStateSelectParent::execute()
 {
     // Remember the previous selection
     previous = tree->getSelected();
 
     tree->selectParent();
+
+    // No change
+    if (tree->getSelected() == previous)
+        return false;
+
     tree->redraw();
+    return true;
 }
 
 /* Reverts to the previous selection */
