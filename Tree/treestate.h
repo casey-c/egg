@@ -61,16 +61,13 @@ public:
     void removeAndSaveOrphans(TreeNode* target);
     void removeAndBurnTheOrphanage(TreeNode* target);
 
-//  void removeAndSaveOrphans();
-//  void removeAndBurnTheOrphanage();
+    /* Surround with cut */
+    void surroundWithCut();
+    void surroundWithDoubleCut();
 
     /* Copy */
     static TreeState* copyState(TreeState* currentTree);
     TreeNode* copyRoot(){ return new TreeNode(this->root); }
-
-    /* Surround with cut */
-    TreeNode* surroundWithCut();
-    void surroundWithDoubleCut();
 
     /* Move */
     void move(TreeNode* target, TreeNode* targetParent);
