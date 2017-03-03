@@ -280,31 +280,71 @@ void TreeState::removeAndBurnTheOrphanage(TreeNode *target)
     delete target;
 }
 
-/* Surround with cut */
-TreeNode* TreeState::surroundWithCut()
+/*
+ * Surrounds each selected node with a cut, if possible. Root nodes cannot be
+ * surrounded. After completing this operation, the selection list is cleared.
+ */
+void TreeState::surroundWithCut()
 {
-    // Roots and placeholders cannot be surrounded
-    if (selected->isRoot() || selected->isPlaceHolder())
-        return NULL;
+    for (TreeNode* node : selectionList)
+    {
+        // Roots cannot be surrounded
+        if (node->isRoot())
+            return;
 
-    // Otherwise, get the old parent
-    TreeNode* oldParent = selected->getParent();
-    TreeNode* newCut = oldParent->addChildCut();
+        TreeNode* oldParent = node->getParent();
+        TreeNode* newCut = oldParent->addChildCut();
+        TreeNode::move(node,newCut);
+    }
 
-    // Move the selection into the new cut
-    move(selected,newCut);
-
-    return newCut;
+    clearSelection();
 }
 
-/* Surround with double cut */
+//TreeNode* TreeState::surroundWithCut()
+//{
+//    // Roots and placeholders cannot be surrounded
+//    if (selected->isRoot() || selected->isPlaceHolder())
+//        return NULL;
+//
+//    // Otherwise, get the old parent
+//    TreeNode* oldParent = selected->getParent();
+//    TreeNode* newCut = oldParent->addChildCut();
+//
+//    // Move the selection into the new cut
+//    move(selected,newCut);
+//
+//    return newCut;
+//}
+
+/*
+ * Surrounds each selected node with a double cut, if possible. Roots cannot be
+ * surrounded. After completing this operation, the selection is cleared.
+ */
 void TreeState::surroundWithDoubleCut()
 {
-    surroundWithCut();
-    surroundWithCut();
+    for (TreeNode* node : selectionList)
+    {
+        // Nodes cannot be surrounded
+        if (node->isRoot())
+            return;
+
+        TreeNode* oldParent = node->getParent();
+        TreeNode* newOuterCut = oldParent->addChildCut();
+        TreeNode* newInnerCut = newOuterCut->addChildCut();
+
+        TreeNode::move(node,newInnerCut);
+    }
+
+    clearSelection();
 }
 
-/* Move target to the new parent */
+/*
+ * Moves the target node to a different parent.
+ *
+ * Params:
+ *      target: the node whose parent we wish to update.
+ *      targetParent: the new parent we want the node to have
+ */
 void TreeState::move(TreeNode *target, TreeNode *targetParent)
 {
     TreeNode::move(target,targetParent);
@@ -479,6 +519,7 @@ TreeState* TreeState::performDeiteration()
 {
     // Determine if the selection is logically equivalent to the target
     // TODO: implement an .equals() to compare TreeNodes
+    return NULL;
 }
 
 /* Box print */
