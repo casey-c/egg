@@ -6,6 +6,10 @@ TreeState::~TreeState()
     delete root;
 }
 
+/////////////////
+/// Highlight ///
+/////////////////
+
 /*
  * Highlights a child of the current highlighted node, if it exists
  */
@@ -99,6 +103,91 @@ void TreeState::highlightSpecific(TreeNode* node)
 {
     highlighted = node;
 }
+
+/////////////////
+/// Selection ///
+/////////////////
+
+/*
+ * Adds a node to the selection. Selected nodes have some restrictions:
+ *
+ * All nodes in the selection list must be siblings of each other (they must
+ * have the same parent). This makes sure all selected nodes can be properly
+ * iterated if needed.
+ *
+ * If the parameter node is not a sibling of the existing selectionList, then
+ * the selectionList is cleared and updated to include only the newly added
+ * node.
+ *
+ * Params:
+ *      node: the node to be added to the selection.
+ */
+void TreeState::selectSpecific(TreeNode* node)
+{
+    // In any of these cases, the new node will replace the old selection
+    if (     selectionList.isEmpty() ||
+             selectionList.first()->isRoot() ||
+             node->isRoot() ||
+             node->getParent() != selectionList.first()->getParent())
+        clearSelection();
+
+    selectionList.append(node);
+    return;
+}
+
+
+/*
+ * Adds the highlighted node to the current selection list
+ */
+void TreeState::selectHighlighted()
+{
+    selectSpecific(highlighted);
+}
+
+/*
+ * Selects all the children of the desired node, if they exist
+ *
+ * Params:
+ *      the node whose children we wish to select
+ */
+void TreeState::selectChildrenOf(TreeNode* node)
+{
+    clearSelection();
+
+    for (TreeNode* child : node->getChildren())
+        selectSpecific(child);
+}
+
+/*
+ * Clears all selected nodes
+ */
+void TreeState::clearSelection()
+{
+    selectionList.clear();
+}
+
+/*
+ * Deselects a specific node, if selected
+ *
+ * Params:
+ *      node: the node to remove selection from
+ */
+void TreeState::deselectNode(TreeNode *node)
+{
+    selectionList.removeOne(node);
+}
+
+/*
+ * Deselects the highlighted node, if selected
+ */
+void TreeState::deselectHighlighted()
+{
+    deselectNode(highlighted);
+}
+
+/////////////////////
+/// Add functions ///
+/////////////////////
 
 /*
  * Adds a child cut to all nodes in the selection list. After doing so, the
@@ -217,6 +306,10 @@ void TreeState::addBiconditionalTemplate()
     clearSelection();
 }
 
+////////////////////////
+/// Remove functions ///
+////////////////////////
+
 /*
  * Removes the target node, but transfers ownership of all its children to their
  * grandparent. Saving the orphans means we won't delete any kids that the node
@@ -280,6 +373,10 @@ void TreeState::removeAndBurnTheOrphanage(TreeNode *target)
     delete target;
 }
 
+//////////////////////////
+/// Surround functions ///
+//////////////////////////
+
 /*
  * Surrounds each selected node with a cut, if possible. Root nodes cannot be
  * surrounded. After completing this operation, the selection list is cleared.
@@ -299,22 +396,6 @@ void TreeState::surroundWithCut()
 
     clearSelection();
 }
-
-//TreeNode* TreeState::surroundWithCut()
-//{
-//    // Roots and placeholders cannot be surrounded
-//    if (selected->isRoot() || selected->isPlaceHolder())
-//        return NULL;
-//
-//    // Otherwise, get the old parent
-//    TreeNode* oldParent = selected->getParent();
-//    TreeNode* newCut = oldParent->addChildCut();
-//
-//    // Move the selection into the new cut
-//    move(selected,newCut);
-//
-//    return newCut;
-//}
 
 /*
  * Surrounds each selected node with a double cut, if possible. Roots cannot be
@@ -338,6 +419,10 @@ void TreeState::surroundWithDoubleCut()
     clearSelection();
 }
 
+////////////
+/// Move ///
+////////////
+
 /*
  * Moves the target node to a different parent.
  *
@@ -350,7 +435,9 @@ void TreeState::move(TreeNode *target, TreeNode *targetParent)
     TreeNode::move(target,targetParent);
 }
 
-/* Modification mode commands */
+/////////////////////////
+/// Modification mode ///
+/////////////////////////
 
 /*
  * Removes a double cut from around the current selection, if it exists.
@@ -551,48 +638,4 @@ QString TreeState::getBoxedString()
 void TreeState::redraw()
 {
     emit treeChanged(getBoxedString());
-}
-
-
-//////////////////////////
-/// Multiple selection ///
-//////////////////////////
-/*
- * Clears all selected nodes
- */
-void TreeState::clearSelection()
-{
-    selectionList.clear();
-}
-
-/*
- * Adds the highlighted node to selection
- */
-void TreeState::addToSelectionList()
-{
-    // Root nodes replace any previous selection
-    if (highlighted->isRoot())
-    {
-        clearSelection();
-        selectionList.append(highlighted);
-        return;
-    }
-
-    // Check if highlighted object is already in selection list or if it's
-    // allowed to join (selections must be siblings)
-    for (TreeNode* node : selectionList)
-        if (    node == highlighted ||
-                node->getParent() != highlighted->getParent())
-            return;
-
-    // We should be okay to add the highlighted node
-    selectionList.append(highlighted);
-}
-
-/*
- * Removes the highlighted node from selection list
- */
-void TreeState::removeFromSelectionList()
-{
-    selectionList.removeOne(highlighted);
 }
