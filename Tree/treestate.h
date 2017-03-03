@@ -40,13 +40,24 @@ public:
         root(new TreeNode(original->copyRoot())), selected(root){}
     ~TreeState();
 
-    /* Change selection */
+    /* Change highlighted */
     void highlightChild();
     void highlightParent();
     void highlightRoot();
     void highlightRightSibling();
     void highlightLeftSibling();
     void highlightSpecific(TreeNode* node);
+
+    /* Change selection */
+    void selectSpecific(TreeNode* node);
+    void selectHighlighted();
+    void selectChildrenOf(TreeNode* node);
+
+    void clearSelection();
+    void deselectNode(TreeNode* node);
+    void deselectHighlighted();
+
+    QList<TreeNode*> getSelectionList() { return selectionList; }
 
     /* Add */
     void addChildCut();
@@ -86,13 +97,6 @@ public:
     /* Update any views */
     void redraw();
 
-    /* For selection commands */
-    //TreeNode* getSelected() { return selected; }
-    QList<TreeNode*> getSelectionList() { return selectionList; }
-
-    void clearSelection();
-    void addToSelectionList();
-    void removeFromSelectionList();
 
 signals:
     void treeChanged(QString s);
