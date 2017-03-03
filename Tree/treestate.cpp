@@ -101,140 +101,183 @@ void TreeState::highlightSpecific(TreeNode* node)
 }
 
 /*
- * Adds a child cut to all valid nodes in the current selection. If any nodes
- * are successfully added, the selection will be cleared and the highlighted
- * node will remain untouched.
- *
- * Returns:
- *      true: if any child cuts were added
- *      false: otherwise
+ * Adds a child cut to all nodes in the selection list. After doing so, the
+ * current selection is cleared but the highlighted node remains untouched.
  */
-bool TreeState::addChildCut()
+void TreeState::addChildCut()
 {
-    bool anyAdded = false;
-
     for (TreeNode* node : selectionList)
-    {
-        if (node->addChildCut())
-            anyAdded = true;
-    }
-
-    if (!anyAdded)
-        return false;
+        node->addChildCut();
 
     clearSelection();
-    return true;
 }
 
 /*
- * Adds a double cut to all valid nodes in the current selection. All double
- * cuts that have been successfully added will have their inner cut selected.
- * The selection list will be cleared if any cuts are added.
- *
- * Returns:
- *      true: if any double cuts are added
- *      false: otherwise
+ * Adds a double cut child to all nodes in the selection list. After doing so,
+ * the current selection is cleared but the highlighted node remains untouched.
  */
-bool TreeState::addChildDoubleCut()
+void TreeState::addChildDoubleCut()
 {
     QList<TreeNode*> outerCuts;
 
     // Add the outer cuts
     for (TreeNode* node : selectionList)
-    {
-        if (node->addChildCut())
-            outerCuts.append(node->getChildren().last());
-    }
+        outerCuts.append(node->addChildCut());
 
     // Add the inner cuts
     for (TreeNode* node : outerCuts)
         node->addChildCut();
 
-    // No cuts were added
-    if (outerCuts.isEmpty())
-        return false;
-
-    // Everything was successful
     clearSelection();
-    return true;
 }
 
 /*
- * Adds a child statement to all the selected nodes if possible. If any
- * statements are added, the selection is cleared and the function returns true.
+ * Adds a child statement to all nodes in the selection list. After doing so,
+ * the selection list is cleared but the highlighted node remains untouched.
  *
  * Params:
  *      s: the string representation of the statement
- *
- * Returns:
- *      true: if at least one statement was successfully added
- *      false: otherwise
  */
-bool TreeState::addChildStatement(QString s)
+void TreeState::addChildStatement(QString s)
+{
+    for (TreeNode* node : selectionList)
+        node->addChildStatement(s);
+
+    clearSelection();
+}
+
+/* Adds an or template */
+bool TreeState::addOrTemplate()
 {
     bool anyAdded = false;
     for (TreeNode* node : selectionList)
     {
-        if (node->addChildStatement(s))
+        // Statements & placeholders are forbidden from adding templates
+        if (node->isStatement())
+            continue;
+        else
             anyAdded = true;
+
+        // Add the actual template
+        node->addChildCut();
+
+    }
+}
+
+/*
+ * Adds an or template to all nodes in the selection list. After doing so, the
+ * selection list is cleared.
+ */
+void TreeState::addOrTemplate()
+{
+    for (TreeNode* node : selectionList)
+    {
+        TreeNode* outerCut = node->addChildCut();
+        outerCut->addChildCut();
+        outerCut->addChildCut();
     }
 
-    // Nothing added
-    if (!anyAdded)
-        return false;
-
-    // Everything was successful
     clearSelection();
-    return true;
 }
 
-/* Adds an or template */
-TreeNode* TreeState::addOrTemplate()
+/*
+ * Adds a conditional template to all nodes in the selection list. After doing
+ * so, the selection list is cleared.
+ */
+void TreeState::addConditionalTemplate()
 {
-    selected = selected->addChildCut();
-    selected->addChildCut();
-    selected = selected->addChildCut();
-    return selected;
+    for (TreeNode* node : selectionList)
+    {
+        TreeNode* outer = node->addChildCut();
+        outer->addChildCut();
+        outer->addChildPlaceholder();
+    }
+
+    clearSelection();
 }
 
-/* Adds a conditional template */
-TreeNode* TreeState::addConditionalTemplate()
+/*
+ * Adds a biconditional template to all nodes in the selection list. After doing
+ * so, the selection list is cleared.
+ */
+void TreeState::addBiconditionalTemplate()
 {
-    selected = selected->addChildCut();
-    selected->addChildCut();
-    selected = selected->addChildPlaceholder();
-    return selected;
+    for (TreeNode* node : selectionList)
+    {
+        TreeNode* first = node->addChildCut();
+        TreeNode* second = node->addChildCut();
+
+        first->addChildCut();
+        first->addChildPlaceholder();
+
+        second->addChildCut();
+        second->addChildPlaceholder();
+    }
+
+    clearSelection();
 }
 
-/* Remove the node, but give its children to their grandparent */
-void TreeState::removeAndSaveOrphans()
+/*
+ * Removes the target node, but transfers ownership of all its children to their
+ * grandparent. Saving the orphans means we won't delete any kids that the node
+ * has, but instead try to move them.
+ *
+ * Placeholder elements are always deleted and remade if neccessary. The call to
+ * parent->addChildPlaceholder() will not make a second placeholder if the
+ * parent already has one, as that function will enforce the one placeholder per
+ * node limit.
+ *
+ * Root elements cannot be removed through this function; they are taken care of
+ * only in the destructor.
+ *
+ * Params:
+ *      target: the node to be removed (its children are safely moved)
+ */
+void TreeState::removeAndSaveOrphans(TreeNode *target)
 {
-    // Undefined behavior
-    if (selected->isRoot() || selected->isPlaceHolder())
+    // Root cannot be removed
+    if (target->isRoot())
         return;
 
-    // The grandparent who will inherit the orphans
-    TreeNode* grandparent = selected->getParent();
+    // The node who inherits the orphans
+    TreeNode* parent = target->getParent();
 
-    // Move the children
-    for (auto child : selected->getChildren())
-        TreeNode::move(child,grandparent);
+    // Placeholder logic
+    if (target->hasPlaceHolder())
+        parent->addChildPlaceholder();
 
-    // If the selected has a placeholder, but the grandparent doesn't yet
-    if (selected->hasPlaceHolder() && !grandparent->hasPlaceHolder())
-        grandparent->addChildPlaceholder();
+    // Save the children
+    for (TreeNode* orphan : target->getChildren())
+        TreeNode::move(orphan,parent);
 
-    // Delete and update the selected region
-    delete selected;
-    selected = grandparent;
+    // Update selection and highlight info if necessary
+    selectionList.removeOne(target);
+    if (highlighted == target)
+        highlighted = parent;
+
+    delete target;
 }
 
-/* Remove the selected node and any of its children */
-void TreeState::removeAndBurnTheOrphanage()
+/*
+ * Removes the target node, crashes the plane, and leaves no survivors (all
+ * children of the target node are lost).
+ *
+ * Params:
+ *      target: the node to be removed, and all its children lost
+ */
+void TreeState::removeAndBurnTheOrphanage(TreeNode *target)
 {
-    TreeNode* parent = selected->getParent();
-    delete selected;
-    selected = parent;
+    // Roots can't be removed (they are taken care of by the destructor)
+    if (target->isRoot())
+        return;
+
+    // Update selection and highlight info if necessary
+    selectionList.removeOne(target);
+    if (highlighted == target)
+        highlighted = target->getParent();
+
+    // They expect one of us in the wreckage, brother
+    delete target;
 }
 
 /* Surround with cut */
