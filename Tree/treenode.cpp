@@ -45,19 +45,19 @@ TreeNode::~TreeNode()
 }
 
 /*
- * Adds a child cut to this node. This function will always return true on a
- * valid tree structure. If this node is a statement, the new cut will be a
- * sibling since statements aren't allowed to have children of their own.
+ * Adds a child cut to this node. This function will always succeed and return
+ * the added node (or promoted placeholder). If this node is a statement, a new
+ * cut will be created as a sibling since statements aren't allowed to have
+ * children of their own.
  *
  * Returns:
- *      true if succesfully added
- *      false otherwise (won't happen)
+ *      the added cut
  */
-bool TreeNode::addChildCut()
+TreeNode* TreeNode::addChildCut()
 {
     // Add as sibling instead of instantly returning
     if (isStatement())
-        parent->addChildCut();
+        return parent->addChildCut();
 
     // Check if this is a placeholder
     else if (isPlaceHolder())
@@ -68,6 +68,7 @@ bool TreeNode::addChildCut()
         // Update our parent's info
         parent->placeHolderChild = false;
         parent->children.append(this);
+        return this;
     }
 
     // See if we have a placeholder child to replace
@@ -79,6 +80,7 @@ bool TreeNode::addChildCut()
 
         // Make it our real child
         children.append(placeholder);
+        return placeholder;
     }
 
     // Otherwise, make a new cut element
@@ -86,23 +88,22 @@ bool TreeNode::addChildCut()
     {
         TreeNode* newCut = new TreeNode(constants::ELEMENT_CUT,this,NULL);
         children.append(newCut);
+        return newCut;
     }
-
-    return true;
 }
 
 /*
  * Adds a child statement to this node. If this is a statement, it adds it as a
- * sibling to this node. Because of this, this function will always succeed.
+ * sibling to this node. This function will always succeed and return the node
+ * it creates or updates.
  *
  * Params:
  *      s: the string that describes this statement
  *
  * Returns:
- *      true: if statmement successfully added
- *      false: otherwise (won't happen).
+ *      the added node or promoted placeholder
  */
-bool TreeNode::addChildStatement(QString s)
+TreeNode* TreeNode::addChildStatement(QString s)
 {
     // Add as sibling instead of instantly returning
     if (isStatement())
@@ -118,6 +119,7 @@ bool TreeNode::addChildStatement(QString s)
         // Update our parent's info
         parent->placeHolderChild = false;
         parent->children.append(this);
+        return this;
     }
 
     // See if we have a placeholder child to replace
@@ -130,6 +132,7 @@ bool TreeNode::addChildStatement(QString s)
         // Make it a real boy
         placeHolderChild = false;
         children.append(placeholder);
+        return placeholder;
     }
 
     // Otherwise, make a new statement element
@@ -137,10 +140,8 @@ bool TreeNode::addChildStatement(QString s)
     {
         TreeNode* newStatement = new TreeNode(constants::ELEMENT_STATEMENT,this,s);
         children.append(newStatement);
+        return newStatement;
     }
-
-    // This function can't fail
-    return true;
 }
 
 /* Add child placeholder */

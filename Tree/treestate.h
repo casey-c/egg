@@ -49,16 +49,20 @@ public:
     void highlightSpecific(TreeNode* node);
 
     /* Add */
-    bool addChildCut();
-    bool addChildDoubleCut();
-    bool addChildStatement(QString s);
+    void addChildCut();
+    void addChildDoubleCut();
+    void addChildStatement(QString s);
 
-    TreeNode* addOrTemplate();
-    TreeNode* addConditionalTemplate();
+    void addOrTemplate();
+    void addConditionalTemplate();
+    void addBiconditionalTemplate();
 
     /* Remove */
-    void removeAndSaveOrphans();
-    void removeAndBurnTheOrphanage();
+    void removeAndSaveOrphans(TreeNode* target);
+    void removeAndBurnTheOrphanage(TreeNode* target);
+
+//  void removeAndSaveOrphans();
+//  void removeAndBurnTheOrphanage();
 
     /* Copy */
     static TreeState* copyState(TreeState* currentTree);
