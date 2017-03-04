@@ -452,7 +452,8 @@ void TreeState::move(TreeNode *target, TreeNode *targetParent)
  */
 TreeState* TreeState::doubleCutRemoval()
 {
-    /* First, check if the selection has a double cut surrounding it */
+    /*
+    /* First, check if the selection has a double cut surrounding it
     // Root and placeholders are disallowed
     if (selected->isRoot() || selected->isPlaceHolder())
     {
@@ -500,6 +501,8 @@ TreeState* TreeState::doubleCutRemoval()
 
     // Return the new state with the double cut removed
     return newState;
+    */
+    return NULL;
 }
 
 /*
@@ -513,6 +516,7 @@ TreeState* TreeState::doubleCutRemoval()
  */
 TreeState* TreeState::doubleCutAddition()
 {
+    /*
     // Verify that the selection can be surrounded with a double cut
     if (selected->isRoot())
     {
@@ -535,20 +539,24 @@ TreeState* TreeState::doubleCutAddition()
 
     // Return the new state with the added double cut
     return newState;
+    */
+    return NULL;
 }
 
 /*
- * Sets the subgraph that will be used in iterations and deiterations. This will
- * store a node pointer to be compared against when performIteration and
- * performDeiteration are called afterwards.
+ * Makes the current iteration list the selection list. Doing so will clear the
+ * selection list.
  *
- * TODO: multiple selection, right now only a single node can be the iteration
- * target. We need to be able to select multiple nodes and iterate all of them
- * at once.
+ * TODO: this has a potential for bugs if the nodes saved in the iteration list
+ * are deleted before the iterationList is used/cleared. Ideally, the iteration
+ * list must be updated any time a remove() is called on a node, just in case
+ * the node being deleted is also in this iterationList - we don't want a bad
+ * pointer to deleted memory to stick around and used in iterations/deiterations
+ * later.
  */
 void TreeState::setIterationTarget()
 {
-    iterationTarget = selected;
+    iterationList = selectionList;
 }
 
 /*
@@ -559,6 +567,7 @@ void TreeState::setIterationTarget()
  */
 TreeState* TreeState::performIteration()
 {
+    /*
     // First, verify if the new selection is a valid space to iterate into
     if (selected->isPlaceHolder() || selected->isStatement())
         return this;
@@ -595,6 +604,8 @@ TreeState* TreeState::performIteration()
     newSelected->addExistingByCopy(newTarget);
 
     return newState;
+    */
+    return NULL;
 }
 
 
@@ -622,7 +633,7 @@ QString TreeState::getBoxedString()
     result += "┐\n";
 
     // Add each boxLine recursively
-    result += root->getBoxLine(0,width,true,"",selected);
+    result += root->getBoxLine(0,width,true,"",highlighted, selectionList);
 
     // Footer (last row)
     result += "└";

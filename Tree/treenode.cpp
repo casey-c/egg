@@ -367,7 +367,8 @@ QString TreeNode::getBoxLine(int depth,
                              int end,
                              bool bottom,
                              QString skips,
-                             TreeNode* selected)
+                             TreeNode* highlighted,
+                             QList<TreeNode*> selectionList)
 {
     QString result = "│ ";
 
@@ -413,8 +414,15 @@ QString TreeNode::getBoxLine(int depth,
 
     // End of the row
     result += " │";
-    if (selected == this)
-            result += "(*)";
+
+    // Determine if selected
+    if (selectionList.contains(this))
+        result += "(*)";
+
+    // Determine if highlighted
+    if (highlighted == this)
+            result += " <<";
+
     result += "\n";
 
     // Now figure out all the children
@@ -426,7 +434,8 @@ QString TreeNode::getBoxLine(int depth,
                                              end,
                                              i == children.size() - 1,
                                              skips,
-                                             selected);
+                                             highlighted,
+                                             selectionList);
         childRows.append(childRow);
     }
 

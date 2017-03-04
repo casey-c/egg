@@ -63,7 +63,9 @@ public:
 
     /* Text output in tree form */
     int getBoxWidth(int depth);
-    QString getBoxLine(int depth, int end, bool bottom, QString skips, TreeNode* selected);
+    QString getBoxLine(int depth, int end, bool bottom,
+                       QString skips, TreeNode* highlighted,
+                       QList<TreeNode*> selectionList);
     QString getTypeID();
     bool hasPlaceHolder() { return placeHolderChild; }
 
