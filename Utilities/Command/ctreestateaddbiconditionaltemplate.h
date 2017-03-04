@@ -1,31 +1,27 @@
 #ifndef CTREESTATEADDBICONDITIONALTEMPLATE_H
 #define CTREESTATEADDBICONDITIONALTEMPLATE_H
 
-#include "Tree/treenode.h"
-#include "Tree/treestate.h"
+#include "itreestateadd.h"
 
 /*
  * This command adds a biconditional template to a TreeState
  */
-class CTreeStateAddBiconditionalTemplate : public ICommand
+class CTreeStateAddBiconditionalTemplate : public ITreeStateAdd
 {
 public:
     /* Constructor */
-    CTreeStateAddBiconditionalTemplate(TreeState* t) :
-        tree(t) { text = "Add biconditional"; }
+    CTreeStateAddBiconditionalTemplate(TreeState* t) {
+        text = "Add biconditional";
+        tree = t; }
 
     /* Destructor */
     ~CTreeStateAddBiconditionalTemplate() {}
 
-    bool execute();
-    void undo();
+    /* Override the add() function of the ITreeStateAdd interface */
+    void add() { tree->addBiconditionalTemplate(); }
 
-    ICommand* copy();
-
-private:
-    TreeState* tree;
-    TreeNode* first;
-    TreeNode* second;
+    /* Override the copy() function of the ICommand interface */
+    ICommand* copy() { return new CTreeStateAddBiconditionalTemplate(tree); }
 };
 
 #endif // CTREESTATEADDBICONDITIONALTEMPLATE_H

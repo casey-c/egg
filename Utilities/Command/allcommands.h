@@ -9,17 +9,22 @@
  * commands acts on (e.g. one for all TreeState commands, etc.)
  */
 
+// Add commands
 #include "Utilities/Command/ctreestateaddstatement.h"
 #include "Utilities/Command/ctreestateaddcut.h"
-#include "Utilities/Command/ctreestateselectachild.h"
-#include "Utilities/Command/ctreestateselectleft.h"
-#include "Utilities/Command/ctreestateselectparent.h"
-#include "Utilities/Command/ctreestateselectright.h"
-#include "Utilities/Command/ctreestateselectroot.h"
 #include "Utilities/Command/ctreestateaddbiconditionaltemplate.h"
 #include "Utilities/Command/ctreestateaddconditionaltemplate.h"
 #include "Utilities/Command/ctreestateaddortemplate.h"
 #include "Utilities/Command/ctreestateadddoublecut.h"
+
+// Highlight commands
+#include "Utilities/Command/ctreestatehighlightchild.h"
+#include "Utilities/Command/ctreestatehighlightleft.h"
+#include "Utilities/Command/ctreestatehighlightparent.h"
+#include "Utilities/Command/ctreestatehighlightright.h"
+#include "Utilities/Command/ctreestatehighlightroot.h"
+
+// Surround commands
 #include "Utilities/Command/ctreestatesurroundwithcut.h"
 #include "Utilities/Command/ctreestatesurroundwithdoublecut.h"
 
