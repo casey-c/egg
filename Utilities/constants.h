@@ -21,6 +21,7 @@ namespace constants
     // Keybind modes
     const int MODE_DEFAULT = 0;
     const int MODE_Q = 1;
+    const int MODE_SELECT = 2;
 }
 
 #endif // UTILITIES_CONSTANTS_H

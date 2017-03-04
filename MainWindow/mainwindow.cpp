@@ -141,6 +141,10 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
         command = new CTreeStateAddConditionalTemplate(currentTree);
         commandInvoker.runCommand(command);
         break;
+    case Qt::Key_S:
+        qDebug() << "S is pressed.";
+        keybindMode = constants::MODE_SELECT; // Enter select mode
+        break;
     case Qt::Key_T:
         qDebug() << "T is pressed";
         command = new CTreeStateAddBiconditionalTemplate(currentTree);
@@ -224,11 +228,56 @@ void MainWindow::handleKeyPressQ(QKeyEvent *event)
 }
 
 /*
+ * Handle a key press in Select mode.
+ *
+ * Select mode gives alternate controls to the W,A,X, and D keys
+ *
+ * Controls:
+ *      A: selects all children of the highlighted node
+ *      C: clears the selection
+ *      D: deselects the highlighted node
+ *      F: selects the highlighted node
+ *      S: exits select mode back to default mode
+ */
+void MainWindow::handleKeyPressSelect(QKeyEvent *event)
+{
+    ICommand* command;
+
+    switch (event->key())
+    {
+    case Qt::Key_A:
+        command = new CTreeStateSelectChildren(currentTree);
+        commandInvoker.runCommand(command);
+        break;
+    case Qt::Key_C:
+        command = new CTreeStateClearSelection(currentTree);
+        commandInvoker.runCommand(command);
+        break;
+    case Qt::Key_D:
+        command = new CTreeStateDeselectHighlighted(currentTree);
+        commandInvoker.runCommand(command);
+        break;
+    case Qt::Key_F:
+        command = new CTreeStateSelectHighlighted(currentTree);
+        commandInvoker.runCommand(command);
+        break;
+    case Qt::Key_S:
+        keybindMode = constants::MODE_DEFAULT;
+        break;
+    default:
+        QMainWindow::keyPressEvent(event);
+    }
+
+}
+
+/*
  * All key presses go here first. The keybindMode will turn the event over to
  * the proper function for further processing.
  */
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
+    qDebug() << "Key pressed in mode " << keybindMode;
+
     // Handle key press based on mode
     switch (keybindMode)
     {
@@ -238,6 +287,11 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     case constants::MODE_Q:
         handleKeyPressQ(event);
         break;
+    case constants::MODE_SELECT:
+        handleKeyPressSelect(event);
+        break;
+    default:
+        QMainWindow::keyPressEvent(event);
     }
 
 }

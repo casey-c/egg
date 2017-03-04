@@ -145,16 +145,16 @@ void TreeState::selectHighlighted()
 }
 
 /*
- * Selects all the children of the desired node, if they exist
+ * Selects all the children of the highlighted node, if they exist
  *
  * Params:
  *      the node whose children we wish to select
  */
-void TreeState::selectChildrenOf(TreeNode* node)
+void TreeState::selectChildrenOfHighlighted()
 {
     clearSelection();
 
-    for (TreeNode* child : node->getChildren())
+    for (TreeNode* child : highlighted->getChildren())
         selectSpecific(child);
 }
 
