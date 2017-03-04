@@ -30,12 +30,14 @@ private:
     int keybindMode;
 
     /* Key press handlers */
-    void keyPressEvent(QKeyEvent *event);
-    void handleKeyPressDefault(QKeyEvent *event);
-    void handleKeyPressQ(QKeyEvent *event);
+    void keyPressEvent(QKeyEvent* event);
+    void handleKeyPressDefault(QKeyEvent* event);
+    void handleKeyPressQ(QKeyEvent* event);
+    void handleKeyPressSelect(QKeyEvent* event);
 
 private slots:
     void endTimer();
+
 public slots:
     void updateUndoMenu(QString undo, QString redo, QString repeat,
                         bool undoable, bool redoable, bool repeatable);

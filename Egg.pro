@@ -60,7 +60,11 @@ HEADERS  += MainWindow/mainwindow.h \
     Utilities/Command/ctreestatehighlightchild.h \
     Utilities/Command/ctreestatehighlightparent.h \
     Utilities/Command/ctreestatehighlightleft.h \
-    Utilities/Command/ctreestatehighlightright.h
+    Utilities/Command/ctreestatehighlightright.h \
+    Utilities/Command/ctreestatedeselecthighlighted.h \
+    Utilities/Command/ctreestateselecthighlighted.h \
+    Utilities/Command/ctreestateclearselection.h \
+    Utilities/Command/ctreestateselectchildren.h
 
 FORMS    += MainWindow/mainwindow.ui \
     TreeDisplayWidget/treedisplaywidget.ui

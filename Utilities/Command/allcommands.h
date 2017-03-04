@@ -28,4 +28,10 @@
 #include "Utilities/Command/ctreestatesurroundwithcut.h"
 #include "Utilities/Command/ctreestatesurroundwithdoublecut.h"
 
+// Select commands
+#include "Utilities/Command/ctreestateclearselection.h"
+#include "Utilities/Command/ctreestatedeselecthighlighted.h"
+#include "Utilities/Command/ctreestateselectchildren.h"
+#include "Utilities/Command/ctreestateselecthighlighted.h"
+
 #endif // ALLCOMMANDS_H

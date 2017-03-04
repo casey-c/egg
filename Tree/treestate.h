@@ -54,13 +54,14 @@ public:
     /* Selection */
     void selectSpecific(TreeNode* node);
     void selectHighlighted();
-    void selectChildrenOf(TreeNode* node);
+    void selectChildrenOfHighlighted();
 
     void clearSelection();
     void deselectNode(TreeNode* node);
     void deselectHighlighted();
 
     QList<TreeNode*> getSelectionList() { return selectionList; }
+    void setSelectionList(QList<TreeNode*> list) { selectionList = list; }
 
     /* Add */
     void addChildCut();
