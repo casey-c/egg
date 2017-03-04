@@ -417,11 +417,11 @@ QString TreeNode::getBoxLine(int depth,
 
     // Determine if selected
     if (selectionList.contains(this))
-        result += "(*)";
+        result += "✼";
 
     // Determine if highlighted
     if (highlighted == this)
-            result += " <<";
+            result += " ←"; //◀
 
     result += "\n";
 
