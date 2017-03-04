@@ -195,8 +195,17 @@ void TreeState::deselectHighlighted()
  */
 void TreeState::addChildCut()
 {
+    // With no selection, act on the highlighted node
+    if (selectionList.isEmpty())
+        selectionList.append(highlighted);
+
+    // Add child cuts to all selected nodes
     for (TreeNode* node : selectionList)
         recentAddedNodes.append(node->addChildCut());
+
+    // If we acted on the highlighted node, update the highlight
+    if (selectionList.size() == 1 && !recentAddedNodes.isEmpty())
+        highlighted = recentAddedNodes.first();
 
     clearSelection();
 }
@@ -207,6 +216,10 @@ void TreeState::addChildCut()
  */
 void TreeState::addChildDoubleCut()
 {
+    // With no selection, act on the highlighted node
+    if (selectionList.isEmpty())
+        selectionList.append(highlighted);
+
     QList<TreeNode*> outerCuts;
 
     // Add the outer cuts
@@ -221,6 +234,10 @@ void TreeState::addChildDoubleCut()
     for (TreeNode* node : outerCuts)
         node->addChildCut();
 
+    // If we acted on the highlighted node, update the highlight
+    if (selectionList.size() == 1 && !recentAddedNodes.isEmpty())
+        highlighted = recentAddedNodes.first();
+
     clearSelection();
 }
 
@@ -233,8 +250,17 @@ void TreeState::addChildDoubleCut()
  */
 void TreeState::addChildStatement(QString s)
 {
+    // With no selection, act on the highlighted node
+    if (selectionList.isEmpty())
+        selectionList.append(highlighted);
+
+    // Add child statements to all selected nodes
     for (TreeNode* node : selectionList)
         recentAddedNodes.append(node->addChildStatement(s));
+
+    // If we acted on the highlighted node, update the highlight
+    if (selectionList.size() == 1 && !recentAddedNodes.isEmpty())
+        highlighted = recentAddedNodes.first();
 
     clearSelection();
 }
@@ -245,15 +271,27 @@ void TreeState::addChildStatement(QString s)
  */
 void TreeState::addOrTemplate()
 {
+    // With no selection, act on the highlighted node
+    if (selectionList.isEmpty())
+        selectionList.append(highlighted);
+
+    // For updating highlighted region if solo-selected
+    TreeNode* firstInner;
+
+    // Add the or template to all selected nodes
     for (TreeNode* node : selectionList)
     {
         TreeNode* outerCut = node->addChildCut();
         recentAddedNodes.append(outerCut);
 
         // Inner cuts
-        outerCut->addChildCut();
+        firstInner = outerCut->addChildCut();
         outerCut->addChildCut();
     }
+
+    // If we acted on the highlighted node, update the highlight
+    if (selectionList.size() == 1 && firstInner != NULL)
+        highlighted = firstInner;
 
     clearSelection();
 }
@@ -264,6 +302,14 @@ void TreeState::addOrTemplate()
  */
 void TreeState::addConditionalTemplate()
 {
+    // With no selection, act on the highlighted node
+    if (selectionList.isEmpty())
+        selectionList.append(highlighted);
+
+    // For updating highlighted region if solo-selected
+    TreeNode* placeholder;
+
+    // Add a conditional template to all selected nodes
     for (TreeNode* node : selectionList)
     {
         TreeNode* outer = node->addChildCut();
@@ -271,8 +317,12 @@ void TreeState::addConditionalTemplate()
 
         // Inner cut and placeholder
         outer->addChildCut();
-        outer->addChildPlaceholder();
+        placeholder = outer->addChildPlaceholder();
     }
+
+    // If we acted on the highlighted node, update the highlight
+    if (selectionList.size() == 1 && placeholder != NULL)
+        highlighted = placeholder;
 
     clearSelection();
 }
@@ -283,6 +333,14 @@ void TreeState::addConditionalTemplate()
  */
 void TreeState::addBiconditionalTemplate()
 {
+    // With no selection, act on the highlighted node
+    if (selectionList.isEmpty())
+        selectionList.append(highlighted);
+
+    // For updating highlighted region if solo-selected
+    TreeNode* placeholder;
+
+    // Add biconditional template to all selected nodes
     for (TreeNode* node : selectionList)
     {
         TreeNode* first = node->addChildCut();
@@ -292,11 +350,15 @@ void TreeState::addBiconditionalTemplate()
         recentAddedNodes.append(second);
 
         first->addChildCut();
-        first->addChildPlaceholder();
+        placeholder = first->addChildPlaceholder();
 
         second->addChildCut();
         second->addChildPlaceholder();
     }
+
+    // If we acted on the highlighted node, update the highlight
+    if (selectionList.size() == 1 && placeholder != NULL)
+        highlighted = placeholder;
 
     clearSelection();
 }
@@ -378,6 +440,11 @@ void TreeState::removeAndBurnTheOrphanage(TreeNode *target)
  */
 void TreeState::surroundWithCut()
 {
+    // With no selection, act on the highlighted node
+    if (selectionList.isEmpty())
+        selectionList.append(highlighted);
+
+    // Surround all selected nodes with cuts
     for (TreeNode* node : selectionList)
     {
         // Roots cannot be surrounded
@@ -391,6 +458,10 @@ void TreeState::surroundWithCut()
         recentAddedNodes.append(newCut);
     }
 
+    // If we acted on the highlighted node, update the highlight
+    if (selectionList.size() == 1 && !recentAddedNodes.isEmpty())
+        highlighted = recentAddedNodes.first();
+
     clearSelection();
 }
 
@@ -400,6 +471,11 @@ void TreeState::surroundWithCut()
  */
 void TreeState::surroundWithDoubleCut()
 {
+    // With no selection, act on the highlighted node
+    if (selectionList.isEmpty())
+        selectionList.append(highlighted);
+
+    // Surround all selected nodes with double cuts
     for (TreeNode* node : selectionList)
     {
         // Nodes cannot be surrounded
@@ -412,6 +488,10 @@ void TreeState::surroundWithDoubleCut()
 
         TreeNode::move(node,newInnerCut);
     }
+
+    // If we acted on the highlighted node, update the highlight
+    if (selectionList.size() == 1 && !recentAddedNodes.isEmpty())
+        highlighted = recentAddedNodes.first();
 
     clearSelection();
 }
