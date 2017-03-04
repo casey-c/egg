@@ -35,7 +35,7 @@ class TreeState : public QObject
     Q_OBJECT
 
 public:
-    TreeState(): root(new TreeNode()), highlighted(root){}
+    TreeState(): root(new TreeNode()), highlighted(root) {}
     //TreeState(TreeState* original):
         //root(new TreeNode(original->copyRoot())), selected(root){}
     ~TreeState();
