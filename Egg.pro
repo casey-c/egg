@@ -30,20 +30,12 @@ SOURCES += MainWindow/main.cpp\
     Tree/treenode.cpp \
     Tree/treestate.cpp \
     TreeDisplayWidget/treedisplaywidget.cpp \
-    Utilities/Command/ctreestateaddstatement.cpp \
     Utilities/Command/commandinvoker.cpp \
-    Utilities/Command/ctreestateaddcut.cpp \
-    Utilities/Command/ctreestateselectroot.cpp \
-    Utilities/Command/ctreestateselectparent.cpp \
-    Utilities/Command/ctreestateselectachild.cpp \
-    Utilities/Command/ctreestateselectleft.cpp \
-    Utilities/Command/ctreestateselectright.cpp \
-    Utilities/Command/ctreestateaddconditionaltemplate.cpp \
-    Utilities/Command/ctreestateaddbiconditionaltemplate.cpp \
-    Utilities/Command/ctreestateaddortemplate.cpp \
-    Utilities/Command/ctreestateadddoublecut.cpp \
     Utilities/Command/ctreestatesurroundwithcut.cpp \
-    Utilities/Command/ctreestatesurroundwithdoublecut.cpp
+    Utilities/Command/ctreestatesurroundwithdoublecut.cpp \
+    Utilities/Command/itreestateadd.cpp \
+    Utilities/Command/itreestateselect.cpp \
+    Utilities/Command/itreestatehighlight.cpp
 
 HEADERS  += MainWindow/mainwindow.h \
     Utilities/constants.h \
@@ -54,18 +46,21 @@ HEADERS  += MainWindow/mainwindow.h \
     Utilities/Command/ctreestateaddstatement.h \
     Utilities/Command/commandinvoker.h \
     Utilities/Command/ctreestateaddcut.h \
-    Utilities/Command/ctreestateselectroot.h \
-    Utilities/Command/ctreestateselectparent.h \
-    Utilities/Command/ctreestateselectachild.h \
-    Utilities/Command/ctreestateselectleft.h \
-    Utilities/Command/ctreestateselectright.h \
     Utilities/Command/allcommands.h \
     Utilities/Command/ctreestateaddconditionaltemplate.h \
     Utilities/Command/ctreestateaddbiconditionaltemplate.h \
     Utilities/Command/ctreestateaddortemplate.h \
     Utilities/Command/ctreestateadddoublecut.h \
     Utilities/Command/ctreestatesurroundwithcut.h \
-    Utilities/Command/ctreestatesurroundwithdoublecut.h
+    Utilities/Command/ctreestatesurroundwithdoublecut.h \
+    Utilities/Command/itreestateadd.h \
+    Utilities/Command/itreestateselect.h \
+    Utilities/Command/itreestatehighlight.h \
+    Utilities/Command/ctreestatehighlightroot.h \
+    Utilities/Command/ctreestatehighlightchild.h \
+    Utilities/Command/ctreestatehighlightparent.h \
+    Utilities/Command/ctreestatehighlightleft.h \
+    Utilities/Command/ctreestatehighlightright.h
 
 FORMS    += MainWindow/mainwindow.ui \
     TreeDisplayWidget/treedisplaywidget.ui

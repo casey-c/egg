@@ -85,11 +85,13 @@ void MainWindow::endTimer()
  */
 void MainWindow::handleKeyPressDefault(QKeyEvent *event)
 {
+    qDebug() << "Key pressed: " << event->text();
     ICommand* command;
 
     // A-F will add that letter as a statement
     if (event->key() >= 65 && event->key() <= 70)
     {
+        qDebug() << "Pressed A-F";
         command = new CTreeStateAddStatement(currentTree,
                                              event->text().at(0).toUpper());
         commandInvoker.runCommand(command);
@@ -101,22 +103,22 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
     {
     case Qt::Key_J:
         qDebug() << "J is pressed";
-        command = new CTreeStateSelectAChild(currentTree);
+        command = new CTreeStateHighlightChild(currentTree);
         commandInvoker.runCommand(command);
         break;
     case Qt::Key_K:
         qDebug() << "K is pressed";
-        command = new CTreeStateSelectParent(currentTree);
+        command = new CTreeStateHighlightParent(currentTree);
         commandInvoker.runCommand(command);
         break;
     case Qt::Key_H:
         qDebug() << "H is pressed";
-        command = new CTreeStateSelectLeft(currentTree);
+        command = new CTreeStateHighlightLeft(currentTree);
         commandInvoker.runCommand(command);
         break;
     case Qt::Key_L:
         qDebug() << "L is pressed";
-        command = new CTreeStateSelectRight(currentTree);
+        command = new CTreeStateHighlightRight(currentTree);
         commandInvoker.runCommand(command);
         break;
     case Qt::Key_O:
@@ -183,7 +185,7 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
         break;
     case Qt::Key_Semicolon:
         qDebug() << "; is pressed";
-        command = new CTreeStateSelectRoot(currentTree);
+        command = new CTreeStateHighlightRoot(currentTree);
         commandInvoker.runCommand(command);
         break;
     default:

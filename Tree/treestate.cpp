@@ -196,7 +196,7 @@ void TreeState::deselectHighlighted()
 void TreeState::addChildCut()
 {
     for (TreeNode* node : selectionList)
-        node->addChildCut();
+        recentAddedNodes.append(node->addChildCut());
 
     clearSelection();
 }
@@ -211,7 +211,11 @@ void TreeState::addChildDoubleCut()
 
     // Add the outer cuts
     for (TreeNode* node : selectionList)
-        outerCuts.append(node->addChildCut());
+    {
+        TreeNode* outerCut = node->addChildCut();
+        outerCuts.append(outerCut);
+        recentAddedNodes.append(outerCut);
+    }
 
     // Add the inner cuts
     for (TreeNode* node : outerCuts)
@@ -230,27 +234,9 @@ void TreeState::addChildDoubleCut()
 void TreeState::addChildStatement(QString s)
 {
     for (TreeNode* node : selectionList)
-        node->addChildStatement(s);
+        recentAddedNodes.append(node->addChildStatement(s));
 
     clearSelection();
-}
-
-/* Adds an or template */
-bool TreeState::addOrTemplate()
-{
-    bool anyAdded = false;
-    for (TreeNode* node : selectionList)
-    {
-        // Statements & placeholders are forbidden from adding templates
-        if (node->isStatement())
-            continue;
-        else
-            anyAdded = true;
-
-        // Add the actual template
-        node->addChildCut();
-
-    }
 }
 
 /*
@@ -262,6 +248,9 @@ void TreeState::addOrTemplate()
     for (TreeNode* node : selectionList)
     {
         TreeNode* outerCut = node->addChildCut();
+        recentAddedNodes.append(outerCut);
+
+        // Inner cuts
         outerCut->addChildCut();
         outerCut->addChildCut();
     }
@@ -278,6 +267,9 @@ void TreeState::addConditionalTemplate()
     for (TreeNode* node : selectionList)
     {
         TreeNode* outer = node->addChildCut();
+        recentAddedNodes.append(outer);
+
+        // Inner cut and placeholder
         outer->addChildCut();
         outer->addChildPlaceholder();
     }
@@ -295,6 +287,9 @@ void TreeState::addBiconditionalTemplate()
     {
         TreeNode* first = node->addChildCut();
         TreeNode* second = node->addChildCut();
+
+        recentAddedNodes.append(first);
+        recentAddedNodes.append(second);
 
         first->addChildCut();
         first->addChildPlaceholder();
@@ -392,6 +387,8 @@ void TreeState::surroundWithCut()
         TreeNode* oldParent = node->getParent();
         TreeNode* newCut = oldParent->addChildCut();
         TreeNode::move(node,newCut);
+
+        recentAddedNodes.append(newCut);
     }
 
     clearSelection();
@@ -633,7 +630,8 @@ QString TreeState::getBoxedString()
     result += "┐\n";
 
     // Add each boxLine recursively
-    result += root->getBoxLine(0,width,true,"",highlighted, selectionList);
+    result += root->getBoxLine(0, width, true,
+                               "", highlighted, selectionList);
 
     // Footer (last row)
     result += "└";
@@ -649,4 +647,29 @@ QString TreeState::getBoxedString()
 void TreeState::redraw()
 {
     emit treeChanged(getBoxedString());
+}
+
+
+/*
+ * Returns and clears the most recent added nodes. This is used as a helper for
+ * commands. For example, the command will call an add() function on all the
+ * selected nodes in the tree. For all nodes that are affected, a new node may
+ * be created. These new nodes will appear in the recentAddedNodes list.
+ *
+ * The command then calls this pop() function to determine which nodes were
+ * added, so it knows which nodes to delete if an undo() is ever called on it.
+ *
+ * TODO: buggy behavior with placeholders. Commands that replace a placeholder
+ * with say a cut or something will not remake the placeholder after an undo
+ * call, it will delete the promoted placeholder node. A potential fix may be
+ * to set a flag in TreeNode to say if it is a promoted placeholder, and then
+ * the command.undo() will check for this flag. If found, the command is
+ * responsible for adding a placeholder to the parent after the node itself is
+ * deleted.
+ */
+QList<TreeNode*> TreeState::popRecentNodes()
+{
+    QList<TreeNode*> list = recentAddedNodes;
+    recentAddedNodes.clear();
+    return list;
 }

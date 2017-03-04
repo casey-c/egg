@@ -52,7 +52,7 @@ public:
 
     /* Additions */
     TreeNode* addChildCut();
-    bool addChildStatement(QString s);
+    TreeNode* addChildStatement(QString s);
     TreeNode* addChildPlaceholder();
     void addAll(QList<TreeNode*> list);
 

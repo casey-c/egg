@@ -1,30 +1,27 @@
 #ifndef CTREESTATEADDCONDITIONALTEMPLATE_H
 #define CTREESTATEADDCONDITIONALTEMPLATE_H
 
-#include "Tree/treenode.h"
-#include "Tree/treestate.h"
+#include "itreestateadd.h"
 
 /*
  * This command adds a conditional template to a TreeState
  */
-class CTreeStateAddConditionalTemplate : public ICommand
+class CTreeStateAddConditionalTemplate : public ITreeStateAdd
 {
 public:
     /* Constructor */
-    CTreeStateAddConditionalTemplate(TreeState* t) :
-        tree(t) { text = "Add conditional"; }
+    CTreeStateAddConditionalTemplate(TreeState* t) {
+        text = "Add conditional";
+        tree = t; }
 
     /* Destructor */
     ~CTreeStateAddConditionalTemplate() {}
 
-    bool execute();
-    void undo();
+    /* Override the add() function of the ITreeStateAdd interface */
+    void add() { tree->addConditionalTemplate(); }
 
-    ICommand* copy();
-
-private:
-    TreeState* tree;
-    TreeNode* node;
+    /* Override the copy() function of the ICommand interface */
+    ICommand* copy() { return new CTreeStateAddConditionalTemplate(tree); }
 };
 
 #endif // CTREESTATEADDCONDITIONALTEMPLATE_H

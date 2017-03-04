@@ -1,30 +1,28 @@
 #ifndef CTREESTATEADDDOUBLECUT_H
 #define CTREESTATEADDDOUBLECUT_H
 
-#include "Tree/treestate.h"
-#include "Tree/treenode.h"
+#include "itreestateadd.h"
 
 /*
  * This command adds a double cut to a TreeState
  */
-class CTreeStateAddDoubleCut : public ICommand
+class CTreeStateAddDoubleCut : public ITreeStateAdd
 {
 public:
     /* Constructor */
-    CTreeStateAddDoubleCut(TreeState* t) :
-        tree(t) { text = "Add double cut"; }
+    CTreeStateAddDoubleCut(TreeState* t) {
+        text = "Add double cut";
+        tree = t; }
 
     /* Destructor */
     ~CTreeStateAddDoubleCut() {}
 
-    bool execute();
-    void undo();
+    /* Override the add() function of the ITreeStateAdd interface */
+    void add() { tree->addChildDoubleCut(); }
 
-    ICommand* copy();
-
-private:
-    TreeState* tree;
-    TreeNode* node;
+    /* Override the copy() function of the ICommand interface */
+    ICommand* copy() { return new CTreeStateAddDoubleCut(tree); }
 };
+
 
 #endif // CTREESTATEADDDOUBLECUT_H

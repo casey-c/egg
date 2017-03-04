@@ -35,20 +35,23 @@ class TreeState : public QObject
     Q_OBJECT
 
 public:
-    TreeState(): root(new TreeNode()), selected(root){}
-    TreeState(TreeState* original):
-        root(new TreeNode(original->copyRoot())), selected(root){}
+    TreeState(): root(new TreeNode()), highlighted(root){}
+    //TreeState(TreeState* original):
+        //root(new TreeNode(original->copyRoot())), selected(root){}
     ~TreeState();
 
-    /* Change highlighted */
+    /* Highlighted */
     void highlightChild();
     void highlightParent();
     void highlightRoot();
+
     void highlightRightSibling();
     void highlightLeftSibling();
     void highlightSpecific(TreeNode* node);
 
-    /* Change selection */
+    TreeNode* getHighlighted() { return highlighted; }
+
+    /* Selection */
     void selectSpecific(TreeNode* node);
     void selectHighlighted();
     void selectChildrenOf(TreeNode* node);
@@ -77,8 +80,8 @@ public:
     void surroundWithDoubleCut();
 
     /* Copy */
-    static TreeState* copyState(TreeState* currentTree);
-    TreeNode* copyRoot(){ return new TreeNode(this->root); }
+    //static TreeState* copyState(TreeState* currentTree);
+    //TreeNode* copyRoot(){ return new TreeNode(this->root); }
 
     /* Move */
     void move(TreeNode* target, TreeNode* targetParent);
@@ -87,7 +90,7 @@ public:
     TreeState* doubleCutRemoval();
     TreeState* doubleCutAddition();
     void setIterationTarget();
-    TreeNode* getIterationTarget() { return iterationTarget; }
+    QList<TreeNode*> getIterationTarget() { return iterationList; }
     TreeState* performIteration();
     TreeState* performDeiteration();
 
@@ -98,6 +101,9 @@ public:
     void redraw();
 
 
+    /* Command helpers */
+    QList<TreeNode*> popRecentNodes();
+
 signals:
     void treeChanged(QString s);
 
@@ -107,6 +113,8 @@ private:
     /* Multiselect */
     QList<TreeNode*> selectionList; // All nodes selected
     TreeNode* highlighted; // Node underneath the cursor
+
+    QList<TreeNode*> recentAddedNodes; // Most recent added nodes (for commands)
 
     QList<TreeNode*> iterationList;
     QString getFormattedString();

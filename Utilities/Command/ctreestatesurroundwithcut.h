@@ -1,11 +1,13 @@
 #ifndef CTREESTATESURROUNDWITHCUT_H
 #define CTREESTATESURROUNDWITHCUT_H
 
+#include <QList>
+
 #include "Tree/treestate.h"
 #include "Tree/treenode.h"
 
 /*
- * This command surrounds a selection in a TreeState with a cut
+ * This command surrounds all selections in a TreeState with a cut
  */
 class CTreeStateSurroundWithCut : public ICommand
 {
@@ -20,12 +22,11 @@ public:
     bool execute();
     void undo();
 
-    ICommand* copy();
+    ICommand* copy() { return new CTreeStateSurroundWithCut(tree); }
 
 private:
     TreeState* tree;
-    TreeNode* node;
-    TreeNode* cut;
+    QList<TreeNode*> addedCuts;
 };
 
 #endif // CTREESTATESURROUNDWITHCUT_H

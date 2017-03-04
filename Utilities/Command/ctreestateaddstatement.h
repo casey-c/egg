@@ -1,33 +1,32 @@
 #ifndef CTREESTATEADDSTATEMENT_H
 #define CTREESTATEADDSTATEMENT_H
 
-#include "icommand.h"
-#include "Tree/treestate.h"
+#include <QDebug>
+#include "itreestateadd.h"
 
 /*
  * This command will add a statement to a tree state.
  */
-class CTreeStateAddStatement : public ICommand
+class CTreeStateAddStatement : public ITreeStateAdd
 {
 public:
     /* Constructor */
-    CTreeStateAddStatement(TreeState* t, QString s) :
-        tree(t),
-        statement(s) { text = "Add "+statement; }
+    CTreeStateAddStatement(TreeState* t, QString s) : statement(s) {
+        qDebug() << "Adding statement " << statement;
+        text = "Add " + statement;
+        tree = t; }
 
     /* Destructor */
     ~CTreeStateAddStatement() {}
 
-    bool execute();
-    void undo();
+    /* Override the add() function of the ITreeStateAdd interface */
+    void add() { tree->addChildStatement(statement); }
 
-    ICommand* copy();
+    /* Override the copy() function of the ICommand interface */
+    ICommand* copy() { return new CTreeStateAddStatement(tree,statement); }
 
 private:
-    TreeState* tree;
     QString statement;
-
-    TreeNode* node;
 };
 
 #endif // CTREESTATEADDSTATEMENT_H
