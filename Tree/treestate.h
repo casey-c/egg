@@ -107,11 +107,8 @@ private:
     /* Multiselect */
     QList<TreeNode*> selectionList; // All nodes selected
     TreeNode* highlighted; // Node underneath the cursor
-    /* By default, the highlighted node will be included in the selection */
 
-
-    TreeNode* iterationTarget;
-
+    QList<TreeNode*> iterationList;
     QString getFormattedString();
 };
 
