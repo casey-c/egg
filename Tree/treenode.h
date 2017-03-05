@@ -87,6 +87,9 @@ public:
     bool isStatement(){ return type == constants::ELEMENT_STATEMENT; }
     bool isPlaceHolder() { return type == constants::ELEMENT_PLACEHOLDER; }
 
+    bool isDetached() { return type != constants::ELEMENT_ROOT &&
+                        parent == NULL; }
+
 private:
     /* Constructor for non-root nodes */
     TreeNode(const int t, TreeNode* p, QString n)
