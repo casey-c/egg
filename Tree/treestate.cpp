@@ -163,6 +163,9 @@ void TreeState::selectChildrenOfHighlighted()
  */
 void TreeState::clearSelection()
 {
+    prevSelection.clear();
+    prevSelection = selectionList;
+
     selectionList.clear();
 }
 
@@ -183,6 +186,14 @@ void TreeState::deselectNode(TreeNode *node)
 void TreeState::deselectHighlighted()
 {
     deselectNode(highlighted);
+}
+
+/*
+ * Reverts the selection list to the last set before clear
+ */
+void TreeState::revertSelectionList()
+{
+    selectionList = prevSelection;
 }
 
 /////////////////////
@@ -231,12 +242,13 @@ void TreeState::addChildDoubleCut()
     }
 
     // Add the inner cuts
+    TreeNode* target = NULL;
     for (TreeNode* node : outerCuts)
-        node->addChildCut();
+        (target == NULL) ? target = node->addChildCut() : node->addChildCut();
 
     // If we acted on the highlighted node, update the highlight
-    if (selectionList.size() == 1 && !recentUpdatedNodes.isEmpty())
-        highlighted = recentUpdatedNodes.first();
+    if (selectionList.size() == 1 && target != NULL)
+        highlighted = target;
 
     clearSelection();
 }

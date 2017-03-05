@@ -67,7 +67,8 @@ HEADERS  += MainWindow/mainwindow.h \
     Utilities/Command/ctreestateclearselection.h \
     Utilities/Command/ctreestateselectchildren.h \
     Utilities/Command/itreestateremove.h \
-    Utilities/Command/ctreestatedetachnode.h
+    Utilities/Command/ctreestatedetachnode.h \
+    Utilities/Command/ctreestaterevertselection.h
 
 FORMS    += MainWindow/mainwindow.ui \
     TreeDisplayWidget/treedisplaywidget.ui

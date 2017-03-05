@@ -266,6 +266,10 @@ void MainWindow::handleKeyPressSelect(QKeyEvent *event)
         command = new CTreeStateSelectHighlighted(currentTree);
         commandInvoker.runCommand(command);
         break;
+    case Qt::Key_R:
+        command = new CTreeStateRevertSelection(currentTree);
+        commandInvoker.runCommand(command);
+        break;
     case Qt::Key_S:
         keybindMode = constants::MODE_DEFAULT;
         break;
