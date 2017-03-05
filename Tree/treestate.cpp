@@ -193,7 +193,15 @@ void TreeState::deselectHighlighted()
  */
 void TreeState::revertSelectionList()
 {
-    selectionList = prevSelection;
+    QList<TreeNode*> list = selectionList;
+    selectionList.clear();
+
+    for (TreeNode* node : prevSelection)
+        if (!node->isDetached())
+            selectionList.append(node);
+
+    prevSelection.clear();
+    prevSelection = list;
 }
 
 /////////////////////
