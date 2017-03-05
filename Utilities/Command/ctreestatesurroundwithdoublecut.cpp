@@ -3,6 +3,9 @@
 /* Surrounds everything in the selection with double cuts */
 bool CTreeStateSurroundWithDoubleCut::execute()
 {
+    // Remember the old highlighted
+    prevHighlighted = tree->getHighlighted();
+
     // Surround the selection with cuts
     tree->surroundWithCut();
     addedInnerCuts = tree->popRecentNodes();
@@ -25,9 +28,13 @@ bool CTreeStateSurroundWithDoubleCut::execute()
 /* Removes any added double cuts */
 void CTreeStateSurroundWithDoubleCut::undo()
 {
+    tree->highlightSpecific(prevHighlighted);
+
     for (TreeNode* node : addedInnerCuts)
         tree->removeAndSaveOrphans(node);
 
     for (TreeNode* node : addedOuterCuts)
         tree->removeAndSaveOrphans(node);
+
+    tree->redraw();
 }

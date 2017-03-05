@@ -24,6 +24,7 @@ public:
 private:
     TreeState* tree;
 
+    TreeNode* prevHighlighted;
     QList<TreeNode*> addedOuterCuts;
     QList<TreeNode*> addedInnerCuts;
 };
