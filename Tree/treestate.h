@@ -76,6 +76,9 @@ public:
     void removeAndSaveOrphans(TreeNode* target);
     void removeAndBurnTheOrphanage(TreeNode* target);
 
+    void detachNode(TreeNode* target);
+    void detachNodes();
+
     /* Surround with cut */
     void surroundWithCut();
     void surroundWithDoubleCut();
@@ -104,6 +107,7 @@ public:
 
     /* Command helpers */
     QList<TreeNode*> popRecentNodes();
+    QList<TreeNode*> popRecentParents();
 
 signals:
     void treeChanged(QString s);
@@ -115,7 +119,8 @@ private:
     QList<TreeNode*> selectionList; // All nodes selected
     TreeNode* highlighted; // Node underneath the cursor
 
-    QList<TreeNode*> recentAddedNodes; // Most recent added nodes (for commands)
+    QList<TreeNode*> recentUpdatedNodes; // Most recent added nodes (for commands)
+    QList<TreeNode*> recentParents; // For detach commands
 
     QList<TreeNode*> iterationList;
     QString getFormattedString();

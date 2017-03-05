@@ -35,7 +35,8 @@ SOURCES += MainWindow/main.cpp\
     Utilities/Command/ctreestatesurroundwithdoublecut.cpp \
     Utilities/Command/itreestateadd.cpp \
     Utilities/Command/itreestateselect.cpp \
-    Utilities/Command/itreestatehighlight.cpp
+    Utilities/Command/itreestatehighlight.cpp \
+    Utilities/Command/itreestateremove.cpp
 
 HEADERS  += MainWindow/mainwindow.h \
     Utilities/constants.h \
@@ -64,7 +65,9 @@ HEADERS  += MainWindow/mainwindow.h \
     Utilities/Command/ctreestatedeselecthighlighted.h \
     Utilities/Command/ctreestateselecthighlighted.h \
     Utilities/Command/ctreestateclearselection.h \
-    Utilities/Command/ctreestateselectchildren.h
+    Utilities/Command/ctreestateselectchildren.h \
+    Utilities/Command/itreestateremove.h \
+    Utilities/Command/ctreestatedetachnode.h
 
 FORMS    += MainWindow/mainwindow.ui \
     TreeDisplayWidget/treedisplaywidget.ui

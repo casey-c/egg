@@ -34,4 +34,7 @@
 #include "Utilities/Command/ctreestateselectchildren.h"
 #include "Utilities/Command/ctreestateselecthighlighted.h"
 
+// Remove/detach commands
+#include "Utilities/Command/ctreestatedetachnode.h"
+
 #endif // ALLCOMMANDS_H
