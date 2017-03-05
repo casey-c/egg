@@ -307,9 +307,19 @@ void TreeNode::move(TreeNode *target, TreeNode *targetParent)
         return;
 
     /* Should be okay to proceed with the move */
-    target->getParent()->children.removeOne(target);
+    if (target->getParent() != NULL)
+        target->getParent()->children.removeOne(target);
     targetParent->children.append(target);
     target->parent = targetParent;
+}
+
+/*
+ * Detaches a node by disconnecting the parent from the child
+ */
+void TreeNode::detach(TreeNode *node, TreeNode *parent)
+{
+    parent->children.removeOne(node);
+    node->parent = NULL;
 }
 
 /*

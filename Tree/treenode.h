@@ -61,6 +61,9 @@ public:
     void addExistingByCopy(TreeNode* node);
     static void move(TreeNode* node, TreeNode* targetParent);
 
+    /* Detach */
+    static void detach(TreeNode* node, TreeNode* parent);
+
     /* Text output in tree form */
     int getBoxWidth(int depth);
     QString getBoxLine(int depth, int end, bool bottom,
