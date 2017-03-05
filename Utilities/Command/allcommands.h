@@ -37,5 +37,6 @@
 
 // Remove/detach commands
 #include "Utilities/Command/ctreestatedetachnode.h"
+#include "Utilities/Command/ctreestatedetachnodebutsavechildren.h"
 
 #endif // ALLCOMMANDS_H

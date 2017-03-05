@@ -32,12 +32,6 @@ bool ITreeStateRemove::execute()
 /* Puts the detached nodes back into place */
 void ITreeStateRemove::undo()
 {
-    // Repeat the same check that's in execute(), for paranoia reasons
-    if (removedNodes.size() != oldParents.size())
-        return;
-
-    qDebug() << "attempting to move back into place";
-
     // Move the nodes back into place
     QList<TreeNode*>::iterator nodeIt = removedNodes.begin();
     QList<TreeNode*>::iterator parentIt = oldParents.begin();
@@ -46,7 +40,6 @@ void ITreeStateRemove::undo()
         TreeNode::move((*nodeIt),(*parentIt));
 
     // Reselect and rehighlight
-    qDebug() << "rehighlighting";
     tree->highlightSpecific(prevHighlighted);
     for (TreeNode* node : prevSelected)
          tree->selectSpecific(node);

@@ -85,6 +85,7 @@ public:
 
     void detachNode(TreeNode* target);
     void detachNodes();
+    void detachNodeAndMoveOrphans();
 
     /* Surround with cut */
     void surroundWithCut();
@@ -114,6 +115,7 @@ public:
     /* Command helpers */
     QList<TreeNode*> popRecentNodes();
     QList<TreeNode*> popRecentParents();
+    QList< QList<TreeNode*> > popRecentChildren();
 
 signals:
     void treeChanged(QString s);
@@ -129,6 +131,7 @@ private:
     /* Command helpers */
     QList<TreeNode*> recentUpdatedNodes;
     QList<TreeNode*> recentParents;
+    QList< QList<TreeNode*> > recentListsOfChildren; // yikes man
 
     /* Modification mode helper */
     QList<TreeNode*> iterationList;

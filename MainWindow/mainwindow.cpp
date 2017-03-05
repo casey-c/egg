@@ -121,6 +121,11 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
         command = new CTreeStateHighlightRight(currentTree);
         commandInvoker.runCommand(command);
         break;
+    case Qt::Key_M:
+        qDebug() << "M is pressed";
+        command = new CTreeStateDetachNodeButSaveChildren(currentTree);
+        commandInvoker.runCommand(command);
+        break;
     case Qt::Key_N:
         qDebug() << "N is pressed";
         command = new CTreeStateDetachNode(currentTree);

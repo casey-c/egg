@@ -498,6 +498,54 @@ void TreeState::detachNodes()
     clearSelection();
 }
 
+/*
+ * Detaches the current node, but moves all its children to their grandparent.
+ *
+ * Upon completion, the selection list is cleared.
+ */
+void TreeState::detachNodeAndMoveOrphans()
+{
+    if (selectionList.isEmpty())
+        selectionList.append(highlighted);
+
+    for (TreeNode* node : selectionList)
+    {
+        // Root nodes cannot be detached
+        if (node->isRoot())
+            break;
+
+        // Placeholder nodes cannot be detached
+        // TODO: add logic
+        if (node->isPlaceHolder())
+            break;
+
+        TreeNode* parent = node->getParent();
+
+        // Paranoid null check
+        if (parent == NULL)
+            continue;
+
+
+        QList<TreeNode*> children;
+
+        // Move the children
+        for (TreeNode* child : node->getChildren())
+        {
+            TreeNode::move(child,parent);
+            children.append(child);
+        }
+
+        // Remember these altered children
+        recentListsOfChildren.append(children);
+
+        // Now that the children are taken care of, detach the childless node
+        detachNode(node);
+    }
+
+    clearSelection();
+
+}
+
 //////////////////////////
 /// Surround functions ///
 //////////////////////////
@@ -826,5 +874,12 @@ QList<TreeNode*> TreeState::popRecentParents()
 {
     QList<TreeNode*> list = recentParents;
     recentParents.clear();
+    return list;
+}
+
+QList< QList<TreeNode*> > TreeState::popRecentChildren()
+{
+    QList< QList<TreeNode*> > list = recentListsOfChildren;
+    recentListsOfChildren.clear();
     return list;
 }
