@@ -35,9 +35,14 @@ class TreeState : public QObject
     Q_OBJECT
 
 public:
+    /* Constructor */
     TreeState(): root(new TreeNode()), highlighted(root) {}
+
+    /* Copy Constructor */
     //TreeState(TreeState* original):
         //root(new TreeNode(original->copyRoot())), selected(root){}
+
+    /* Destructor */
     ~TreeState();
 
     /* Highlighted */
@@ -62,6 +67,8 @@ public:
 
     QList<TreeNode*> getSelectionList() { return selectionList; }
     void setSelectionList(QList<TreeNode*> list) { selectionList = list; }
+
+    void revertSelectionList();
 
     /* Add */
     void addChildCut();
@@ -104,7 +111,6 @@ public:
     /* Update any views */
     void redraw();
 
-
     /* Command helpers */
     QList<TreeNode*> popRecentNodes();
     QList<TreeNode*> popRecentParents();
@@ -117,12 +123,17 @@ private:
 
     /* Multiselect */
     QList<TreeNode*> selectionList; // All nodes selected
+    QList<TreeNode*> prevSelection; // For reverting to the last selection
     TreeNode* highlighted; // Node underneath the cursor
 
-    QList<TreeNode*> recentUpdatedNodes; // Most recent added nodes (for commands)
-    QList<TreeNode*> recentParents; // For detach commands
+    /* Command helpers */
+    QList<TreeNode*> recentUpdatedNodes;
+    QList<TreeNode*> recentParents;
 
+    /* Modification mode helper */
     QList<TreeNode*> iterationList;
+
+    /* Visual tree */
     QString getFormattedString();
 };
 

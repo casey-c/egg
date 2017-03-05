@@ -33,6 +33,7 @@
 #include "Utilities/Command/ctreestatedeselecthighlighted.h"
 #include "Utilities/Command/ctreestateselectchildren.h"
 #include "Utilities/Command/ctreestateselecthighlighted.h"
+#include "Utilities/Command/ctreestaterevertselection.h"
 
 // Remove/detach commands
 #include "Utilities/Command/ctreestatedetachnode.h"
