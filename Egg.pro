@@ -36,7 +36,8 @@ SOURCES += MainWindow/main.cpp\
     Utilities/Command/itreestateadd.cpp \
     Utilities/Command/itreestateselect.cpp \
     Utilities/Command/itreestatehighlight.cpp \
-    Utilities/Command/itreestateremove.cpp
+    Utilities/Command/itreestateremove.cpp \
+    Utilities/Command/ctreestatedetachnodebutsavechildren.cpp
 
 HEADERS  += MainWindow/mainwindow.h \
     Utilities/constants.h \
@@ -68,7 +69,8 @@ HEADERS  += MainWindow/mainwindow.h \
     Utilities/Command/ctreestateselectchildren.h \
     Utilities/Command/itreestateremove.h \
     Utilities/Command/ctreestatedetachnode.h \
-    Utilities/Command/ctreestaterevertselection.h
+    Utilities/Command/ctreestaterevertselection.h \
+    Utilities/Command/ctreestatedetachnodebutsavechildren.h
 
 FORMS    += MainWindow/mainwindow.ui \
     TreeDisplayWidget/treedisplaywidget.ui
