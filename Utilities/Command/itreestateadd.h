@@ -47,6 +47,7 @@ public:
 protected:
     TreeState* tree;
 
+    TreeNode* prevHighlighted;
     QList<TreeNode*> prevSelected;
     QList<TreeNode*> newlyCreated;
 };
