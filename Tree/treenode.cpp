@@ -455,3 +455,191 @@ QString TreeNode::getBoxLine(int depth,
 
     return result;
 }
+
+
+//////////////
+/// Pounce ///
+//////////////
+
+/*
+ * Turns a decimal int into 2 bits base 4. These two bits correspond to letters
+ * on the keyboard. These will be typed in sequence, one after the other.
+ *
+ * For numbers [0,15]:
+ *      * First bit is either A,S,D,F
+ *      * Second bit is either J,K,L,;
+ *
+ * Example: 10 becomes 22 in base 4, this corresponds with the second letter of
+ * the first bit (S) followed by the second letter of the second bit (K).
+ *
+ * This means that you can jump to node 10 by pressing SK in rapid succession.
+ *
+ * For numbers [16,31], the order is swapped:
+ *      * First bit is now J,K,L,;
+ *      * Second bit is A,S,D,F
+ *
+ * Example: 26 is 122 in binary. We look at the last two digits (leading 1 is
+ * chopped off) and do the same process but with the right hand going first.
+ *
+ * The new sequence is now KS, which will bring you to node 26.
+ *
+ * NOTE: the way I set pounce up as a two key sequence of the home row only
+ * means that there is a maximum of 32 different nodes that are possible targets
+ * to pounce to. If this is an issue, I can extend it to 50 possible nodes just
+ * by adding in the G and H keys. The problem is that they're not in the default
+ * positions that the fingers are in, so it adds some minor difficulty to
+ * pouncing.
+ *
+ * I'm keeping it at 32 max nodes since I don't believe that graphs will become
+ * too big that they really need additional pounce space. I could be wrong, but
+ * we'll have to reexamine this down the line.
+ *
+ * Params:
+ *      target: the unique # identifying this node on its tree
+ */
+void TreeNode::setPounceID(int target)
+{
+    // Reset the ID
+    pounceID = "";
+
+    // A is the left bit, B is the right bit
+    int a, b;
+
+    // Swap worthy
+    bool swap = false;
+
+    // Determine if we should swap bits
+    if (target > 15)
+    {
+        target -= 16;
+        swap = true;
+
+        // Still too big for this system
+        if (target > 15)
+        {
+            pounceID = "??";
+            return;
+        }
+    }
+
+    a = target / 4;
+    b = target % 4;
+
+    if (a == 0)
+        pounceID += "A";
+    else if (a == 1)
+        pounceID += "S";
+    else if (a == 2)
+        pounceID += "D";
+    else if (a == 3)
+        pounceID += "F";
+
+    if (b == 0)
+        pounceID += "J";
+    else if (b == 1)
+        pounceID += "K";
+    else if (b == 2)
+        pounceID += "L";
+    else if (b == 3)
+        pounceID += ";";
+
+    // Swap the left and right bits on values larger than 15
+    if (swap)
+    {
+        QChar bit0 = pounceID.at(1);
+        QChar bit1 = pounceID.at(0);
+        pounceID = "";
+        pounceID[0] = bit0;
+        pounceID[1] = bit1;
+    }
+}
+
+
+/*
+ * Analogous to getBoxedWidth, see documentation there
+ */
+int TreeNode::getPounceWidth(int depth)
+{
+    int myRowLength = (depth * 3) + pounceID.size();
+
+    int childLength = 0;
+    for (auto child : children)
+        childLength = std::max(child->getPounceWidth(depth+1),
+                               childLength);
+
+    return std::max(myRowLength,childLength);
+}
+
+/*
+ * Analogous to getBoxedLine, see documentation there
+ */
+QString TreeNode::getPounceLine(int depth, int end, bool bottom,
+                                QString skips,
+                                TreeNode *highlighted,
+                                QList<TreeNode *> selectionList)
+{
+    QString result = "│ ";
+
+    // Root does less work
+    if (isRoot())
+    {
+        result += pounceID;
+        for (int i = 0; i < end - pounceID.size(); ++i)
+            result += " ";
+    }
+    else // Non-root elements are a tad more complicated
+    {
+        // Use the skips string to determine whether to leave space or draw
+        // vertical line for branches to the left
+        for (int i = 0; i < skips.length(); ++i)
+        {
+            if (skips.at(i) == '0')
+                result += "   ";
+            else
+                result += "│  ";
+        }
+
+        // Start of the branch to parent
+        if (bottom)
+        {
+            skips.append('0');
+            result += "└──";
+        }
+        else
+        {
+            skips.append('1');
+            result += "├──";
+        }
+
+        // Add the label for this row
+        result += pounceID;
+
+        // Add the remaining space
+        int used = (3 * (depth - 1)) + pounceID.size() + 3;
+        for (int i = 0; i < (end - used); ++i )
+            result += " ";
+    }
+
+    // End of the row: no selection / highlight info needed in the pounce box
+    result += " │\n";
+
+    // Now figure out all the children
+    QList<QString> childRows;
+    for (int i = 0; i < children.size(); ++i)
+    {
+        TreeNode* child = children.at(i);
+        QString childRow = child->getPounceLine(depth + 1,
+                                             end,
+                                             i == children.size() - 1,
+                                             skips,
+                                             highlighted,
+                                             selectionList);
+        childRows.append(childRow);
+    }
+
+    // Combine all the child rows here and append them to result
+    for (auto s : childRows)
+        result += s;
+
+    return result;
+}

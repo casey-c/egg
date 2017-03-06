@@ -202,6 +202,12 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
         command = new CTreeStateHighlightRoot(currentTree);
         commandInvoker.runCommand(command);
         break;
+    case Qt::Key_BracketLeft:
+        qDebug() << "[ is pressed";
+        keybindMode = constants::MODE_POUNCE;
+        currentTree->setPounceIDs();
+        currentTree->drawPounceTree();
+        break;
     default:
         QMainWindow::keyPressEvent(event);
     }
@@ -285,6 +291,82 @@ void MainWindow::handleKeyPressSelect(QKeyEvent *event)
 }
 
 /*
+ * Pounce mode:
+ *
+ * After pressing [ for the first time, the application enters pounce mode.
+ * This redraws the tree with two letter identifiers enabling rapid movement.
+ *
+ * In pounce mode, the first letter typed is saved in the pounce target. After
+ * entering a second letter, the total string is sent to the tree to see if it
+ * can highlight the node with that particular pounce string.
+ *
+ * The app reverts back to default mode after the second key press, regardless
+ * of whether or not the pounce was successful.
+ *
+ * As of right now, pouncing is limited to a total of 32 possible nodes: these
+ * are obtained through combinations of ASDF and JKL; keys, one from each set.
+ * I chose these keys because they are the default positions for the fingers,
+ * and I made pounce work by selecting one letter from each hand. I can extend
+ * this easily by adding any other letters (G and H are the most likely
+ * additions) or removing the restriction that one bit must come from each hand.
+ *
+ * This choice was mostly personal preference: I find it easy to type AJ - a
+ * string that takes one key from each hand - as opposed to AA, which seems a
+ * little bit slower.
+ */
+void MainWindow::handleKeyPressPounce(QKeyEvent *event)
+{
+    QChar letter = (event->text())[0];
+
+    // Make sure the event is ok
+    switch (event->key())
+    {
+        case Qt::Key_A: break;
+        case Qt::Key_S: break;
+        case Qt::Key_D: break;
+        case Qt::Key_F: break;
+        case Qt::Key_J: break;
+        case Qt::Key_K: break;
+        case Qt::Key_L: break;
+        case Qt::Key_Semicolon: break;
+
+        default: return; // Invalid
+    }
+
+    qDebug() << "Typed " << letter;
+
+    if (!typedOne)
+    {
+        qDebug() << "This was the first key press";
+
+        // Reset the target and set the first key
+        pounceTarget = "";
+        pounceTarget += letter;
+
+        typedOne = true;
+    }
+    else
+    {
+        qDebug() << "This was the second key press";
+        typedOne = false;
+
+        pounceTarget += letter;
+        pounceTarget = pounceTarget.toUpper();
+
+        // Pounce to the string, if it exists
+        qDebug() << "Pouncing to " << pounceTarget;
+        currentTree->pounceTo(pounceTarget);
+
+        // Reset the mode
+        keybindMode = constants::MODE_DEFAULT;
+        currentTree->redraw();
+    }
+
+
+
+}
+
+/*
  * All key presses go here first. The keybindMode will turn the event over to
  * the proper function for further processing.
  */
@@ -303,6 +385,9 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         break;
     case constants::MODE_SELECT:
         handleKeyPressSelect(event);
+        break;
+    case constants::MODE_POUNCE:
+        handleKeyPressPounce(event);
         break;
     default:
         QMainWindow::keyPressEvent(event);
