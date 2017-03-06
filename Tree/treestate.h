@@ -117,6 +117,14 @@ public:
     QList<TreeNode*> popRecentParents();
     QList< QList<TreeNode*> > popRecentChildren();
 
+    /* Pounce */
+    void setPounceIDs();
+    void drawPounceTree();
+
+    void pounceTo(QString target);
+
+    QString getPounceString();
+
 signals:
     void treeChanged(QString s);
 

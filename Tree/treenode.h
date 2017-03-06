@@ -90,6 +90,15 @@ public:
     bool isDetached() { return type != constants::ELEMENT_ROOT &&
                         parent == NULL; }
 
+    /* Pounce */
+    void setPounceID(int target);
+    int getPounceWidth(int depth);
+    QString getPounceLine(int depth, int end, bool bottom,
+                       QString skips, TreeNode* highlighted,
+                       QList<TreeNode*> selectionList);
+
+    QString getPounceID() { return pounceID; }
+
 private:
     /* Constructor for non-root nodes */
     TreeNode(const int t, TreeNode* p, QString n)
@@ -106,6 +115,8 @@ private:
 
     bool placeHolderChild;
     int myID;
+
+    QString pounceID;
 
     QList<TreeNode*> children;
     TreeNode* placeholder;

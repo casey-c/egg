@@ -883,3 +883,103 @@ QList< QList<TreeNode*> > TreeState::popRecentChildren()
     recentListsOfChildren.clear();
     return list;
 }
+
+//////////////
+/// Pounce ///
+//////////////
+
+/*
+ * Sets all the pounce ID's using DFS
+ */
+void TreeState::setPounceIDs()
+{
+    QStack<TreeNode*> stack;
+    QList<TreeNode*> visited;
+
+    stack.push(root);
+
+    int id = 0;
+
+    while (!stack.isEmpty())
+    {
+        TreeNode* node = stack.pop();
+        if (!visited.contains(node))
+        {
+            // Add the ID here
+            node->setPounceID(id++);
+
+            visited.prepend(node);
+
+            for (TreeNode* child : node->getChildren())
+                stack.push(child);
+        }
+    }
+}
+
+/*
+ * Draws the tree as pounce values
+ */
+void TreeState::drawPounceTree()
+{
+    emit treeChanged(getPounceString());
+}
+
+/*
+ * Builds the pounce string as a box
+ */
+QString TreeState::getPounceString()
+{
+    // First determine the width of inner region of box
+    int width = root->getPounceWidth(0);
+
+    // Header (first row)
+    QString result = "<pre>┌";
+    for (int i = 0; i < width + 2; ++i)
+        result += "─";
+    result += "┐\n";
+
+    // Add each boxLine recursively
+    result += root->getPounceLine(0, width, true,
+                               "", highlighted, selectionList);
+
+    // Footer (last row)
+    result += "└";
+    for (int i = 0; i < width + 2; ++i)
+        result += "─";
+    result += "┘</pre>";
+
+    return result;
+}
+
+/*
+ * Attempts to highlight the node associated with the pounce string. If it
+ * exists, highlight that node. If it doesn't, do nothing.
+ *
+ * Params:
+ *      target: the string we're looking for as a pounceID of the nodes
+ */
+void TreeState::pounceTo(QString target)
+{
+    // DFS for the node
+    QStack<TreeNode*> stack;
+    stack.push(root);
+
+    while (!stack.isEmpty())
+    {
+        TreeNode* node = stack.pop();
+        if (QString::compare(target,node->getPounceID()) == 0)
+        {
+            // Found our guy
+            highlightSpecific(node);
+            return;
+        }
+
+        // Otherwise, keep searching
+        for (TreeNode* child : node->getChildren())
+            stack.push(child);
+    }
+
+    // We couldn't find the node, oh well
+}
+
+

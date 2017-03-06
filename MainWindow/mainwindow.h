@@ -34,6 +34,11 @@ private:
     void handleKeyPressDefault(QKeyEvent* event);
     void handleKeyPressQ(QKeyEvent* event);
     void handleKeyPressSelect(QKeyEvent* event);
+    void handleKeyPressPounce(QKeyEvent* event);
+
+    /* Pounce */
+    bool typedOne;
+    QString pounceTarget;
 
 private slots:
     void endTimer();
