@@ -28,6 +28,7 @@
 // Surround commands
 #include "Utilities/Command/ctreestatesurroundwithcut.h"
 #include "Utilities/Command/ctreestatesurroundwithdoublecut.h"
+#include "Utilities/Command/ctreestatesurroundwithcutasgroup.h"
 
 // Select commands
 #include "Utilities/Command/ctreestateclearselection.h"

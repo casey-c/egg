@@ -613,6 +613,37 @@ void TreeState::surroundWithDoubleCut()
     clearSelection();
 }
 
+/*
+ * Surrounds the selected nodes with a single cut. All selected nodes that
+ * are siblings remain siblings, and the selection is cleared afterwards
+ */
+void TreeState::surroundWithCutAsGroup()
+{
+    // With no selection, act on the highlighted node
+    if (selectionList.isEmpty())
+        selectionList.append(highlighted);
+
+    // Roots cannot be surrounded
+    if (selectionList.first()->isRoot())
+        return;
+
+    // Add the cut to the proper node
+    TreeNode* parent = selectionList.first()->getParent();
+    TreeNode* cut = parent->addChildCut();
+
+    recentUpdatedNodes.append(cut);
+
+    // Move all the selected nodes into the new cut
+    for (TreeNode* node : selectionList)
+        TreeNode::move(node, cut);
+
+    // If we acted on the highlighted node, update the highlight
+    if (selectionList.size() == 1 && !recentUpdatedNodes.isEmpty())
+        highlighted = recentUpdatedNodes.first();
+
+    clearSelection();
+}
+
 ////////////
 /// Move ///
 ////////////
