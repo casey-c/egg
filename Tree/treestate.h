@@ -127,6 +127,7 @@ public:
     /* Surround with cut */
     void surroundWithCut();
     void surroundWithDoubleCut();
+    void surroundWithCutAsGroup();
 
     /* Copy */
     //static TreeState* copyState(TreeState* currentTree);

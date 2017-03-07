@@ -3,7 +3,7 @@
 /* Surrounds with cut */
 bool CTreeStateSurroundWithCut::execute()
 {
-    // Surround all the selected nodes with double cuts, if possible
+    // Surround all the selected nodes with cuts, if possible
     tree->surroundWithCut();
 
     // Determine which nodes we surrounded
