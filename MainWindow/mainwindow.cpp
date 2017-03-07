@@ -133,7 +133,10 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
         break;
     case Qt::Key_O:
         qDebug() << "O is pressed";
-        command = new CTreeStateSurroundWithCutAsGroup(currentTree);
+        if (QString::compare(event->text(), "O"))
+            command = new CTreeStateSurroundWithCutAsGroup(currentTree);
+        else
+            command = new CTreeStateSurroundWithCut(currentTree);
         commandInvoker.runCommand(command);
         break;
     case Qt::Key_P: // TODO: change this to a group maybe
