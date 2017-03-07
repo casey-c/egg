@@ -355,7 +355,8 @@ void MainWindow::handleKeyPressPounce(QKeyEvent *event)
 
         // Pounce to the string, if it exists
         qDebug() << "Pouncing to " << pounceTarget;
-        currentTree->pounceTo(pounceTarget);
+        ICommand* command = new CTreeStatePounce(currentTree, pounceTarget);
+        commandInvoker.runCommand(command);
 
         // Reset the mode
         keybindMode = constants::MODE_DEFAULT;

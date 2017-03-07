@@ -23,6 +23,7 @@
 #include "Utilities/Command/ctreestatehighlightparent.h"
 #include "Utilities/Command/ctreestatehighlightright.h"
 #include "Utilities/Command/ctreestatehighlightroot.h"
+#include "Utilities/Command/ctreestatepounce.h"
 
 // Surround commands
 #include "Utilities/Command/ctreestatesurroundwithcut.h"
