@@ -198,7 +198,8 @@ void TreeState::revertSelectionList()
 
     for (TreeNode* node : prevSelection)
         if (!node->isDetached())
-            selectionList.append(node);
+            selectSpecific(node);
+            //selectionList.append(node);
 
     prevSelection.clear();
     prevSelection = list;
