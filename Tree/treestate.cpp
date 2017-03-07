@@ -814,7 +814,13 @@ TreeState* TreeState::performDeiteration()
     return NULL;
 }
 
-/* Box print */
+/////////////////
+/// Box print ///
+/////////////////
+
+/*
+ * Prints out the tree inside a box. (For sending to the TreeDisplayWidget)
+ */
 QString TreeState::getBoxedString()
 {
     // First determine the width of inner region of box
