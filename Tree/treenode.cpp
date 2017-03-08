@@ -429,11 +429,28 @@ QString TreeNode::getBoxLine(int depth,
     if (selectionList.contains(this))
         result += "●";
 
-    // Determine if highlighted
-    if (highlighted == this)
-            result += " ←"; //◀
+    // Shows highlighting on parent if the highlighted node is an invisible
+    // placeholder
+    if ((highlighted->isPlaceHolder() && highlighted->parent == this) ||
+            highlighted == this)
+    //if (highlighted == this) // Alternate to show actual highlighting
+        result += " ←"; //◀
 
     result += "\n";
+
+    // The following lines can be used to actually depict placeholders on the
+    // tree. Since placeholders are technically not nodes (they aren't
+    // considered when doing operations like BFS, for example), I'm going to
+    // leave these lines commented out.
+    /*
+    if (placeHolderChild)
+        result += placeholder->getBoxLine(depth+1,
+                                          end,
+                                          children.size() == 0,
+                                          skips,
+                                          highlighted,
+                                          selectionList);
+    */
 
     // Now figure out all the children
     QList<QString> childRows;
