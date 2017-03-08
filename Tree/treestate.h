@@ -76,8 +76,8 @@ public:
     TreeState(): root(new TreeNode()), highlighted(root) {}
 
     /* Copy Constructor */
-    //TreeState(TreeState* original):
-        //root(new TreeNode(original->copyRoot())), selected(root){}
+    TreeState(TreeState* original):
+        root(new TreeNode(original->root)), highlighted(root){}
 
     /* Destructor */
     ~TreeState();
@@ -129,18 +129,16 @@ public:
     void surroundWithDoubleCut();
     void surroundWithCutAsGroup();
 
-    /* Copy */
-    //static TreeState* copyState(TreeState* currentTree);
-    //TreeNode* copyRoot(){ return new TreeNode(this->root); }
-
     /* Move */
     void move(TreeNode* target, TreeNode* targetParent);
 
     /* Modification mode */
     TreeState* doubleCutRemoval();
     TreeState* doubleCutAddition();
+
     void setIterationTarget();
     QList<TreeNode*> getIterationTarget() { return iterationList; }
+
     TreeState* performIteration();
     TreeState* performDeiteration();
 
@@ -158,9 +156,7 @@ public:
     /* Pounce */
     void setPounceIDs();
     void drawPounceTree();
-
     void pounceTo(QString target);
-
     QString getPounceString();
 
 signals:

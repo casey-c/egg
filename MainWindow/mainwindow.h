@@ -21,6 +21,7 @@ public:
 private:
     Ui::MainWindow *ui;
     TreeState* currentTree;
+    TreeState* copiedTree; // For debugging copy constructor, to be removed
     TreeDisplayWidget* treeDisplayWidget;
 
     /* Commands */

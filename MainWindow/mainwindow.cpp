@@ -10,6 +10,7 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
+    copiedTree(NULL),
     keybindMode(constants::MODE_DEFAULT)
 {
     ui->setupUi(this);
@@ -186,6 +187,36 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
         command = new CTreeStateAddDoubleCut(currentTree);
         commandInvoker.runCommand(command);
         break;
+    case Qt::Key_1: // DEBUG: copy the current tree
+    {
+        qDebug() << "1 is pressed";
+        if (copiedTree != NULL)
+            delete copiedTree;
+
+        copiedTree = new TreeState(currentTree);
+        break;
+    }
+    case Qt::Key_2: // DEBUG: swap between copied tree and current tree
+    {
+        qDebug() << "2 is pressed";
+
+        // Disconnect the old tree
+        currentTree->disconnect();
+
+        // Swap connections
+        TreeState* temp = currentTree;
+        currentTree = copiedTree;
+        copiedTree = temp;
+
+        // Reconnect the proper tree
+        QObject::connect(currentTree,
+                         SIGNAL(treeChanged(QString)),
+                         treeDisplayWidget,
+                         SLOT(updateText(QString)));
+
+        currentTree->redraw();
+        break;
+    }
     case Qt::Key_0:
         qDebug() << "0 is pressed";
         delete(currentTree);

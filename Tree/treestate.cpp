@@ -3,7 +3,9 @@
 
 TreeState::~TreeState()
 {
+    qDebug() << "Deleting this tree state";
     delete root;
+    qDebug() << "Successfully deleted root";
 }
 
 /////////////////
@@ -678,7 +680,7 @@ void TreeState::move(TreeNode *target, TreeNode *targetParent)
 TreeState* TreeState::doubleCutRemoval()
 {
     /*
-    /* First, check if the selection has a double cut surrounding it
+    // First, check if the selection has a double cut surrounding it
     // Root and placeholders are disallowed
     if (selected->isRoot() || selected->isPlaceHolder())
     {
