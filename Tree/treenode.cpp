@@ -7,23 +7,26 @@
 /* Debug id */
 int TreeNode::globalID = 0;
 
+//////////////////////////////////
+/// Constructors / Destructors ///
+//////////////////////////////////
+
 /* Copy constructor */
 TreeNode::TreeNode(TreeNode *original):
     type(original->getType()),
-    parent(),
     name(original->getName()),
     placeHolderChild(false),
-    myID(globalID++),
-    children(),
-    placeholder()
-
+    myID(globalID++)
 {
-    if(original->hasPlaceHolder()){
-        placeHolderChild = true;
-        placeholder = TreeNode::copyChildren(original->getPlaceHolder(),this);
+    if (original->hasPlaceHolder())
+        addChildPlaceholder();
+
+    for (TreeNode* child : original->getChildren())
+    {
+        TreeNode* node = new TreeNode(child);
+        node->parent = this;
+        children.append(node);
     }
-    for (auto child : original->getChildren())
-        this->children.append(TreeNode::copyChildren(child, this));
 }
 
 /*
@@ -43,6 +46,10 @@ TreeNode::~TreeNode()
     if (placeHolderChild)
         delete placeholder;
 }
+
+/////////////////
+/// Additions ///
+/////////////////
 
 /*
  * Adds a child cut to this node. This function will always succeed and return
@@ -144,12 +151,19 @@ TreeNode* TreeNode::addChildStatement(QString s)
     }
 }
 
-/* Add child placeholder */
+/*
+ * Adds a child placeholder to this node. If this node is a statement, it cannot
+ * have a placeholder, so it returns NULL. If this statement is already a
+ * placeholder, it returns itself. If this statement already has a child
+ * placeholder, that placeholder is returned (limit 1 placeholder per node).
+ * Otherwise, we create a new placeholder node, assign it as a child to this one
+ * and then return that created node.
+ */
 TreeNode* TreeNode::addChildPlaceholder()
 {
     // Check if this is allowed to have children
     if (isStatement())
-        return this;
+        return NULL;
 
     // Check if this is already a placeholder
     if (isPlaceHolder())
@@ -169,106 +183,9 @@ TreeNode* TreeNode::addChildPlaceholder()
     return newPlaceholder;
 }
 
-/* Recursively copy a node with their children */
-TreeNode* TreeNode::copyChildren(TreeNode* original, TreeNode* parent)
-{
-    // Copy the original node into a new node
-    TreeNode* newNode = new TreeNode(original->getType(),
-                                     parent,
-                                     original->getName());
-
-    // Recurse on the original's children
-    for (auto child : original->getChildren())
-        newNode->children.append(TreeNode::copyChildren(child, newNode));
-
-    return newNode;
-}
-
-/*
- * Adds all the TreeNodes in list as children of our own
- *
- * Params:
- *      list: pointers to the nodes to add
- */
-void TreeNode::addAll(QList<TreeNode *> list)
-{
-    // Check for empty list
-    if (list.isEmpty())
-        return;
-
-    // Check if this is allowed to have children
-    if (isStatement())
-        return;
-
-    // This node is a placeholder
-    if (isPlaceHolder())
-    {
-        TreeNode* first = list.first();
-        list.removeFirst();
-
-        // Replace this with first node in the list
-        this->type = first->type;
-        this->name = first->name;
-
-        // Make sure our parent knows we're a real boy now
-        parent->children.append(this);
-        parent->placeHolderChild = false;
-
-        // Add the rest as siblings to this node
-        for (TreeNode* node : list)
-            parent->addExistingByCopy(node);
-
-        // Finished
-        return;
-    }
-
-    // This is a parent of a placeholder
-    else if (placeHolderChild)
-    {
-        // Replace the placeholder child with the first item in the list
-        TreeNode* first = list.first();
-        list.removeFirst();
-
-        placeholder->type = first->type;
-        placeholder->name = first->name;
-
-        // Update parent info
-        placeHolderChild = false;
-        children.append(placeholder);
-
-        // Then add the other items as additional children
-        for (TreeNode* node : list)
-            this->addExistingByCopy(node);
-    }
-
-}
-
-/*
- * Copies the node and adds the copy as a child to this one.
- *
- * Params:
- *      node: a pointer to the node that needs to be copied
- */
-void TreeNode::addExistingByCopy(TreeNode *node)
-{
-    // Check to make sure the existing node doesn't conflict with placeholder
-    // restrictions
-    if (node->isPlaceHolder())
-    {
-        // Only allowed one placeholder per parent node
-        if (this->placeHolderChild)
-            return;
-
-        // Otherwise, set this node as our new placeholder
-        placeHolderChild = true;
-        placeholder = node;
-        return;
-    }
-
-    // Otherwise, we should be free to add a new child
-    TreeNode* newNode = new TreeNode(node->type,this,node->name);
-    children.append(newNode);
-}
+////////////
+/// Move ///
+////////////
 
 /*
  * Move will update pointers to move target in the tree structure, with a couple
@@ -313,6 +230,10 @@ void TreeNode::move(TreeNode *target, TreeNode *targetParent)
     target->parent = targetParent;
 }
 
+//////////////
+/// Detach ///
+//////////////
+
 /*
  * Detaches a node by disconnecting the parent from the child
  */
@@ -322,8 +243,12 @@ void TreeNode::detach(TreeNode *node, TreeNode *parent)
     node->parent = NULL;
 }
 
+///////////////////
+/// Text Output ///
+///////////////////
+
 /*
- * Changes the type int into a readable QString
+ * Changes the type int into a readable QString, for printing on the tree
  */
 QString TreeNode::getTypeID()
 {
@@ -369,9 +294,11 @@ int TreeNode::getBoxWidth(int depth)
  *      skips:  binary string to determine whether to draw a branch upward or
  *              to skip that vertical line. this is inherited from parent, with
  *              an appended 0 or 1 based on whether the parent itself was a
- *              bottom piece, respectively
- *      selected: a pointer to the treestate's selceted node; this determines
- *              when to apply a (*) to a row
+ *              bottom piece, respectively.
+ *      highlighted: a pointer to the TreeState's highlighted node; this
+ *              determines when to apply the ← symbol to a row
+ *      selectionList: a list of the TreeState's selected nodes; this determines
+ *              when to apply the ● symbol to a row
  */
 QString TreeNode::getBoxLine(int depth,
                              int end,

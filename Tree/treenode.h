@@ -32,13 +32,13 @@ class TreeNode
 {
 public:
     /* Constructor makes a root node */
-    TreeNode() :
-        type(constants::ELEMENT_ROOT),
-        parent(),
-        name(QString("Root")),
-        placeHolderChild(),
-        myID(globalID++),
-        placeholder() {}
+    TreeNode()
+        : type(constants::ELEMENT_ROOT)
+        , name(QString("Root"))
+        , parent()
+        , placeHolderChild()
+        , placeholder()
+        , myID(globalID++) {}
 
     /* Copy constructor */
     TreeNode(TreeNode *original);
@@ -54,27 +54,32 @@ public:
     TreeNode* addChildCut();
     TreeNode* addChildStatement(QString s);
     TreeNode* addChildPlaceholder();
-    void addAll(QList<TreeNode*> list);
 
-    /* Copy and move */
-    static TreeNode* copyChildren(TreeNode* original, TreeNode *parent);
-    void addExistingByCopy(TreeNode* node);
+    /* Move */
     static void move(TreeNode* node, TreeNode* targetParent);
 
     /* Detach */
     static void detach(TreeNode* node, TreeNode* parent);
 
     /* Text output in tree form */
+    QString getTypeID();
     int getBoxWidth(int depth);
     QString getBoxLine(int depth, int end, bool bottom,
                        QString skips, TreeNode* highlighted,
                        QList<TreeNode*> selectionList);
-    QString getTypeID();
-    bool hasPlaceHolder() { return placeHolderChild; }
+
+    /* Pounce */
+    void setPounceID(int target);
+    int getPounceWidth(int depth);
+    QString getPounceLine(int depth, int end, bool bottom,
+                       QString skips, TreeNode* highlighted,
+                       QList<TreeNode*> selectionList);
 
     /* Getters */
     QString getName() { return name; }
+    bool hasPlaceHolder() { return placeHolderChild; }
     int getType(){ return type; }
+    QString getPounceID() { return pounceID; }
 
     /* TODO: fix rep. exposure (make private? friend TreeState?) */
     QList<TreeNode*> getChildren() { return children; }
@@ -86,40 +91,34 @@ public:
     bool isCut() { return type == constants::ELEMENT_CUT; }
     bool isStatement(){ return type == constants::ELEMENT_STATEMENT; }
     bool isPlaceHolder() { return type == constants::ELEMENT_PLACEHOLDER; }
-
     bool isDetached() { return type != constants::ELEMENT_ROOT &&
                         parent == NULL; }
-
-    /* Pounce */
-    void setPounceID(int target);
-    int getPounceWidth(int depth);
-    QString getPounceLine(int depth, int end, bool bottom,
-                       QString skips, TreeNode* highlighted,
-                       QList<TreeNode*> selectionList);
-
-    QString getPounceID() { return pounceID; }
 
 private:
     /* Constructor for non-root nodes */
     TreeNode(const int t, TreeNode* p, QString n)
             : type(t)
-            , parent(p)
             , name(n)
+            , parent(p)
             , placeHolderChild()
             , myID(globalID++) {}
 
+    /* Details */
     int type;
-    TreeNode* parent;
-
     QString name;
 
+    /* Connections */
+    TreeNode* parent;
+    QList<TreeNode*> children;
+
+    /* Placeholder */
     bool placeHolderChild;
+    TreeNode* placeholder;
+
+    /* ID's */
+    QString pounceID;
     int myID;
 
-    QString pounceID;
-
-    QList<TreeNode*> children;
-    TreeNode* placeholder;
 };
 
 #endif // TREE_TREENODE_H
