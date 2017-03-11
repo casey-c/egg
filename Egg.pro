@@ -38,7 +38,12 @@ SOURCES += MainWindow/main.cpp\
     Utilities/Command/itreestatehighlight.cpp \
     Utilities/Command/itreestateremove.cpp \
     Utilities/Command/ctreestatedetachnodebutsavechildren.cpp \
-    Utilities/Command/ctreestatesurroundwithcutasgroup.cpp
+    Utilities/Command/ctreestatesurroundwithcutasgroup.cpp \
+    HistoryStack/historystack.cpp \
+    HistoryTree/historytree.cpp \
+    HistoryTree/historytreenode.cpp \
+    ProofTree/prooftree.cpp \
+    ProofTree/prooftreenode.cpp
 
 HEADERS  += MainWindow/mainwindow.h \
     Utilities/constants.h \
@@ -73,7 +78,12 @@ HEADERS  += MainWindow/mainwindow.h \
     Utilities/Command/ctreestaterevertselection.h \
     Utilities/Command/ctreestatedetachnodebutsavechildren.h \
     Utilities/Command/ctreestatepounce.h \
-    Utilities/Command/ctreestatesurroundwithcutasgroup.h
+    Utilities/Command/ctreestatesurroundwithcutasgroup.h \
+    HistoryStack/historystack.h \
+    HistoryTree/historytree.h \
+    HistoryTree/historytreenode.h \
+    ProofTree/prooftree.h \
+    ProofTree/prooftreenode.h
 
 FORMS    += MainWindow/mainwindow.ui \
     TreeDisplayWidget/treedisplaywidget.ui
