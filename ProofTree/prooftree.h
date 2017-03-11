@@ -52,10 +52,15 @@
 class ProofTree
 {
 public:
+    /* Constructor */
     ProofTree();
 
+    /* Destructor */
+    ~ProofTree();
+
     /* Additions */
-    void addTreeState(TreeState* state);
+    void addStep(TreeState* state, int type);
+
 
     /* Highlight */
     void highlightPrevious();

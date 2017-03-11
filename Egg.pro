@@ -39,9 +39,6 @@ SOURCES += MainWindow/main.cpp\
     Utilities/Command/itreestateremove.cpp \
     Utilities/Command/ctreestatedetachnodebutsavechildren.cpp \
     Utilities/Command/ctreestatesurroundwithcutasgroup.cpp \
-    HistoryStack/historystack.cpp \
-    HistoryTree/historytree.cpp \
-    HistoryTree/historytreenode.cpp \
     ProofTree/prooftree.cpp \
     ProofTree/prooftreenode.cpp
 
@@ -79,9 +76,6 @@ HEADERS  += MainWindow/mainwindow.h \
     Utilities/Command/ctreestatedetachnodebutsavechildren.h \
     Utilities/Command/ctreestatepounce.h \
     Utilities/Command/ctreestatesurroundwithcutasgroup.h \
-    HistoryStack/historystack.h \
-    HistoryTree/historytree.h \
-    HistoryTree/historytreenode.h \
     ProofTree/prooftree.h \
     ProofTree/prooftreenode.h
 
