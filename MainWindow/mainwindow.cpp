@@ -4,6 +4,8 @@
 #include "Tree/treestate.h"
 #include "Utilities/Command/allcommands.h"
 
+#include "PolishInputWidget/polishinputwidget.h"
+
 #include <QDebug>
 #include <QTimer>
 
@@ -117,6 +119,13 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
         command = new CTreeStateHighlightLeft(currentTree);
         commandInvoker.runCommand(command);
         break;
+    case Qt::Key_I:
+    {
+        qDebug() << "I is pressed";
+        PolishInputWidget* widget = new PolishInputWidget();
+        widget->show();
+        break;
+    }
     case Qt::Key_L:
         qDebug() << "L is pressed";
         command = new CTreeStateHighlightRight(currentTree);

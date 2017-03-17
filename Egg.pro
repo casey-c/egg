@@ -40,7 +40,8 @@ SOURCES += MainWindow/main.cpp\
     Utilities/Command/ctreestatedetachnodebutsavechildren.cpp \
     Utilities/Command/ctreestatesurroundwithcutasgroup.cpp \
     ProofTree/prooftree.cpp \
-    ProofTree/prooftreenode.cpp
+    ProofTree/prooftreenode.cpp \
+    PolishInputWidget/polishinputwidget.cpp
 
 HEADERS  += MainWindow/mainwindow.h \
     Utilities/constants.h \
@@ -77,10 +78,12 @@ HEADERS  += MainWindow/mainwindow.h \
     Utilities/Command/ctreestatepounce.h \
     Utilities/Command/ctreestatesurroundwithcutasgroup.h \
     ProofTree/prooftree.h \
-    ProofTree/prooftreenode.h
+    ProofTree/prooftreenode.h \
+    PolishInputWidget/polishinputwidget.h
 
 FORMS    += MainWindow/mainwindow.ui \
-    TreeDisplayWidget/treedisplaywidget.ui
+    TreeDisplayWidget/treedisplaywidget.ui \
+    PolishInputWidget/polishinputwidget.ui
 
 INCLUDEPATH += $$PWD
 
