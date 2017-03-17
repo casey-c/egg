@@ -30,11 +30,15 @@ private:
     PolishNode* polishRoot;
     TreeNode* eggRoot;
 
-    QStack<PolishNode*> stack;
+    QStack<PolishNode*> polishStack;
+    QStack<TreeNode*> eggStack;
     bool wff;
 
     void addNArityNode(int arity, QString text);
     void redraw();
+
+signals:
+    void sendCompletedFormula(TreeNode* root);
 };
 
 #endif // POLISHINPUTWIDGET_H

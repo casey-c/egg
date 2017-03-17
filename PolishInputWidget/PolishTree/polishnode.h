@@ -11,6 +11,9 @@ public:
     static PolishNode* makeRoot(QString t, bool o)
     { return new PolishNode(nullptr, t, o, false); }
 
+    /* Destructor */
+    ~PolishNode();
+
     /* Create and update new nodes */
     PolishNode* makeNewChild();
     void setDetails(QString t, bool o);
