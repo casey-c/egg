@@ -123,6 +123,13 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
     {
         qDebug() << "I is pressed";
         PolishInputWidget* widget = new PolishInputWidget();
+
+        // Connect it up
+        connect( widget,
+                 SIGNAL(sendCompletedFormula(TreeNode*)),
+                 this,
+                 SLOT(insertFromFormula(TreeNode*)));
+
         widget->show();
         break;
     }
@@ -456,4 +463,15 @@ void MainWindow::updateUndoMenu(QString undo, QString redo, QString repeat,
 
     ui->actionRepeat->setEnabled(repeatable);
     ui->actionRepeat->setText(repeat);
+}
+
+void MainWindow::insertFromFormula(TreeNode *root)
+{
+    qDebug() << "Received a root node";
+    for (TreeNode* node : root->getChildren())
+        currentTree->move(node, currentTree->getHighlighted());
+
+    delete root;
+
+    currentTree->redraw();
 }

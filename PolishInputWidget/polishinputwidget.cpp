@@ -12,7 +12,12 @@ PolishInputWidget::PolishInputWidget(QWidget *parent) :
     wff(false)
 {
     ui->setupUi(this);
+
+    // Remove min/maximize buttons
     QWidget::setWindowFlags(Qt::Dialog);
+
+    // Make sure we call the destructor on close()
+    setAttribute(Qt::WA_DeleteOnClose);
 }
 
 /*
@@ -21,6 +26,10 @@ PolishInputWidget::PolishInputWidget(QWidget *parent) :
 PolishInputWidget::~PolishInputWidget()
 {
     delete ui;
+
+    // Get rid of the allocated polish nodes
+    if (polishRoot != nullptr)
+        delete polishRoot;
 }
 
 /*
@@ -35,15 +44,54 @@ void PolishInputWidget::addNArityNode(int arity, QString t)
     if (polishRoot == nullptr)
     {
         polishRoot = PolishNode::makeRoot(t, o);
+        eggRoot = new TreeNode();
 
+        // Make the polish children
         for (int i = 0; i < arity; ++i)
-            stack.push(polishRoot->makeNewChild());
+            polishStack.push(polishRoot->makeNewChild());
+
+        // Make the egg children
+        if (QString::compare(t, "∧") == 0) // AND
+        {
+            eggStack.push(eggRoot);
+            eggStack.push(eggRoot);
+        }
+        else if (QString::compare(t, "∨") == 0) // OR
+        {
+            TreeNode* outer = eggRoot->addChildCut();
+            eggStack.push(outer->addChildCut());
+            eggStack.push(outer->addChildCut());
+        }
+        else if (QString::compare(t, "¬") == 0) // NOT
+        {
+            eggStack.push(eggRoot->addChildCut());
+        }
+        else if (QString::compare(t, "→") == 0) // CONDITIONAL
+        {
+            TreeNode* outer = eggRoot->addChildCut();
+            eggStack.push(outer->addChildCut());
+            eggStack.push(outer);
+        }
+        else if (QString::compare(t, "↔") == 0) // BICONDITIONAL
+        {
+            TreeNode* outerRight = eggRoot->addChildCut();
+            TreeNode* outerLeft = eggRoot->addChildCut();
+
+            eggStack.push(outerRight);
+            eggStack.push(outerRight->addChildCut());
+            eggStack.push(outerLeft);
+            eggStack.push(outerLeft->addChildCut());
+        }
+        else if (arity == 0) // Literals
+        {
+            eggRoot->addChildStatement(t);
+        }
 
         // Redraw the plaintext
         redraw();
 
-        // We already have a WFF
-        if (stack.isEmpty())
+        // We've already have a WFF (i.e., added a literal only)
+        if (polishStack.isEmpty())
         {
             wff = true;
             ui->add_button->setEnabled(true);
@@ -54,34 +102,75 @@ void PolishInputWidget::addNArityNode(int arity, QString t)
         return;
     }
 
-    // We already have a WFF
-    if (stack.isEmpty())
+    // We already have a WFF, so time to start a fresh one
+    if (polishStack.isEmpty())
     {
         qDebug() << "Clearing root";
         ui->add_button->setEnabled(false);
         wff = false;
 
-        // Delete the root
+        // Delete the roots
         delete polishRoot;
         polishRoot = nullptr;
+        delete eggRoot;
+        eggRoot = nullptr;
 
         // Recall this function
         addNArityNode(arity, t);
         return;
     }
 
-    // Pop, set, and add
-    PolishNode* node = stack.pop();
-    node->setDetails(t, o);
+    // Pop, set, and add for polish
+    PolishNode* poleNode = polishStack.pop();
+    poleNode->setDetails(t, o);
 
+    // Add the polish children
     for (int i = 0; i < arity; ++i)
-        stack.push(node->makeNewChild());
+        polishStack.push(poleNode->makeNewChild());
+
+    // Pop, set, and add for egg
+    TreeNode* eggNode = eggStack.pop();
+    if (QString::compare(t, "∧") == 0) // AND
+    {
+        eggStack.push(eggNode);
+        eggStack.push(eggNode);
+    }
+    else if (QString::compare(t, "∨") == 0) // OR
+    {
+        TreeNode* outer = eggNode->addChildCut();
+        eggStack.push(outer->addChildCut());
+        eggStack.push(outer->addChildCut());
+    }
+    else if (QString::compare(t, "¬") == 0) // NOT
+    {
+        eggStack.push(eggNode->addChildCut());
+    }
+    else if (QString::compare(t, "→") == 0) // CONDITIONAL
+    {
+        TreeNode* outer = eggNode->addChildCut();
+        eggStack.push(outer->addChildCut());
+        eggStack.push(outer);
+    }
+    else if (QString::compare(t, "↔") == 0) // BICONDITIONAL
+    {
+        TreeNode* outerRight = eggNode->addChildCut();
+        TreeNode* outerLeft = eggNode->addChildCut();
+
+        eggStack.push(outerRight);
+        eggStack.push(outerRight->addChildCut());
+        eggStack.push(outerLeft);
+        eggStack.push(outerLeft->addChildCut());
+    }
+    else if (arity == 0) // Literals
+    {
+        eggNode->addChildStatement(t);
+    }
 
     // Redraw the plaintext
     redraw();
 
     // Check if well-formed
-    if (stack.isEmpty())
+    if (polishStack.isEmpty())
     {
         wff = true;
         ui->add_button->setEnabled(true);
@@ -136,8 +225,9 @@ void PolishInputWidget::keyPressEvent(QKeyEvent *event)
 
 void PolishInputWidget::on_add_button_clicked()
 {
-    if (wff)
-        qDebug() << "Well formed!";
-    else
-        qDebug() << "Not well formed!";
+    qDebug() << "Well formed!";
+
+    // Make the tree update here
+    emit(sendCompletedFormula(eggRoot));
+    this->close();
 }

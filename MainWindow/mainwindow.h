@@ -48,6 +48,8 @@ public slots:
     void updateUndoMenu(QString undo, QString redo, QString repeat,
                         bool undoable, bool redoable, bool repeatable);
 
+    void insertFromFormula(TreeNode* root);
+
 };
 
 #endif // MAINWINDOW_MAINWINDOW_H

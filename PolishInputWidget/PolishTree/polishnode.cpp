@@ -1,5 +1,19 @@
 #include "polishnode.h"
 
+
+///////////////
+/// Destroy ///
+///////////////
+
+/*
+ * Recursively clean up memory
+ */
+PolishNode::~PolishNode()
+{
+    for (PolishNode* child : children)
+        delete child;
+}
+
 /////////////////////////
 /// Create and update ///
 /////////////////////////
