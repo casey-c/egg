@@ -89,6 +89,9 @@
          <pointsize>12</pointsize>
         </font>
        </property>
+       <property name="text">
+        <string>___</string>
+       </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
        </property>
@@ -120,7 +123,7 @@
       </widget>
      </item>
      <item row="2" column="0" colspan="2">
-      <widget class="QPushButton" name="pushButton_3">
+      <widget class="QPushButton" name="add_button">
        <property name="enabled">
         <bool>false</bool>
        </property>
