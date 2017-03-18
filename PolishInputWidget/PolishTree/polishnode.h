@@ -2,7 +2,7 @@
 #define POLISHNODE_H
 
 #include <QString>
-#include <Qlist>
+#include <QList>
 
 class PolishNode
 {

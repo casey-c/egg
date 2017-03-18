@@ -37,6 +37,8 @@ private:
     void addNArityNode(int arity, QString text);
     void redraw();
 
+    bool closeEarly;
+
 signals:
     void sendCompletedFormula(TreeNode* root);
 };

@@ -9,7 +9,8 @@ PolishInputWidget::PolishInputWidget(QWidget *parent) :
     ui(new Ui::PolishInputWidget),
     polishRoot(nullptr),
     eggRoot(nullptr),
-    wff(false)
+    wff(false),
+    closeEarly(true)
 {
     ui->setupUi(this);
 
@@ -30,6 +31,10 @@ PolishInputWidget::~PolishInputWidget()
     // Get rid of the allocated polish nodes
     if (polishRoot != nullptr)
         delete polishRoot;
+
+    // Not handled in main window, so we'll delete any egg nodes here
+    if (closeEarly && eggRoot != nullptr)
+        delete eggRoot;
 }
 
 /*
@@ -204,30 +209,34 @@ void PolishInputWidget::keyPressEvent(QKeyEvent *event)
     {
     case Qt::Key_Ampersand:
         addNArityNode(2, "∧");
-        break;
+        return;
     case Qt::Key_Bar:
         addNArityNode(2, "∨");
-        break;
+        return;
     case Qt::Key_AsciiTilde:
         addNArityNode(1, "¬");
-        break;
+        return;
     case Qt::Key_Dollar:
         addNArityNode(2, "→");
-        break;
+        return;
     case Qt::Key_Percent:
         addNArityNode(2, "↔");
-        break;
+        return;
+    case Qt::Key_Escape:
+        close();
+        return;
     default:
         QWidget::keyPressEvent(event);
-        break;
+        return;
     }
 }
 
 void PolishInputWidget::on_add_button_clicked()
 {
     qDebug() << "Well formed!";
+    closeEarly = false; // a little flag for our closeEvent() to not delete here
 
-    // Make the tree update here
+    // Send info to make the Tree update, also will clean up that memory
     emit(sendCompletedFormula(eggRoot));
     this->close();
 }

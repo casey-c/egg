@@ -472,6 +472,5 @@ void MainWindow::insertFromFormula(TreeNode *root)
         currentTree->move(node, currentTree->getHighlighted());
 
     delete root;
-
     currentTree->redraw();
 }
