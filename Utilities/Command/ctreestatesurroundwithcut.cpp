@@ -3,11 +3,14 @@
 /* Surrounds with cut */
 bool CTreeStateSurroundWithCut::execute()
 {
-    node = tree->getSelected();
-    cut = tree->surroundWithCut();
+    // Surround all the selected nodes with cuts, if possible
+    tree->surroundWithCut();
 
-    // Couldn't surround with cut
-    if (cut == NULL)
+    // Determine which nodes we surrounded
+    addedCuts = tree->popRecentNodes();
+
+    // Check if we did anything
+    if (addedCuts.isEmpty())
         return false;
 
     tree->redraw();
@@ -17,25 +20,10 @@ bool CTreeStateSurroundWithCut::execute()
 /* Moves the inside node back to the parent and deletes the cut */
 void CTreeStateSurroundWithCut::undo()
 {
-    // No cut was performed, so nothing to undo!
-    if (cut == NULL)
-        return;
+    // Revert the changes by deleting the cuts and moving the nodes to the
+    // cuts' parents
+    for (TreeNode* node : addedCuts)
+        tree->removeAndSaveOrphans(node);
 
-    // Perform the move
-    TreeNode* parent = cut->getParent();
-    tree->move(node,parent);
-
-    // Delete the cut
-    tree->selectSpecific(cut);
-    tree->removeAndBurnTheOrphanage();
-
-    // Reselect the proper node and redraw
-    tree->selectSpecific(node);
     tree->redraw();
-}
-
-/* Copy */
-ICommand* CTreeStateSurroundWithCut::copy()
-{
-    return new CTreeStateSurroundWithCut(tree);
 }

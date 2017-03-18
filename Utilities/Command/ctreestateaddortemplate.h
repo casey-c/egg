@@ -1,30 +1,27 @@
 #ifndef CTREESTATEADDORTEMPLATE_H
 #define CTREESTATEADDORTEMPLATE_H
 
-#include "Tree/treenode.h"
-#include "Tree/treestate.h"
+#include "itreestateadd.h"
 
 /*
  * This command adds an or template to a Tree State
  */
-class CTreeStateAddOrTemplate : public ICommand
+class CTreeStateAddOrTemplate : public ITreeStateAdd
 {
 public:
     /* Constructor */
-    CTreeStateAddOrTemplate(TreeState* t) :
-        tree(t) { text = "Add OR template"; }
+    CTreeStateAddOrTemplate(TreeState* t) {
+        text = "Add OR template";
+        tree = t;}
 
     /* Destructor */
     ~CTreeStateAddOrTemplate() {}
 
-    bool execute();
-    void undo();
+    /* Override the add() function of the ITreeStateAdd interface */
+    void add() { tree->addOrTemplate(); }
 
-    ICommand* copy();
-
-private:
-    TreeState* tree;
-    TreeNode* node;
+    /* Override the copy() function of the ICommand interface */
+    ICommand* copy() { return new CTreeStateAddOrTemplate(tree); }
 };
 
 #endif // CTREESTATEADDORTEMPLATE_H

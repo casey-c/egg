@@ -21,6 +21,7 @@ public:
 private:
     Ui::MainWindow *ui;
     TreeState* currentTree;
+    TreeState* copiedTree; // For debugging copy constructor, to be removed
     TreeDisplayWidget* treeDisplayWidget;
 
     /* Commands */
@@ -30,15 +31,24 @@ private:
     int keybindMode;
 
     /* Key press handlers */
-    void keyPressEvent(QKeyEvent *event);
-    void handleKeyPressDefault(QKeyEvent *event);
-    void handleKeyPressQ(QKeyEvent *event);
+    void keyPressEvent(QKeyEvent* event);
+    void handleKeyPressDefault(QKeyEvent* event);
+    void handleKeyPressQ(QKeyEvent* event);
+    void handleKeyPressSelect(QKeyEvent* event);
+    void handleKeyPressPounce(QKeyEvent* event);
+
+    /* Pounce */
+    bool typedOne;
+    QString pounceTarget;
 
 private slots:
     void endTimer();
+
 public slots:
     void updateUndoMenu(QString undo, QString redo, QString repeat,
                         bool undoable, bool redoable, bool repeatable);
+
+    void insertFromFormula(TreeNode* root);
 
 };
 

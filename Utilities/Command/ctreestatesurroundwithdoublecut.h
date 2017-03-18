@@ -1,6 +1,8 @@
 #ifndef CTREESTATESURROUNDWITHDOUBLECUT_H
 #define CTREESTATESURROUNDWITHDOUBLECUT_H
 
+#include <QList>
+
 #include "Tree/treestate.h"
 #include "Tree/treenode.h"
 
@@ -17,14 +19,14 @@ public:
     bool execute();
     void undo();
 
-    ICommand* copy();
+    ICommand* copy() { return new CTreeStateSurroundWithDoubleCut(tree); }
 
 private:
     TreeState* tree;
-    TreeNode* node;
 
-    TreeNode* outerCut;
-    TreeNode* innerCut;
+    TreeNode* prevHighlighted;
+    QList<TreeNode*> addedOuterCuts;
+    QList<TreeNode*> addedInnerCuts;
 };
 
 #endif // CTREESTATESURROUNDWITHDOUBLECUT_H

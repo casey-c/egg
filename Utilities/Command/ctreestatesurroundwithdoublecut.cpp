@@ -1,42 +1,40 @@
 #include "ctreestatesurroundwithdoublecut.h"
 
-/* Surrounds with double cut */
+/* Surrounds everything in the selection with double cuts */
 bool CTreeStateSurroundWithDoubleCut::execute()
 {
-    node = tree->getSelected();
-    outerCut = tree->surroundWithCut();
+    // Remember the old highlighted
+    prevHighlighted = tree->getHighlighted();
 
-    // Couldn't surround with cut
-    if (outerCut == NULL)
+    // Surround the selection with cuts
+    tree->surroundWithCut();
+    addedInnerCuts = tree->popRecentNodes();
+
+    // Check if anything was added
+    if (addedInnerCuts.isEmpty())
         return false;
 
-    innerCut = tree->surroundWithCut();
+    // Surround the new cuts with cuts of their own
+    for (TreeNode* node : addedInnerCuts)
+        tree->selectSpecific(node);
+
+    tree->surroundWithCut();
+    addedOuterCuts = tree->popRecentNodes();
+
     tree->redraw();
     return true;
 }
 
-/* Moves the inside node back to its grandparent and deletes both cuts */
+/* Removes any added double cuts */
 void CTreeStateSurroundWithDoubleCut::undo()
 {
-    // Didn't make any cuts
-    if (outerCut == NULL || innerCut == NULL)
-        return;
+    tree->highlightSpecific(prevHighlighted);
 
-    // Perform the move
-    TreeNode* grandparent = outerCut->getParent();
-    tree->move(node,grandparent);
+    for (TreeNode* node : addedInnerCuts)
+        tree->removeAndSaveOrphans(node);
 
-    // Delete the cuts
-    tree->selectSpecific(outerCut);
-    tree->removeAndBurnTheOrphanage();
+    for (TreeNode* node : addedOuterCuts)
+        tree->removeAndSaveOrphans(node);
 
-    // Reselect the proper node and redraw
-    tree->selectSpecific(node);
     tree->redraw();
-}
-
-/* Copy */
-ICommand* CTreeStateSurroundWithDoubleCut::copy()
-{
-    return new CTreeStateSurroundWithDoubleCut(tree);
 }

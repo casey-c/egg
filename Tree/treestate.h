@@ -11,65 +11,123 @@
  * region and handling a modify command), which will handle any substantial
  * changes within the graph.
  *
- * The constructor makes a new root node and selects it.
+ * The constructor makes a new root node and highlights it.
  *
- * Change selection will update the selected tree node (which will serve as
- * the source of modifications, additions, and removals).
+ * There are a couple of concepts to understand before working with a TreeState:
  *
- * Additions will try and add a child of a specific type to the selected
- * region. If the selected region is a statement (which is not allowed to have
- * children of its own), then the addition will add it as a child of the
- * selected region's parent (i.e. make it a new sibling to the selected
- * statement).
+ * Highlight vs. Selection:
+ *      highlight: a single pointer indicating what the mouse is on / where the
+ *                 keyboard is, where the focus should be
+ *      selection: a collection of sibling nodes that act as an extension of the
+ *                 highlighted node; this enables operations to act on multiple
+ *                 nodes at once, instead of just the single highlighted node
  *
- * Removals come in two flavors: saveOrphans will transfer all of the selected
- * region's children to their grandparent; burnTheOrphanage will remove and kill
- * all of the selected region's children if they have any. In either case, the
- * selected region will be removed from the tree. Root elements are not allowed
- * to be removed.
+ *    * Both highlight and selection act similar; if nothing is selected, the
+ *      operations will all act on the highlighted node instead. Selections just
+ *      allow for multi-selection to repeat operations on many nodes. They are
+ *      also critical to the design of iterations and deiterations, which act
+ *      upon subgraphs as points of copy and erasure.
  *
- * Surround with cut simply adds a cut above the selected region in the tree.
+ * Basic operations (EDIT mode):
+ *      add:       builds the tree by adding nodes beneath the highlighted node
+ *                 or the selected nodes
+ *      highlight: moves the highlighted node, effectively handling a mouse move
+ *                 or a keyboard movement key press
+ *      select:    changes the selection list; makes sure we don't violate any
+ *                 of the restrictions imposed upon selection
+ *      remove:    permanently deleting a node from the tree - this is
+ *                 unrecoverable, and is used after undoing an add call
+ *      detach:    similar to remove, however the node isn't actually deleted,
+ *                 a pointer to the detached node is stored in a command
+ *                 somewhere. this is what is called through the detach commands
+ *                 (N key, M key) so that the processes are easily undoable and
+ *                 nodes don't have to be deleted and remade often; just detach
+ *                 and move back into place
+ *      move:      essentially changes the parent of a treenode, making it move
+ *                 on the tree structure. there's some logic to ensure the tree
+ *                 integrity isn't violated (so can't move a root down the tree
+ *                 or anything silly like that)
+ *      surround:  for surrounding a selection with a cut or double cut
+ *
+ * Modification operations (MODIFICATION mode):
+ *      DC:        surround anything with a double cut, remove any double cut
+ *                 that surrounds a node (if the double cut is contiguous)
+ *      Insertion: enter EDIT mode on any odd level subgraph
+ *      Erasure:   detach anything on an even level subgraph
+ *      It/Deit:   copies the selectionList's subgraph into a valid new location
+ *                 or finds duplicates of it and removes them. these have some
+ *                 important restrictions too.
+ *
+ * Drawing:
+ *      boxprint:  draws the tree inside a box, using a recursive call to the
+ *                 corresponding drawing functions of tree nodes
+ *      pounce:    very similar to boxprint, except the node info themselves are
+ *                 replaced with the text strings that can be typed to pounce
+ *                 there (i.e. rapid movement for highlight through the
+ *                 keyboard alone) - based on vim plugin EasyMotion and chrome
+ *                 plugin vimium's link clicking functionality (F key)
  */
 class TreeState : public QObject
 {
     Q_OBJECT
 
 public:
-    TreeState(): root(new TreeNode()), selected(root){}
+    /* Constructor */
+    TreeState(): root(new TreeNode()), highlighted(root) {}
+
+    /* Copy Constructor */
     TreeState(TreeState* original):
-        root(new TreeNode(original->copyRoot())), selected(root){}
+        root(new TreeNode(original->root)), highlighted(root){}
+
+    /* Destructor */
     ~TreeState();
 
-    /* Change selection */
-    void selectAChild();
-    void selectParent();
-    void selectRoot();
-    void selectLeftSibling();
-    void selectRightSibling();
+    /* Highlighted */
+    void highlightChild();
+    void highlightParent();
+    void highlightRoot();
 
+    void highlightRightSibling();
+    void highlightLeftSibling();
+    void highlightSpecific(TreeNode* node);
+
+    TreeNode* getHighlighted() { return highlighted; }
+
+    /* Selection */
     void selectSpecific(TreeNode* node);
+    void selectHighlighted();
+    void selectChildrenOfHighlighted();
 
-    /* TODO: multiple selection? */
+    void clearSelection();
+    void deselectNode(TreeNode* node);
+    void deselectHighlighted();
+
+    QList<TreeNode*> getSelectionList() { return selectionList; }
+    void setSelectionList(QList<TreeNode*> list) { selectionList = list; }
+
+    void revertSelectionList();
 
     /* Add */
-    TreeNode* addChildCut();
-    TreeNode* addChildDoubleCut();
-    TreeNode* addChildStatement(QString s);
+    void addChildCut();
+    void addChildDoubleCut();
+    void addChildStatement(QString s);
 
-    TreeNode* addOrTemplate();
-    TreeNode* addConditionalTemplate();
+    void addOrTemplate();
+    void addConditionalTemplate();
+    void addBiconditionalTemplate();
 
     /* Remove */
-    void removeAndSaveOrphans();
-    void removeAndBurnTheOrphanage();
+    void removeAndSaveOrphans(TreeNode* target);
+    void removeAndBurnTheOrphanage(TreeNode* target);
 
-    /* Copy */
-    static TreeState* copyState(TreeState* currentTree);
-    TreeNode* copyRoot(){ return new TreeNode(this->root); }
+    void detachNode(TreeNode* target);
+    void detachNodes();
+    void detachNodeAndMoveOrphans();
 
     /* Surround with cut */
-    TreeNode* surroundWithCut();
+    void surroundWithCut();
     void surroundWithDoubleCut();
+    void surroundWithCutAsGroup();
 
     /* Move */
     void move(TreeNode* target, TreeNode* targetParent);
@@ -77,8 +135,10 @@ public:
     /* Modification mode */
     TreeState* doubleCutRemoval();
     TreeState* doubleCutAddition();
+
     void setIterationTarget();
-    TreeNode* getIterationTarget() { return iterationTarget; }
+    QList<TreeNode*> getIterationTarget() { return iterationList; }
+
     TreeState* performIteration();
     TreeState* performDeiteration();
 
@@ -88,18 +148,37 @@ public:
     /* Update any views */
     void redraw();
 
-    /* For selection commands */
-    TreeNode* getSelected() { return selected; }
+    /* Command helpers */
+    QList<TreeNode*> popRecentNodes();
+    QList<TreeNode*> popRecentParents();
+    QList< QList<TreeNode*> > popRecentChildren();
+
+    /* Pounce */
+    void setPounceIDs();
+    void drawPounceTree();
+    void pounceTo(QString target);
+    QString getPounceString();
 
 signals:
     void treeChanged(QString s);
 
 private:
     TreeNode* root;
-    TreeNode* selected; /* TODO: List<> for multi-select? */
 
-    TreeNode* iterationTarget;
+    /* Multiselect */
+    QList<TreeNode*> selectionList; // All nodes selected
+    QList<TreeNode*> prevSelection; // For reverting to the last selection
+    TreeNode* highlighted; // Node underneath the cursor
 
+    /* Command helpers */
+    QList<TreeNode*> recentUpdatedNodes;
+    QList<TreeNode*> recentParents;
+    QList< QList<TreeNode*> > recentListsOfChildren; // yikes man
+
+    /* Modification mode helper */
+    QList<TreeNode*> iterationList;
+
+    /* Visual tree */
     QString getFormattedString();
 };
 

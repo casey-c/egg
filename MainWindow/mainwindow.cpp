@@ -4,12 +4,15 @@
 #include "Tree/treestate.h"
 #include "Utilities/Command/allcommands.h"
 
+#include "PolishInputWidget/polishinputwidget.h"
+
 #include <QDebug>
 #include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
+    copiedTree(NULL),
     keybindMode(constants::MODE_DEFAULT)
 {
     ui->setupUi(this);
@@ -85,11 +88,13 @@ void MainWindow::endTimer()
  */
 void MainWindow::handleKeyPressDefault(QKeyEvent *event)
 {
+    qDebug() << "Key pressed: " << event->text();
     ICommand* command;
 
     // A-F will add that letter as a statement
     if (event->key() >= 65 && event->key() <= 70)
     {
+        qDebug() << "Pressed A-F";
         command = new CTreeStateAddStatement(currentTree,
                                              event->text().at(0).toUpper());
         commandInvoker.runCommand(command);
@@ -101,30 +106,57 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
     {
     case Qt::Key_J:
         qDebug() << "J is pressed";
-        command = new CTreeStateSelectAChild(currentTree);
+        command = new CTreeStateHighlightChild(currentTree);
         commandInvoker.runCommand(command);
         break;
     case Qt::Key_K:
         qDebug() << "K is pressed";
-        command = new CTreeStateSelectParent(currentTree);
+        command = new CTreeStateHighlightParent(currentTree);
         commandInvoker.runCommand(command);
         break;
     case Qt::Key_H:
         qDebug() << "H is pressed";
-        command = new CTreeStateSelectLeft(currentTree);
+        command = new CTreeStateHighlightLeft(currentTree);
         commandInvoker.runCommand(command);
         break;
+    case Qt::Key_I:
+    {
+        qDebug() << "I is pressed";
+        PolishInputWidget* widget = new PolishInputWidget();
+
+        // Connect it up
+        connect( widget,
+                 SIGNAL(sendCompletedFormula(TreeNode*)),
+                 this,
+                 SLOT(insertFromFormula(TreeNode*)));
+
+        widget->show();
+        break;
+    }
     case Qt::Key_L:
         qDebug() << "L is pressed";
-        command = new CTreeStateSelectRight(currentTree);
+        command = new CTreeStateHighlightRight(currentTree);
+        commandInvoker.runCommand(command);
+        break;
+    case Qt::Key_M:
+        qDebug() << "M is pressed";
+        command = new CTreeStateDetachNodeButSaveChildren(currentTree);
+        commandInvoker.runCommand(command);
+        break;
+    case Qt::Key_N:
+        qDebug() << "N is pressed";
+        command = new CTreeStateDetachNode(currentTree);
         commandInvoker.runCommand(command);
         break;
     case Qt::Key_O:
         qDebug() << "O is pressed";
-        command = new CTreeStateSurroundWithCut(currentTree);
+        if (QString::compare(event->text(), "O"))
+            command = new CTreeStateSurroundWithCutAsGroup(currentTree);
+        else
+            command = new CTreeStateSurroundWithCut(currentTree);
         commandInvoker.runCommand(command);
         break;
-    case Qt::Key_P:
+    case Qt::Key_P: // TODO: change this to a group maybe
         qDebug() << "P is pressed";
         command = new CTreeStateSurroundWithDoubleCut(currentTree);
         commandInvoker.runCommand(command);
@@ -138,6 +170,10 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
         qDebug() << "R is pressed.";
         command = new CTreeStateAddConditionalTemplate(currentTree);
         commandInvoker.runCommand(command);
+        break;
+    case Qt::Key_S:
+        qDebug() << "S is pressed.";
+        keybindMode = constants::MODE_SELECT; // Enter select mode
         break;
     case Qt::Key_T:
         qDebug() << "T is pressed";
@@ -167,6 +203,36 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
         command = new CTreeStateAddDoubleCut(currentTree);
         commandInvoker.runCommand(command);
         break;
+    case Qt::Key_1: // DEBUG: copy the current tree
+    {
+        qDebug() << "1 is pressed";
+        if (copiedTree != NULL)
+            delete copiedTree;
+
+        copiedTree = new TreeState(currentTree);
+        break;
+    }
+    case Qt::Key_2: // DEBUG: swap between copied tree and current tree
+    {
+        qDebug() << "2 is pressed";
+
+        // Disconnect the old tree
+        currentTree->disconnect();
+
+        // Swap connections
+        TreeState* temp = currentTree;
+        currentTree = copiedTree;
+        copiedTree = temp;
+
+        // Reconnect the proper tree
+        QObject::connect(currentTree,
+                         SIGNAL(treeChanged(QString)),
+                         treeDisplayWidget,
+                         SLOT(updateText(QString)));
+
+        currentTree->redraw();
+        break;
+    }
     case Qt::Key_0:
         qDebug() << "0 is pressed";
         delete(currentTree);
@@ -183,8 +249,14 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
         break;
     case Qt::Key_Semicolon:
         qDebug() << "; is pressed";
-        command = new CTreeStateSelectRoot(currentTree);
+        command = new CTreeStateHighlightRoot(currentTree);
         commandInvoker.runCommand(command);
+        break;
+    case Qt::Key_BracketLeft:
+        qDebug() << "[ is pressed";
+        keybindMode = constants::MODE_POUNCE;
+        currentTree->setPounceIDs();
+        currentTree->drawPounceTree();
         break;
     default:
         QMainWindow::keyPressEvent(event);
@@ -222,11 +294,137 @@ void MainWindow::handleKeyPressQ(QKeyEvent *event)
 }
 
 /*
+ * Handle a key press in Select mode.
+ *
+ * Select mode gives alternate controls to the W,A,X, and D keys
+ *
+ * Controls:
+ *      A: selects all children of the highlighted node
+ *      C: clears the selection
+ *      D: deselects the highlighted node
+ *      F: selects the highlighted node
+ *      S: exits select mode back to default mode
+ */
+void MainWindow::handleKeyPressSelect(QKeyEvent *event)
+{
+    ICommand* command;
+
+    switch (event->key())
+    {
+    case Qt::Key_A:
+        command = new CTreeStateSelectChildren(currentTree);
+        commandInvoker.runCommand(command);
+        break;
+    case Qt::Key_C:
+        command = new CTreeStateClearSelection(currentTree);
+        commandInvoker.runCommand(command);
+        break;
+    case Qt::Key_D:
+        command = new CTreeStateDeselectHighlighted(currentTree);
+        commandInvoker.runCommand(command);
+        break;
+    case Qt::Key_F:
+        command = new CTreeStateSelectHighlighted(currentTree);
+        commandInvoker.runCommand(command);
+        break;
+    case Qt::Key_R:
+        command = new CTreeStateRevertSelection(currentTree);
+        commandInvoker.runCommand(command);
+        break;
+    case Qt::Key_S:
+        keybindMode = constants::MODE_DEFAULT;
+        break;
+    default:
+        QMainWindow::keyPressEvent(event);
+    }
+
+}
+
+/*
+ * Pounce mode:
+ *
+ * After pressing [ for the first time, the application enters pounce mode.
+ * This redraws the tree with two letter identifiers enabling rapid movement.
+ *
+ * In pounce mode, the first letter typed is saved in the pounce target. After
+ * entering a second letter, the total string is sent to the tree to see if it
+ * can highlight the node with that particular pounce string.
+ *
+ * The app reverts back to default mode after the second key press, regardless
+ * of whether or not the pounce was successful.
+ *
+ * As of right now, pouncing is limited to a total of 32 possible nodes: these
+ * are obtained through combinations of ASDF and JKL; keys, one from each set.
+ * I chose these keys because they are the default positions for the fingers,
+ * and I made pounce work by selecting one letter from each hand. I can extend
+ * this easily by adding any other letters (G and H are the most likely
+ * additions) or removing the restriction that one bit must come from each hand.
+ *
+ * This choice was mostly personal preference: I find it easy to type AJ - a
+ * string that takes one key from each hand - as opposed to AA, which seems a
+ * little bit slower.
+ */
+void MainWindow::handleKeyPressPounce(QKeyEvent *event)
+{
+    QChar letter = (event->text())[0];
+
+    // Make sure the event is ok
+    switch (event->key())
+    {
+        case Qt::Key_A: break;
+        case Qt::Key_S: break;
+        case Qt::Key_D: break;
+        case Qt::Key_F: break;
+        case Qt::Key_J: break;
+        case Qt::Key_K: break;
+        case Qt::Key_L: break;
+        case Qt::Key_Semicolon: break;
+
+        default: return; // Invalid
+    }
+
+    qDebug() << "Typed " << letter;
+
+    if (!typedOne)
+    {
+        qDebug() << "This was the first key press";
+
+        // Reset the target and set the first key
+        pounceTarget = "";
+        pounceTarget += letter;
+
+        typedOne = true;
+    }
+    else
+    {
+        qDebug() << "This was the second key press";
+        typedOne = false;
+
+        pounceTarget += letter;
+        pounceTarget = pounceTarget.toUpper();
+
+        // Pounce to the string, if it exists
+        qDebug() << "Pouncing to " << pounceTarget;
+        ICommand* command = new CTreeStatePounce(currentTree, pounceTarget);
+        commandInvoker.runCommand(command);
+
+        // Reset the mode
+        keybindMode = constants::MODE_DEFAULT;
+        currentTree->redraw();
+    }
+
+
+
+}
+
+/*
  * All key presses go here first. The keybindMode will turn the event over to
  * the proper function for further processing.
  */
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
+    qDebug() << "Key pressed in mode " << keybindMode;
+
     // Handle key press based on mode
     switch (keybindMode)
     {
@@ -236,6 +434,14 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     case constants::MODE_Q:
         handleKeyPressQ(event);
         break;
+    case constants::MODE_SELECT:
+        handleKeyPressSelect(event);
+        break;
+    case constants::MODE_POUNCE:
+        handleKeyPressPounce(event);
+        break;
+    default:
+        QMainWindow::keyPressEvent(event);
     }
 
 }
@@ -257,4 +463,14 @@ void MainWindow::updateUndoMenu(QString undo, QString redo, QString repeat,
 
     ui->actionRepeat->setEnabled(repeatable);
     ui->actionRepeat->setText(repeat);
+}
+
+void MainWindow::insertFromFormula(TreeNode *root)
+{
+    qDebug() << "Received a root node";
+    for (TreeNode* node : root->getChildren())
+        currentTree->move(node, currentTree->getHighlighted());
+
+    delete root;
+    currentTree->redraw();
 }

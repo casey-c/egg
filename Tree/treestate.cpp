@@ -3,194 +3,668 @@
 
 TreeState::~TreeState()
 {
-    selected = NULL;
+    qDebug() << "Deleting this tree state";
     delete root;
+    qDebug() << "Successfully deleted root";
 }
 
-/* Selects the first child of the selected region, if it exists */
-void TreeState::selectAChild()
+/////////////////
+/// Highlight ///
+/////////////////
+
+/*
+ * Highlights a child of the current highlighted node, if it exists
+ */
+void TreeState::highlightChild()
 {
-    if (!selected->getChildren().isEmpty())
-        selected = selected->getChildren().first();
+    if (!highlighted->getChildren().isEmpty())
+            highlightSpecific(highlighted->getChildren().first());
 }
 
-/* Selects the parent of the selected node, if not already root. */
-void TreeState::selectParent()
+/*
+ * Highlights the parent of the current highlighted node
+ */
+void TreeState::highlightParent()
 {
-    if (!selected->isRoot())
-        selected = selected->getParent();
+    if (!highlighted->isRoot())
+        highlightSpecific(highlighted->getParent());
 }
 
 
-/* Recursively selects the parent of the selection until we reach root */
-void TreeState::selectRoot()
+/*
+ * Highlights the root node
+ */
+void TreeState::highlightRoot()
 {
-    while (!selected->isRoot())
-        selected = selected->getParent();
+    highlightSpecific(root);
 }
 
-/* Selects the previous sibling of the parent's getChildren list */
-void TreeState::selectLeftSibling()
+/*
+ * Highlights the left sibling of the current highlighted node
+ */
+void TreeState::highlightLeftSibling()
 {
-    /* Root doesn't have any siblings */
-    if (selected->isRoot())
+    // Root doesn't have any siblings
+    if (highlighted->isRoot())
         return;
 
-    /* List has the selected item and all its siblings */
-    QList<TreeNode*> list = selected->getParent()->getChildren();
+    // List contains the highlighted item and all its siblings
+    QList<TreeNode*> list = highlighted->getParent()->getChildren();
     TreeNode* previous = NULL;
 
-    for (TreeNode* prev : list)
+    // Look for a node to the left
+    for (TreeNode* curr : list)
     {
-        if (prev == selected)
+        if (curr == highlighted)
             break;
-        previous = prev;
+        previous = curr;
     }
 
-    /* Nothing to the left */
+    // Nothing to the left
     if (previous == NULL)
-       selected = list.last();
-    else /* Choose the previous as the new selection */
-        selected = previous;
-
-    emit treeChanged(getBoxedString());
+        highlightSpecific(list.last());
+    else // Highlight the node to the left
+        highlightSpecific(previous);
 }
 
-/* Select the next right sibling */
-void TreeState::selectRightSibling()
+/*
+ * Highlights the right sibling of the currently highlighted node
+ */
+void TreeState::highlightRightSibling()
 {
-    /* Root doesn't have any siblings */
-    if (selected->isRoot())
+    // Root doesn't have any siblings
+    if (highlighted->isRoot())
         return;
 
-    /* List has the selected item and all its siblings */
-    QList<TreeNode*> list = selected->getParent()->getChildren();
+    // List contains the highlighted node and all its siblings
+    QList<TreeNode*> list = highlighted->getParent()->getChildren();
 
     TreeNode* next = NULL;
     QList<TreeNode*>::const_reverse_iterator it = list.rbegin();
     for (; it != list.rend(); ++it)
     {
-        if (*it == selected)
+        if (*it == highlighted)
             break;
         next = *it;
     }
 
-    /* Nothing to the right */
+    // Nothing to the right
     if (next == NULL)
-       selected = list.front();
-    else /* Choose the next as the new selection */
-        selected = next;
-
-    emit treeChanged(getBoxedString());
+        highlightSpecific(list.front());
+    else // Found something to the right
+        highlightSpecific(next);
 }
 
-/* Select a node (used by commands) */
+/*
+ * Highlights a specific node
+ *
+ * Params:
+ *      node: the node to be highlighted
+ */
+void TreeState::highlightSpecific(TreeNode* node)
+{
+    highlighted = node;
+}
+
+/////////////////
+/// Selection ///
+/////////////////
+
+/*
+ * Adds a node to the selection. Selected nodes have some restrictions:
+ *
+ * All nodes in the selection list must be siblings of each other (they must
+ * have the same parent). This makes sure all selected nodes can be properly
+ * iterated if needed.
+ *
+ * If the parameter node is not a sibling of the existing selectionList, then
+ * the selectionList is cleared and updated to include only the newly added
+ * node.
+ *
+ * Params:
+ *      node: the node to be added to the selection.
+ */
 void TreeState::selectSpecific(TreeNode* node)
 {
-    selected = node;
+    // In any of these cases, the new node will replace the old selection
+    if (     selectionList.isEmpty() ||
+             selectionList.first()->isRoot() ||
+             node->isRoot() ||
+             node->getParent() != selectionList.first()->getParent())
+        clearSelection();
+
+    selectionList.append(node);
+    return;
 }
 
-/* Adds a cut to the selected node's children */
-TreeNode* TreeState::addChildCut()
+
+/*
+ * Adds the highlighted node to the current selection list
+ */
+void TreeState::selectHighlighted()
 {
-    selected = selected->addChildCut();
-    return selected;
+    selectSpecific(highlighted);
 }
 
-/* Adds a double cut to the selected region */
-TreeNode* TreeState::addChildDoubleCut()
+/*
+ * Selects all the children of the highlighted node, if they exist
+ *
+ * Params:
+ *      the node whose children we wish to select
+ */
+void TreeState::selectChildrenOfHighlighted()
 {
-    addChildCut();
-    return addChildCut();
+    clearSelection();
+
+    for (TreeNode* child : highlighted->getChildren())
+        selectSpecific(child);
 }
 
-/* Adds a child statement with the string s */
-TreeNode* TreeState::addChildStatement(QString s)
+/*
+ * Clears all selected nodes
+ */
+void TreeState::clearSelection()
 {
-    selected = selected->addChildStatement(s);
-    return selected;
+    prevSelection.clear();
+    prevSelection = selectionList;
+
+    selectionList.clear();
 }
 
-/* Adds an or template */
-TreeNode* TreeState::addOrTemplate()
+/*
+ * Deselects a specific node, if selected
+ *
+ * Params:
+ *      node: the node to remove selection from
+ */
+void TreeState::deselectNode(TreeNode *node)
 {
-    selected = selected->addChildCut();
-    selected->addChildCut();
-    selected = selected->addChildCut();
-    return selected;
+    selectionList.removeOne(node);
 }
 
-/* Adds a conditional template */
-TreeNode* TreeState::addConditionalTemplate()
+/*
+ * Deselects the highlighted node, if selected
+ */
+void TreeState::deselectHighlighted()
 {
-    selected = selected->addChildCut();
-    selected->addChildCut();
-    selected = selected->addChildPlaceholder();
-    return selected;
+    deselectNode(highlighted);
 }
 
-/* Remove the node, but give its children to their grandparent */
-void TreeState::removeAndSaveOrphans()
+/*
+ * Reverts the selection list to the last set before clear
+ */
+void TreeState::revertSelectionList()
 {
-    // Undefined behavior
-    if (selected->isRoot() || selected->isPlaceHolder())
+    QList<TreeNode*> list = selectionList;
+    selectionList.clear();
+
+    for (TreeNode* node : prevSelection)
+        if (!node->isDetached())
+            selectSpecific(node);
+            //selectionList.append(node);
+
+    prevSelection.clear();
+    prevSelection = list;
+}
+
+/////////////////////
+/// Add functions ///
+/////////////////////
+
+/*
+ * Adds a child cut to all nodes in the selection list. After doing so, the
+ * current selection is cleared but the highlighted node remains untouched.
+ */
+void TreeState::addChildCut()
+{
+    // With no selection, act on the highlighted node
+    if (selectionList.isEmpty())
+        selectionList.append(highlighted);
+
+    // Add child cuts to all selected nodes
+    for (TreeNode* node : selectionList)
+        recentUpdatedNodes.append(node->addChildCut());
+
+    // If we acted on the highlighted node, update the highlight
+    if (selectionList.size() == 1 && !recentUpdatedNodes.isEmpty())
+        highlighted = recentUpdatedNodes.first();
+
+    clearSelection();
+}
+
+/*
+ * Adds a double cut child to all nodes in the selection list. After doing so,
+ * the current selection is cleared but the highlighted node remains untouched.
+ */
+void TreeState::addChildDoubleCut()
+{
+    // With no selection, act on the highlighted node
+    if (selectionList.isEmpty())
+        selectionList.append(highlighted);
+
+    QList<TreeNode*> outerCuts;
+
+    // Add the outer cuts
+    for (TreeNode* node : selectionList)
+    {
+        TreeNode* outerCut = node->addChildCut();
+        outerCuts.append(outerCut);
+        recentUpdatedNodes.append(outerCut);
+    }
+
+    // Add the inner cuts
+    TreeNode* target = NULL;
+    for (TreeNode* node : outerCuts)
+        (target == NULL) ? target = node->addChildCut() : node->addChildCut();
+
+    // If we acted on the highlighted node, update the highlight
+    if (selectionList.size() == 1 && target != NULL)
+        highlighted = target;
+
+    clearSelection();
+}
+
+/*
+ * Adds a child statement to all nodes in the selection list. After doing so,
+ * the selection list is cleared but the highlighted node remains untouched.
+ *
+ * Params:
+ *      s: the string representation of the statement
+ */
+void TreeState::addChildStatement(QString s)
+{
+    // With no selection, act on the highlighted node
+    if (selectionList.isEmpty())
+        selectionList.append(highlighted);
+
+    // Add child statements to all selected nodes
+    for (TreeNode* node : selectionList)
+        recentUpdatedNodes.append(node->addChildStatement(s));
+
+    // If we acted on the highlighted node, update the highlight
+    if (selectionList.size() == 1 && !recentUpdatedNodes.isEmpty())
+        highlighted = recentUpdatedNodes.first();
+
+    clearSelection();
+}
+
+/*
+ * Adds an or template to all nodes in the selection list. After doing so, the
+ * selection list is cleared.
+ */
+void TreeState::addOrTemplate()
+{
+    // With no selection, act on the highlighted node
+    if (selectionList.isEmpty())
+        selectionList.append(highlighted);
+
+    // For updating highlighted region if solo-selected
+    TreeNode* firstInner;
+
+    // Add the or template to all selected nodes
+    for (TreeNode* node : selectionList)
+    {
+        TreeNode* outerCut = node->addChildCut();
+        recentUpdatedNodes.append(outerCut);
+
+        // Inner cuts
+        firstInner = outerCut->addChildCut();
+        outerCut->addChildCut();
+    }
+
+    // If we acted on the highlighted node, update the highlight
+    if (selectionList.size() == 1 && firstInner != NULL)
+        highlighted = firstInner;
+
+    clearSelection();
+}
+
+/*
+ * Adds a conditional template to all nodes in the selection list. After doing
+ * so, the selection list is cleared.
+ */
+void TreeState::addConditionalTemplate()
+{
+    // With no selection, act on the highlighted node
+    if (selectionList.isEmpty())
+        selectionList.append(highlighted);
+
+    // For updating highlighted region if solo-selected
+    TreeNode* placeholder;
+
+    // Add a conditional template to all selected nodes
+    for (TreeNode* node : selectionList)
+    {
+        TreeNode* outer = node->addChildCut();
+        recentUpdatedNodes.append(outer);
+
+        // Inner cut and placeholder
+        outer->addChildCut();
+        placeholder = outer->addChildPlaceholder();
+    }
+
+    // If we acted on the highlighted node, update the highlight
+    if (selectionList.size() == 1 && placeholder != NULL)
+        highlighted = placeholder;
+
+    clearSelection();
+}
+
+/*
+ * Adds a biconditional template to all nodes in the selection list. After doing
+ * so, the selection list is cleared.
+ */
+void TreeState::addBiconditionalTemplate()
+{
+    // With no selection, act on the highlighted node
+    if (selectionList.isEmpty())
+        selectionList.append(highlighted);
+
+    // For updating highlighted region if solo-selected
+    TreeNode* placeholder;
+
+    // Add biconditional template to all selected nodes
+    for (TreeNode* node : selectionList)
+    {
+        TreeNode* first = node->addChildCut();
+        TreeNode* second = node->addChildCut();
+
+        recentUpdatedNodes.append(first);
+        recentUpdatedNodes.append(second);
+
+        first->addChildCut();
+        placeholder = first->addChildPlaceholder();
+
+        second->addChildCut();
+        second->addChildPlaceholder();
+    }
+
+    // If we acted on the highlighted node, update the highlight
+    if (selectionList.size() == 1 && placeholder != NULL)
+        highlighted = placeholder;
+
+    clearSelection();
+}
+
+////////////////////////
+/// Remove functions ///
+////////////////////////
+
+/*
+ * Removes the target node, but transfers ownership of all its children to their
+ * grandparent. Saving the orphans means we won't delete any kids that the node
+ * has, but instead try to move them.
+ *
+ * Placeholder elements are always deleted and remade if neccessary. The call to
+ * parent->addChildPlaceholder() will not make a second placeholder if the
+ * parent already has one, as that function will enforce the one placeholder per
+ * node limit.
+ *
+ * Root elements cannot be removed through this function; they are taken care of
+ * only in the destructor.
+ *
+ * Params:
+ *      target: the node to be removed (its children are safely moved)
+ */
+void TreeState::removeAndSaveOrphans(TreeNode *target)
+{
+    // Root cannot be removed
+    if (target->isRoot())
         return;
 
-    // The grandparent who will inherit the orphans
-    TreeNode* grandparent = selected->getParent();
+    // The node who inherits the orphans
+    TreeNode* parent = target->getParent();
 
-    // Move the children
-    for (auto child : selected->getChildren())
-        TreeNode::move(child,grandparent);
+    // Placeholder logic
+    if (target->hasPlaceHolder())
+        parent->addChildPlaceholder();
 
-    // If the selected has a placeholder, but the grandparent doesn't yet
-    if (selected->hasPlaceHolder() && !grandparent->hasPlaceHolder())
-        grandparent->addChildPlaceholder();
+    // Save the children
+    for (TreeNode* orphan : target->getChildren())
+        TreeNode::move(orphan,parent);
 
-    // Delete and update the selected region
-    delete selected;
-    selected = grandparent;
+    // Update selection and highlight info if necessary
+    selectionList.removeOne(target);
+    if (highlighted == target)
+        highlighted = parent;
+
+    delete target;
 }
 
-/* Remove the selected node and any of its children */
-void TreeState::removeAndBurnTheOrphanage()
+/*
+ * Removes the target node, crashes the plane, and leaves no survivors (all
+ * children of the target node are lost).
+ *
+ * Params:
+ *      target: the node to be removed, and all its children lost
+ */
+void TreeState::removeAndBurnTheOrphanage(TreeNode *target)
 {
-    TreeNode* parent = selected->getParent();
-    delete selected;
-    selected = parent;
+    // Roots can't be removed (they are taken care of by the destructor)
+    if (target->isRoot())
+        return;
+
+    // Update selection and highlight info if necessary
+    selectionList.removeOne(target);
+    if (highlighted == target)
+        highlighted = target->getParent();
+
+    // They expect one of us in the wreckage, brother
+    delete target;
 }
 
-/* Surround with cut */
-TreeNode* TreeState::surroundWithCut()
+/*
+ * Detaches the target node. It doesn't delete it from memory, but stores it
+ * inside a command somewhere. This is the function that gets called on a remove
+ * command so that we only have to remember a single node pointer instead of an
+ * entire copied tree state. (Making the execute() function only need to detach
+ * a node while the undo() function only needs to reattach)
+ *
+ * Params:
+ *      target: the node that will be detached
+ */
+void TreeState::detachNode(TreeNode *target)
 {
-    // Roots and placeholders cannot be surrounded
-    if (selected->isRoot() || selected->isPlaceHolder())
-        return NULL;
+    // Root nodes cannot be detached
+    if (target->isRoot())
+        return;
 
-    // Otherwise, get the old parent
-    TreeNode* oldParent = selected->getParent();
-    TreeNode* newCut = oldParent->addChildCut();
+    // Placeholders cannot be detached (for now)
+    // TODO: add placeholder logic too
+    if (target->isPlaceHolder())
+        return;
 
-    // Move the selection into the new cut
-    move(selected,newCut);
+    // Remember the old parent
+    TreeNode* parent = target->getParent();
+    highlightSpecific(parent);
 
-    return newCut;
+    // Detach the parent from the child
+    TreeNode::detach(target, parent);
+
+    recentUpdatedNodes.append(target);
+    recentParents.append(parent);
 }
 
-/* Surround with double cut */
+/*
+ * Calls detach on all the selected nodes (or highlighted if none selected)
+ *
+ * Clears the selection list after completing its operation
+ */
+void TreeState::detachNodes()
+{
+    if (selectionList.isEmpty())
+        selectionList.append(highlighted);
+
+    for (TreeNode* node : selectionList)
+        detachNode(node);
+
+    clearSelection();
+}
+
+/*
+ * Detaches the current node, but moves all its children to their grandparent.
+ *
+ * Upon completion, the selection list is cleared.
+ */
+void TreeState::detachNodeAndMoveOrphans()
+{
+    if (selectionList.isEmpty())
+        selectionList.append(highlighted);
+
+    for (TreeNode* node : selectionList)
+    {
+        // Root nodes cannot be detached
+        if (node->isRoot())
+            break;
+
+        // Placeholder nodes cannot be detached
+        // TODO: add logic
+        if (node->isPlaceHolder())
+            break;
+
+        TreeNode* parent = node->getParent();
+
+        // Paranoid null check
+        if (parent == NULL)
+            continue;
+
+
+        QList<TreeNode*> children;
+
+        // Move the children
+        for (TreeNode* child : node->getChildren())
+        {
+            TreeNode::move(child,parent);
+            children.append(child);
+        }
+
+        // Remember these altered children
+        recentListsOfChildren.append(children);
+
+        // Now that the children are taken care of, detach the childless node
+        detachNode(node);
+    }
+
+    clearSelection();
+
+}
+
+//////////////////////////
+/// Surround functions ///
+//////////////////////////
+
+/*
+ * Surrounds each selected node with a cut, if possible. Root nodes cannot be
+ * surrounded. After completing this operation, the selection list is cleared.
+ */
+void TreeState::surroundWithCut()
+{
+    // With no selection, act on the highlighted node
+    if (selectionList.isEmpty())
+        selectionList.append(highlighted);
+
+    // Surround all selected nodes with cuts
+    for (TreeNode* node : selectionList)
+    {
+        // Roots cannot be surrounded
+        if (node->isRoot())
+            return;
+
+        TreeNode* oldParent = node->getParent();
+        TreeNode* newCut = oldParent->addChildCut();
+        TreeNode::move(node,newCut);
+
+        recentUpdatedNodes.append(newCut);
+    }
+
+    // If we acted on the highlighted node, update the highlight
+    if (selectionList.size() == 1 && !recentUpdatedNodes.isEmpty())
+        highlighted = recentUpdatedNodes.first();
+
+    clearSelection();
+}
+
+/*
+ * Surrounds each selected node with a double cut, if possible. Roots cannot be
+ * surrounded. After completing this operation, the selection is cleared.
+ */
 void TreeState::surroundWithDoubleCut()
 {
-    surroundWithCut();
-    surroundWithCut();
+    // With no selection, act on the highlighted node
+    if (selectionList.isEmpty())
+        selectionList.append(highlighted);
+
+    // Surround all selected nodes with double cuts
+    for (TreeNode* node : selectionList)
+    {
+        // Nodes cannot be surrounded
+        if (node->isRoot())
+            return;
+
+        TreeNode* oldParent = node->getParent();
+        TreeNode* newOuterCut = oldParent->addChildCut();
+        TreeNode* newInnerCut = newOuterCut->addChildCut();
+
+        TreeNode::move(node,newInnerCut);
+    }
+
+    // If we acted on the highlighted node, update the highlight
+    if (selectionList.size() == 1 && !recentUpdatedNodes.isEmpty())
+        highlighted = recentUpdatedNodes.first();
+
+    clearSelection();
 }
 
-/* Move target to the new parent */
+/*
+ * Surrounds the selected nodes with a single cut. All selected nodes that
+ * are siblings remain siblings, and the selection is cleared afterwards
+ */
+void TreeState::surroundWithCutAsGroup()
+{
+    // With no selection, act on the highlighted node
+    if (selectionList.isEmpty())
+        selectionList.append(highlighted);
+
+    // Roots cannot be surrounded
+    if (selectionList.first()->isRoot())
+        return;
+
+    // Add the cut to the proper node
+    TreeNode* parent = selectionList.first()->getParent();
+    TreeNode* cut = parent->addChildCut();
+
+    recentUpdatedNodes.append(cut);
+
+    // Move all the selected nodes into the new cut
+    for (TreeNode* node : selectionList)
+        TreeNode::move(node, cut);
+
+    // If we acted on the highlighted node, update the highlight
+    if (selectionList.size() == 1 && !recentUpdatedNodes.isEmpty())
+        highlighted = recentUpdatedNodes.first();
+
+    clearSelection();
+}
+
+////////////
+/// Move ///
+////////////
+
+/*
+ * Moves the target node to a different parent.
+ *
+ * Params:
+ *      target: the node whose parent we wish to update.
+ *      targetParent: the new parent we want the node to have
+ */
 void TreeState::move(TreeNode *target, TreeNode *targetParent)
 {
     TreeNode::move(target,targetParent);
 }
 
-/* Modification mode commands */
+/////////////////////////
+/// Modification mode ///
+/////////////////////////
 
 /*
  * Removes a double cut from around the current selection, if it exists.
@@ -205,7 +679,8 @@ void TreeState::move(TreeNode *target, TreeNode *targetParent)
  */
 TreeState* TreeState::doubleCutRemoval()
 {
-    /* First, check if the selection has a double cut surrounding it */
+    /*
+    // First, check if the selection has a double cut surrounding it
     // Root and placeholders are disallowed
     if (selected->isRoot() || selected->isPlaceHolder())
     {
@@ -253,6 +728,8 @@ TreeState* TreeState::doubleCutRemoval()
 
     // Return the new state with the double cut removed
     return newState;
+    */
+    return NULL;
 }
 
 /*
@@ -266,6 +743,7 @@ TreeState* TreeState::doubleCutRemoval()
  */
 TreeState* TreeState::doubleCutAddition()
 {
+    /*
     // Verify that the selection can be surrounded with a double cut
     if (selected->isRoot())
     {
@@ -288,20 +766,24 @@ TreeState* TreeState::doubleCutAddition()
 
     // Return the new state with the added double cut
     return newState;
+    */
+    return NULL;
 }
 
 /*
- * Sets the subgraph that will be used in iterations and deiterations. This will
- * store a node pointer to be compared against when performIteration and
- * performDeiteration are called afterwards.
+ * Makes the current iteration list the selection list. Doing so will clear the
+ * selection list.
  *
- * TODO: multiple selection, right now only a single node can be the iteration
- * target. We need to be able to select multiple nodes and iterate all of them
- * at once.
+ * TODO: this has a potential for bugs if the nodes saved in the iteration list
+ * are deleted before the iterationList is used/cleared. Ideally, the iteration
+ * list must be updated any time a remove() is called on a node, just in case
+ * the node being deleted is also in this iterationList - we don't want a bad
+ * pointer to deleted memory to stick around and used in iterations/deiterations
+ * later.
  */
 void TreeState::setIterationTarget()
 {
-    iterationTarget = selected;
+    iterationList = selectionList;
 }
 
 /*
@@ -312,6 +794,7 @@ void TreeState::setIterationTarget()
  */
 TreeState* TreeState::performIteration()
 {
+    /*
     // First, verify if the new selection is a valid space to iterate into
     if (selected->isPlaceHolder() || selected->isStatement())
         return this;
@@ -348,6 +831,8 @@ TreeState* TreeState::performIteration()
     newSelected->addExistingByCopy(newTarget);
 
     return newState;
+    */
+    return NULL;
 }
 
 
@@ -359,9 +844,16 @@ TreeState* TreeState::performDeiteration()
 {
     // Determine if the selection is logically equivalent to the target
     // TODO: implement an .equals() to compare TreeNodes
+    return NULL;
 }
 
-/* Box print */
+/////////////////
+/// Box print ///
+/////////////////
+
+/*
+ * Prints out the tree inside a box. (For sending to the TreeDisplayWidget)
+ */
 QString TreeState::getBoxedString()
 {
     // First determine the width of inner region of box
@@ -374,7 +866,8 @@ QString TreeState::getBoxedString()
     result += "┐\n";
 
     // Add each boxLine recursively
-    result += root->getBoxLine(0,width,true,"",selected);
+    result += root->getBoxLine(0, width, true,
+                               "", highlighted, selectionList);
 
     // Footer (last row)
     result += "└";
@@ -391,3 +884,142 @@ void TreeState::redraw()
 {
     emit treeChanged(getBoxedString());
 }
+
+
+/*
+ * Returns and clears the most recent added nodes. This is used as a helper for
+ * commands. For example, the command will call an add() function on all the
+ * selected nodes in the tree. For all nodes that are affected, a new node may
+ * be created. These new nodes will appear in the recentAddedNodes list.
+ *
+ * The command then calls this pop() function to determine which nodes were
+ * added, so it knows which nodes to delete if an undo() is ever called on it.
+ *
+ * TODO: buggy behavior with placeholders. Commands that replace a placeholder
+ * with say a cut or something will not remake the placeholder after an undo
+ * call, it will delete the promoted placeholder node. A potential fix may be
+ * to set a flag in TreeNode to say if it is a promoted placeholder, and then
+ * the command.undo() will check for this flag. If found, the command is
+ * responsible for adding a placeholder to the parent after the node itself is
+ * deleted.
+ */
+QList<TreeNode*> TreeState::popRecentNodes()
+{
+    QList<TreeNode*> list = recentUpdatedNodes;
+    recentUpdatedNodes.clear();
+    return list;
+}
+
+QList<TreeNode*> TreeState::popRecentParents()
+{
+    QList<TreeNode*> list = recentParents;
+    recentParents.clear();
+    return list;
+}
+
+QList< QList<TreeNode*> > TreeState::popRecentChildren()
+{
+    QList< QList<TreeNode*> > list = recentListsOfChildren;
+    recentListsOfChildren.clear();
+    return list;
+}
+
+//////////////
+/// Pounce ///
+//////////////
+
+/*
+ * Sets all the pounce ID's using DFS
+ */
+void TreeState::setPounceIDs()
+{
+    QStack<TreeNode*> stack;
+    QList<TreeNode*> visited;
+
+    stack.push(root);
+
+    int id = 0;
+
+    while (!stack.isEmpty())
+    {
+        TreeNode* node = stack.pop();
+        if (!visited.contains(node))
+        {
+            // Add the ID here
+            node->setPounceID(id++);
+
+            visited.prepend(node);
+
+            for (TreeNode* child : node->getChildren())
+                stack.push(child);
+        }
+    }
+}
+
+/*
+ * Draws the tree as pounce values
+ */
+void TreeState::drawPounceTree()
+{
+    emit treeChanged(getPounceString());
+}
+
+/*
+ * Builds the pounce string as a box
+ */
+QString TreeState::getPounceString()
+{
+    // First determine the width of inner region of box
+    int width = root->getPounceWidth(0);
+
+    // Header (first row)
+    QString result = "<pre>┌";
+    for (int i = 0; i < width + 2; ++i)
+        result += "─";
+    result += "┐\n";
+
+    // Add each boxLine recursively
+    result += root->getPounceLine(0, width, true,
+                               "", highlighted, selectionList);
+
+    // Footer (last row)
+    result += "└";
+    for (int i = 0; i < width + 2; ++i)
+        result += "─";
+    result += "┘</pre>";
+
+    return result;
+}
+
+/*
+ * Attempts to highlight the node associated with the pounce string. If it
+ * exists, highlight that node. If it doesn't, do nothing.
+ *
+ * Params:
+ *      target: the string we're looking for as a pounceID of the nodes
+ */
+void TreeState::pounceTo(QString target)
+{
+    // DFS for the node
+    QStack<TreeNode*> stack;
+    stack.push(root);
+
+    while (!stack.isEmpty())
+    {
+        TreeNode* node = stack.pop();
+        if (QString::compare(target,node->getPounceID()) == 0)
+        {
+            // Found our guy
+            highlightSpecific(node);
+            return;
+        }
+
+        // Otherwise, keep searching
+        for (TreeNode* child : node->getChildren())
+            stack.push(child);
+    }
+
+    // We couldn't find the node, oh well
+}
+
+
