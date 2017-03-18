@@ -31,7 +31,8 @@ private:
     TreeNode* eggRoot;
 
     QStack<PolishNode*> polishStack;
-    QStack<TreeNode*> eggStack;
+    //QStack<TreeNode*> eggStack;
+    QStack< QList<TreeNode*> > eggStack;
     bool wff;
 
     void addNArityNode(int arity, QString text);

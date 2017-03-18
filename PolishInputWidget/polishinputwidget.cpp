@@ -58,34 +58,64 @@ void PolishInputWidget::addNArityNode(int arity, QString t)
         // Make the egg children
         if (QString::compare(t, "∧") == 0) // AND
         {
-            eggStack.push(eggRoot);
-            eggStack.push(eggRoot);
+            QList< TreeNode* > left;
+            QList< TreeNode* > right;
+
+            left.append(eggRoot);
+            right.append(eggRoot);
+
+            eggStack.push(right);
+            eggStack.push(left);
         }
         else if (QString::compare(t, "∨") == 0) // OR
         {
             TreeNode* outer = eggRoot->addChildCut();
-            eggStack.push(outer->addChildCut());
-            eggStack.push(outer->addChildCut());
+
+            QList< TreeNode* > left;
+            QList< TreeNode* > right;
+
+            left.append(outer->addChildCut());
+            right.append(outer->addChildCut());
+
+            eggStack.push(right);
+            eggStack.push(left);
         }
         else if (QString::compare(t, "¬") == 0) // NOT
         {
-            eggStack.push(eggRoot->addChildCut());
+            QList< TreeNode* > child;
+            child.append(eggRoot->addChildCut());
+            eggStack.push(child);
         }
         else if (QString::compare(t, "→") == 0) // CONDITIONAL
         {
             TreeNode* outer = eggRoot->addChildCut();
-            eggStack.push(outer->addChildCut());
-            eggStack.push(outer);
+
+            QList< TreeNode* > outerList;
+            QList< TreeNode* > innerList;
+
+            innerList.append(outer->addChildCut());
+            outerList.append(outer);
+
+            eggStack.push(innerList);
+            eggStack.push(outerList);
         }
         else if (QString::compare(t, "↔") == 0) // BICONDITIONAL
         {
+            QList<TreeNode*> leftList;
+            QList<TreeNode*> rightList;
+
             TreeNode* outerRight = eggRoot->addChildCut();
             TreeNode* outerLeft = eggRoot->addChildCut();
 
-            eggStack.push(outerRight);
-            eggStack.push(outerRight->addChildCut());
-            eggStack.push(outerLeft);
-            eggStack.push(outerLeft->addChildCut());
+            // Crossing the streams!
+            rightList.append(outerLeft->addChildCut());
+            leftList.append(outerRight->addChildCut());
+
+            rightList.append(outerRight);
+            leftList.append(outerLeft);
+
+            eggStack.push(rightList);
+            eggStack.push(leftList);
         }
         else if (arity == 0) // Literals
         {
@@ -134,41 +164,86 @@ void PolishInputWidget::addNArityNode(int arity, QString t)
         polishStack.push(poleNode->makeNewChild());
 
     // Pop, set, and add for egg
-    TreeNode* eggNode = eggStack.pop();
+    QList<TreeNode*> eggList = eggStack.pop();
+    //TreeNode* eggNode = eggStack.pop();
     if (QString::compare(t, "∧") == 0) // AND
     {
-        eggStack.push(eggNode);
-        eggStack.push(eggNode);
+        QList<TreeNode*> left;
+        QList<TreeNode*> right;
+
+        for (TreeNode* node : eggList)
+        {
+            left.append(node);
+            right.append(node);
+        }
+
+        eggStack.push(left);
+        eggStack.push(right);
     }
     else if (QString::compare(t, "∨") == 0) // OR
     {
-        TreeNode* outer = eggNode->addChildCut();
-        eggStack.push(outer->addChildCut());
-        eggStack.push(outer->addChildCut());
+        QList<TreeNode*> left;
+        QList<TreeNode*> right;
+
+        for (TreeNode* node : eggList)
+        {
+            TreeNode* outer = node->addChildCut();
+            left.append(outer->addChildCut());
+            right.append(outer->addChildCut());
+        }
+
+        eggStack.append(left);
+        eggStack.append(right);
     }
     else if (QString::compare(t, "¬") == 0) // NOT
     {
-        eggStack.push(eggNode->addChildCut());
+        QList<TreeNode*> children;
+
+        for (TreeNode* node : eggList)
+            children.append(node->addChildCut());
+
+        eggStack.push(children);
     }
     else if (QString::compare(t, "→") == 0) // CONDITIONAL
     {
-        TreeNode* outer = eggNode->addChildCut();
-        eggStack.push(outer->addChildCut());
-        eggStack.push(outer);
+        QList<TreeNode*> outerList;
+        QList<TreeNode*> innerList;
+
+        for (TreeNode* node : eggList)
+        {
+            TreeNode* outer = node->addChildCut();
+            outerList.append(outer);
+            innerList.append(outer->addChildCut());
+        }
+
+        eggStack.push(innerList);
+        eggStack.push(outerList);
     }
     else if (QString::compare(t, "↔") == 0) // BICONDITIONAL
     {
-        TreeNode* outerRight = eggNode->addChildCut();
-        TreeNode* outerLeft = eggNode->addChildCut();
+        QList<TreeNode*> leftList;
+        QList<TreeNode*> rightList;
 
-        eggStack.push(outerRight);
-        eggStack.push(outerRight->addChildCut());
-        eggStack.push(outerLeft);
-        eggStack.push(outerLeft->addChildCut());
+        for (TreeNode* node : eggList)
+        {
+            TreeNode* outerRight = node->addChildCut();
+            TreeNode* outerLeft = node->addChildCut();
+
+            // Crossing the streams!
+            rightList.append(outerLeft->addChildCut());
+            leftList.append(outerRight->addChildCut());
+
+            rightList.append(outerRight);
+            leftList.append(outerLeft);
+        }
+
+        eggStack.push(rightList);
+        eggStack.push(leftList);
     }
     else if (arity == 0) // Literals
     {
-        eggNode->addChildStatement(t);
+        for (TreeNode* node : eggList)
+            node->addChildStatement(t);
     }
 
     // Redraw the plaintext
