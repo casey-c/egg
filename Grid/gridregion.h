@@ -20,6 +20,9 @@ public:
 
     QList<GridRegion*> getChildren() { return children; }
 
+    /* Print */
+    QString toString();
+
 private:
     /* Connections */
     GridRegion* parent;
@@ -29,10 +32,22 @@ private:
     /* Array */
     int width;
     int height;
-    GridCell** array;
+    GridCell*** array; // array[col][row]
 
     /* Copies my elements into the provided array */
-    void transferCells(int sx, int sy, GridCell** array);
+    void transferCells(int sx, int sy, GridCell*** parentArray);
+
+    /* Helper to handle array allocations:
+     * Only call after setting width and height */
+    void allocateSpace();
+
+    /* Helper to fill the corners and borders of a cut
+     * Only call after allocating space */
+    void addBorders();
+
+    /* Helper to fill in padding
+     * Only call after allocating space and transfering all children*/
+    void fillPadding();
 };
 
 #endif // GRIDREGION_H

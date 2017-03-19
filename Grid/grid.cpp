@@ -1,6 +1,7 @@
 #include "grid.h"
 #include <QStack>
 #include <QQueue>
+#include <QDebug>
 
 /*
  * Constructor
@@ -72,4 +73,13 @@ Grid::Grid(TreeState* t) :
 
     for (GridRegion* region : order)
         region->buildGrid();
+}
+
+QString Grid::toPlaintext()
+{
+    QString result = "<pre>";
+    result += root->toString();
+    result += "</pre>";
+    qDebug() << result;
+    return result;
 }

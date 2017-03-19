@@ -6,6 +6,8 @@
 
 #include "PolishInputWidget/polishinputwidget.h"
 
+#include "Grid/grid.h"
+
 #include <QDebug>
 #include <QTimer>
 
@@ -243,6 +245,14 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
                          SLOT(updateText(QString)));
         currentTree->redraw();
         break;
+    case Qt::Key_9:
+    {
+        qDebug() << "9 is pressed";
+        Grid g(currentTree);
+
+        ui->tempGridText->setText(g.toPlaintext());
+        break;
+    }
     case Qt::Key_Period:
         qDebug() << ". is pressed";
         commandInvoker.repeatLastCommand();

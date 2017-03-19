@@ -53,6 +53,11 @@
          <height>444</height>
         </rect>
        </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QTextEdit" name="tempGridText"/>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
