@@ -159,6 +159,9 @@ public:
     void pounceTo(QString target);
     QString getPounceString();
 
+    /* Grid helpers */
+    TreeNode* getRoot() { return root; }
+
 signals:
     void treeChanged(QString s);
 

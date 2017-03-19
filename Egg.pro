@@ -42,7 +42,10 @@ SOURCES += MainWindow/main.cpp\
     ProofTree/prooftree.cpp \
     ProofTree/prooftreenode.cpp \
     PolishInputWidget/polishinputwidget.cpp \
-    PolishInputWidget/PolishTree/polishnode.cpp
+    PolishInputWidget/PolishTree/polishnode.cpp \
+    Grid/gridregion.cpp \
+    Grid/gridcell.cpp \
+    Grid/grid.cpp
 
 HEADERS  += MainWindow/mainwindow.h \
     Utilities/constants.h \
@@ -81,7 +84,10 @@ HEADERS  += MainWindow/mainwindow.h \
     ProofTree/prooftree.h \
     ProofTree/prooftreenode.h \
     PolishInputWidget/polishinputwidget.h \
-    PolishInputWidget/PolishTree/polishnode.h
+    PolishInputWidget/PolishTree/polishnode.h \
+    Grid/gridregion.h \
+    Grid/gridcell.h \
+    Grid/grid.h
 
 FORMS    += MainWindow/mainwindow.ui \
     TreeDisplayWidget/treedisplaywidget.ui \
