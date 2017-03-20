@@ -125,7 +125,7 @@ TreeNode* TreeNode::addChildStatement(QString s)
 
         // Update our parent's info
         parent->placeHolderChild = false;
-        parent->children.append(this);
+        parent->children.prepend(this);
         return this;
     }
 
@@ -138,7 +138,7 @@ TreeNode* TreeNode::addChildStatement(QString s)
 
         // Make it a real boy
         placeHolderChild = false;
-        children.append(placeholder);
+        children.prepend(placeholder);
         return placeholder;
     }
 
@@ -146,7 +146,7 @@ TreeNode* TreeNode::addChildStatement(QString s)
     else
     {
         TreeNode* newStatement = new TreeNode(constants::ELEMENT_STATEMENT,this,s);
-        children.append(newStatement);
+        children.prepend(newStatement);
         return newStatement;
     }
 }
