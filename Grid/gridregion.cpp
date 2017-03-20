@@ -145,13 +145,6 @@ void GridRegion::buildGrid()
         {
             int childHeight = children.at(i)->height;
             int childWidth = children.at(i)->width;
-
-            qDebug() << "attempting to transfer cells";
-            qDebug() << width << " my width";
-            qDebug() << height << " my height";
-            qDebug() << childHeight << " childHeight";
-            qDebug() << childWidth << " childWidth";
-
             children.at(i)->transferCells(posX,
                                           (height - childHeight) / 2,
                                           array);
@@ -175,38 +168,13 @@ GridRegion* GridRegion::addChildRegion(TreeNode *n)
 
 void GridRegion::transferCells(int sx, int sy, GridCell ***parentArray)
 {
-    qDebug() << "transfering cells ";
-    qDebug() << width << " my width";
-    qDebug() << height << " my height";
-
-    qDebug() << sx << " my sx";
-    qDebug() << sy << " my sy";
-
-
     for (int pcol = sx, col = 0; col < width; ++pcol, ++col)
         for (int prow = sy, row = 0; row < height; ++prow, ++row)
-        {
-            qDebug() << pcol << " my pcol";
-            qDebug() << prow << " my prow";
-            qDebug() << col << " my col";
-            qDebug() << row << " my row";
-
             parentArray[pcol][prow] = array[col][row];
-        }
 }
 
 QString GridRegion::toString()
 {
-    qDebug() << "Called my to string method.";
-    qDebug() << width << " width";
-    qDebug() << height << " height";
-
-    qDebug() << "I have " << children.size() << " children";
-    int cW = 0;
-    for (GridRegion* c : children)
-        cW += c->width;
-    qDebug() << "My children's total width is " << cW;
-
     QString result = "";
     for (int row = 0; row < height; ++row)
     {

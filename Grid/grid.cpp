@@ -94,6 +94,5 @@ QString Grid::toPlaintext()
     QString result = "<pre>";
     result += root->toString();
     result += "</pre>";
-    qDebug() << result;
     return result;
 }
