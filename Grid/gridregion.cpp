@@ -85,6 +85,14 @@ void GridRegion::buildGrid()
             allocateSpace();
             fillPadding();
         }
+        // Placeholder
+        else if (associatedNode->isPlaceHolder())
+        {
+            width = 5;
+            height = 3;
+            allocateSpace();
+            fillPadding();
+        }
 
         // At this point, this region is complete
         return;
