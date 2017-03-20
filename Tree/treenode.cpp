@@ -194,15 +194,13 @@ TreeNode* TreeNode::addChildPlaceholder()
  * Params:
  *      target: the node to move (must not be root or placeholder)
  *      targetParent: what new parent the target needs to have
- *
- * Undefined behavior:
- * Moving a target to one of its children is a dangerous edge case not currently
- * accounted for. This function assumes that it won't happen, and performs no
- * checks to verify that it won't. Target must only be moved either up the tree
- * or on a different branch sideways, never down.
  */
 void TreeNode::move(TreeNode *target, TreeNode *targetParent)
 {
+    // Make sure that move does not go down
+    if (targetParent->isInUpperFamily(target))
+        return;
+
     // Make sure the target is movable
     if (target->isRoot())
         return;
@@ -228,6 +226,30 @@ void TreeNode::move(TreeNode *target, TreeNode *targetParent)
         target->getParent()->children.removeOne(target);
     targetParent->children.append(target);
     target->parent = targetParent;
+}
+
+/*
+ * This function checks that if parameter node is in upper family line of this
+ * node. (parent, grandparent, grand-grandparent..... and goes on)
+ *
+ * Returns:
+ *      true : if parameter is a part of the upper family line
+ *      false : if not
+ *
+ * Params:
+ *      node : node that we are checking if it is in the line
+ */
+bool TreeNode::isInUpperFamily(TreeNode* node)
+{
+    TreeNode* compareNode = parent;
+    while (compareNode->getType() != constants::ELEMENT_ROOT)
+    {
+        if(compareNode->getID() == node->getID())
+            return true;
+
+        compareNode = compareNode->getParent();
+    }
+    return false;
 }
 
 //////////////

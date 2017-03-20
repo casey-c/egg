@@ -57,6 +57,7 @@ public:
 
     /* Move */
     static void move(TreeNode* node, TreeNode* targetParent);
+    bool isInUpperFamily(TreeNode* node);
 
     /* Detach */
     static void detach(TreeNode* node, TreeNode* parent);
