@@ -41,4 +41,7 @@
 #include "Utilities/Command/ctreestatedetachnode.h"
 #include "Utilities/Command/ctreestatedetachnodebutsavechildren.h"
 
+// Insert from formula
+#include "Utilities/Command/ctreestateinsertfromformula.h"
+
 #endif // ALLCOMMANDS_H

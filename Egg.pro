@@ -45,7 +45,8 @@ SOURCES += MainWindow/main.cpp\
     PolishInputWidget/PolishTree/polishnode.cpp \
     Grid/gridregion.cpp \
     Grid/gridcell.cpp \
-    Grid/grid.cpp
+    Grid/grid.cpp \
+    Utilities/Command/ctreestateinsertfromformula.cpp
 
 HEADERS  += MainWindow/mainwindow.h \
     Utilities/constants.h \
@@ -87,7 +88,8 @@ HEADERS  += MainWindow/mainwindow.h \
     PolishInputWidget/PolishTree/polishnode.h \
     Grid/gridregion.h \
     Grid/gridcell.h \
-    Grid/grid.h
+    Grid/grid.h \
+    Utilities/Command/ctreestateinsertfromformula.h
 
 FORMS    += MainWindow/mainwindow.ui \
     TreeDisplayWidget/treedisplaywidget.ui \
