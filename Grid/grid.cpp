@@ -4,12 +4,13 @@
 #include <QDebug>
 
 /*
- * Constructor
+ * Constructor makes the regions, orders them correctly, and then fills them
+ * by calling the proper methods in GridRegion.
  */
 Grid::Grid(TreeState* t) :
     tree(t)
 {
-    /// First, let's BFS to make all the regions ///
+    /// First, let's use BFS to make all the regions ///
 
     // Root
     root = new GridRegion(tree->getRoot());
@@ -56,7 +57,7 @@ Grid::Grid(TreeState* t) :
         }
     }
 
-    /// At this point, all the regions are allocated, but lacking detail. To
+    /// At this point, all the regions are allocated but lacking detail. To
     /// fill them in with the proper details, we need to construct them from the
     /// bottom up: i.e. all children before their parent, as the parent needs
     /// each and every child's own data before it can build its own grid.
@@ -89,6 +90,9 @@ Grid::Grid(TreeState* t) :
         region->buildGrid();
 }
 
+/*
+ * Converts the overall grid to a plaintext string
+ */
 QString Grid::toPlaintext()
 {
     QString result = "<pre>";
