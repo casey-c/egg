@@ -1,6 +1,10 @@
 #include "polishinputwidget.h"
 #include "ui_polishinputwidget.h"
 
+//////////////////////////////////
+/// Constructor and Destructor ///
+//////////////////////////////////
+
 /*
  * Constructor
  */
@@ -37,8 +41,24 @@ PolishInputWidget::~PolishInputWidget()
         delete eggRoot;
 }
 
+///////////////
+/// Changes ///
+///////////////
+
 /*
- * Add function
+ * Adds a polish node with the correct arity. This function will make the root
+ * nodes if not yet set. It also produces the equivalent cuts/statements
+ * required for conversion to the existential graph tree.
+ *
+ * NOTE: this function is messy, long, and complicated. I don't have time to
+ * make it cleaner at the moment, but it can definitely be condensed. At the
+ * moment, it has 2 separate sections that basically do the same steps, one for
+ * root and one for non-root nodes. These should not be separated, but lazy copy
+ * and pasting makes this difficult to maintain.
+ *
+ * Params:
+ *      arity:  the number of children the desired node will have
+ *      t:      the text giving details to this node
  */
 void PolishInputWidget::addNArityNode(int arity, QString t)
 {
@@ -165,7 +185,6 @@ void PolishInputWidget::addNArityNode(int arity, QString t)
 
     // Pop, set, and add for egg
     QList<TreeNode*> eggList = eggStack.pop();
-    //TreeNode* eggNode = eggStack.pop();
     if (QString::compare(t, "∧") == 0) // AND
     {
         QList<TreeNode*> left;
@@ -258,6 +277,9 @@ void PolishInputWidget::addNArityNode(int arity, QString t)
     }
 }
 
+/*
+ * Redraws the text box with the proper plaintext
+ */
 void PolishInputWidget::redraw()
 {
     // Null check
@@ -267,8 +289,19 @@ void PolishInputWidget::redraw()
         ui->lineEdit->setText(polishRoot->toPlaintext());
 }
 
+////////////////
+/// Keybinds ///
+////////////////
+
 /*
- * Keybindings
+ * Handles keyboard presses on this widget.
+ *
+ *      A-Z: adds a literal with that letter
+ *      &: adds an AND operator
+ *      |: adds an OR operator
+ *      ~: adds a NOT operator
+ *      $: adds a conditional operator
+ *      %: adds a biconditional operator
  */
 void PolishInputWidget::keyPressEvent(QKeyEvent *event)
 {
@@ -306,12 +339,19 @@ void PolishInputWidget::keyPressEvent(QKeyEvent *event)
     }
 }
 
+////////////////////
+/// Button press ///
+////////////////////
+
 void PolishInputWidget::on_add_button_clicked()
 {
-    qDebug() << "Well formed!";
-    closeEarly = false; // a little flag for our closeEvent() to not delete here
+    // Set the flag for the destructor not to delete the egg tree here
+    closeEarly = false;
 
-    // Send info to make the Tree update, also will clean up that memory
+    // Send the required info back to the MainWindow. The receiving data will
+    // get put into a command responsible for memory deallocation as well.
     emit(sendCompletedFormula(eggRoot));
+
+    // Close this window, as we are done here. (This will call the destructor)
     this->close();
 }
