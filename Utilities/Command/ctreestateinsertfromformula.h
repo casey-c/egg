@@ -6,6 +6,10 @@
 
 #include <QList>
 
+/*
+ * This command will handle the moving of nodes created in the InsertFromFormula
+ * window and put them into the current tree at its highlighted node.
+ */
 class CTreeStateInsertFromFormula : public ICommand
 {
 public:
@@ -15,8 +19,9 @@ public:
         src(source) { text = "Insert from formula"; }
 
     /* Destructor */
-    ~CTreeStateInsertFromFormula() {}
+    ~CTreeStateInsertFromFormula();
 
+    /* ICommand implementations */
     bool execute();
     void undo();
 

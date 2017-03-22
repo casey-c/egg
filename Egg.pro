@@ -44,7 +44,6 @@ SOURCES += MainWindow/main.cpp\
     PolishInputWidget/polishinputwidget.cpp \
     PolishInputWidget/PolishTree/polishnode.cpp \
     Grid/gridregion.cpp \
-    Grid/gridcell.cpp \
     Grid/grid.cpp \
     Utilities/Command/ctreestateinsertfromformula.cpp
 

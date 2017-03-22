@@ -1,60 +1,33 @@
 #include "gridregion.h"
 #include <QDebug>
 
-/*
- * Allocates space on the heap for a 2D array of GridCell pointers. This must be
- * called after the width and height have already been set.
- */
-void GridRegion::allocateSpace()
-{
-    array = new GridCell**[width];
-    for (int row = 0; row < width; ++row)
-        array[row] = new GridCell*[height];
-
-    // Make every GridCell a nullPtr until filled in later
-    for (int col = 0; col < width; ++col)
-        for (int row = 0; row < height; ++row)
-            array[col][row] = nullptr;
-}
+////////////////////////
+/// Make new regions ///
+////////////////////////
 
 /*
- * Fills any nullptr GridCell with a new padding cell. This must be called only
- * after allocating space.
+ * Makes a new child region to this one.
+ *
+ * Params:
+ *      n: the associated tree node of the child region
  */
-void GridRegion::fillPadding()
+GridRegion* GridRegion::addChildRegion(TreeNode *n)
 {
-    for (int col = 0; col < width; ++col)
-        for (int row = 0; row < height; ++row)
-            if (array[col][row] == nullptr)
-                array[col][row] = GridCell::makePadding(this);
+    GridRegion* child = new GridRegion(n);
+    children.append(child);
+
+    return child;
 }
+
+////////////////////////
+/// Helper functions ///
+////////////////////////
 
 /*
- * Adds any borders and corners for cut regions
+ * The main function to construct the region. It first calculates the size
+ * required for the region's grid array, and then fills them with the proper
+ * cells.
  */
-void GridRegion::addBorders()
-{
-    // Corners
-    array[0][0] = GridCell::makeCornerUpperLeft(this);
-    array[width - 1][0] = GridCell::makeCornerUpperRight(this);
-    array[0][height - 1] = GridCell::makeCornerLowerLeft(this);
-    array[width - 1][height - 1] = GridCell::makeCornerLowerRight(this);
-
-    // Vertical border
-    for (int row = 1; row < height - 1; ++row)
-    {
-        array[0][row] = GridCell::makeBorderVertical(this);
-        array[width - 1][row] = GridCell::makeBorderVertical(this);
-    }
-
-    // Horizontal border
-    for (int col = 1; col < width - 1; ++col)
-    {
-        array[col][0] = GridCell::makeBorderHorizontal(this);
-        array[col][height - 1] = GridCell::makeBorderHorizontal(this);
-    }
-}
-
 void GridRegion::buildGrid()
 {
     // Leaf nodes are workable by themselves
@@ -155,17 +128,60 @@ void GridRegion::buildGrid()
         // Fill the rest in with padding and we should be a-okay
         fillPadding();
     }
-
 }
 
-GridRegion* GridRegion::addChildRegion(TreeNode *n)
+/*
+ * Allocates space on the heap for a 2D array of GridCell pointers. This must be
+ * called after the width and height have already been set.
+ */
+void GridRegion::allocateSpace()
 {
-    GridRegion* child = new GridRegion(n);
-    children.append(child);
+    array = new GridCell**[width];
+    for (int row = 0; row < width; ++row)
+        array[row] = new GridCell*[height];
 
-    return child;
+    // Make every GridCell a nullPtr until filled in later
+    for (int col = 0; col < width; ++col)
+        for (int row = 0; row < height; ++row)
+            array[col][row] = nullptr;
 }
 
+/*
+ * Adds any borders and corners for cut regions. This can only be called after
+ * the allocateSpace() function has allocated space for the array.
+ */
+void GridRegion::addBorders()
+{
+    // Corners
+    array[0][0] = GridCell::makeCornerUpperLeft(this);
+    array[width - 1][0] = GridCell::makeCornerUpperRight(this);
+    array[0][height - 1] = GridCell::makeCornerLowerLeft(this);
+    array[width - 1][height - 1] = GridCell::makeCornerLowerRight(this);
+
+    // Vertical border
+    for (int row = 1; row < height - 1; ++row)
+    {
+        array[0][row] = GridCell::makeBorderVertical(this);
+        array[width - 1][row] = GridCell::makeBorderVertical(this);
+    }
+
+    // Horizontal border
+    for (int col = 1; col < width - 1; ++col)
+    {
+        array[col][0] = GridCell::makeBorderHorizontal(this);
+        array[col][height - 1] = GridCell::makeBorderHorizontal(this);
+    }
+}
+
+/*
+ * Gives control of this region's parent array to this particular node, allowing
+ * it to set its associated cells and avoid duplication of GridCells.
+ *
+ * Params:
+ *      sx: the starting column to fill in for the parent
+ *      sy: the starting row to fill in for the parent
+ *      parentArray: the array to copy this region's cell pointers into
+ */
 void GridRegion::transferCells(int sx, int sy, GridCell ***parentArray)
 {
     for (int pcol = sx, col = 0; col < width; ++pcol, ++col)
@@ -173,6 +189,26 @@ void GridRegion::transferCells(int sx, int sy, GridCell ***parentArray)
             parentArray[pcol][prow] = array[col][row];
 }
 
+
+/*
+ * Fills any nullptr GridCell with a new padding cell. This must be called only
+ * after allocating space.
+ */
+void GridRegion::fillPadding()
+{
+    for (int col = 0; col < width; ++col)
+        for (int row = 0; row < height; ++row)
+            if (array[col][row] == nullptr)
+                array[col][row] = GridCell::makePadding(this);
+}
+
+/////////////
+/// Print ///
+/////////////
+
+/*
+ * Converts this region into a plaintext string.
+ */
 QString GridRegion::toString()
 {
     QString result = "";

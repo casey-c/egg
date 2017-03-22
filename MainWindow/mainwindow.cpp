@@ -479,5 +479,4 @@ void MainWindow::insertFromFormula(TreeNode *root)
 {
     ICommand* command = new CTreeStateInsertFromFormula(currentTree, root);
     commandInvoker.runCommand(command);
-
 }

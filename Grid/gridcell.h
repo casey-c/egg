@@ -5,7 +5,8 @@
 #include <QString>
 
 /*
- * An enum for the cell type: may be useless, may be useful, who knows
+ * An enum to specify the CellType. This will be useful later on for drawing
+ * the GridCells on a canvas.
  */
 enum CellType
 {
@@ -19,10 +20,25 @@ enum CellType
     cellBorderCornerLowerRight
 };
 
+// Forward declaration for GridRegion
 class GridRegion;
 
 /*
- * Named constructors idiom
+ * A GridCell is the data for a specific cell in the grid. It stores the
+ * associated GridRegion (i.e. which region it is a direct child of) as well
+ * as an associated type (defined by the CellType enum).
+ *
+ * cellLetter type will also store a QString for which letter it depicts.
+ *
+ * All the types store a plaintext string to be printed to the screen on a
+ * toPlaintext() call of the parent region. These exist to make printing easy,
+ * but in the future grid cells will be drawn in a 2D graphical way to some
+ * canvas based on their type itself.
+ *
+ * GridCell uses the named constructor idiom: this makes it easier and more
+ * intuitive to construct a cell based on what type of cell is desired. This
+ * allows cleaner, more understandable code inside the GridRegion class, as well
+ * as not needing to use the enum outside of here.
  */
 class GridCell
 {
@@ -53,15 +69,18 @@ public:
         return new GridCell(p, cellBorderVertical, "│");
     }
 
+    /* Getters */
     QString getText() { return letter; }
     CellType getType() { return type; }
 
 private:
+    /* Private constructor to force using the static factories */
     GridCell(GridRegion* p, CellType c, QString l) :
         parent(p),
         type(c),
         letter(l) {}
 
+    /* Details */
     GridRegion* parent;
     CellType type;
 

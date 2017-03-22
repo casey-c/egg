@@ -1,6 +1,5 @@
 #include "polishnode.h"
 
-
 ///////////////
 /// Destroy ///
 ///////////////
@@ -19,7 +18,8 @@ PolishNode::~PolishNode()
 /////////////////////////
 
 /*
- * Constructs a new child node without any details (i.e. a placeholder)
+ * Constructs a new child node without any details (essentially making a
+ * placeholder)
  */
 PolishNode* PolishNode::makeNewChild()
 {
@@ -34,7 +34,12 @@ PolishNode* PolishNode::makeNewChild()
 }
 
 /*
- * Sets the details for this node
+ * Sets the details for this node.
+ *
+ * Params:
+ *      t: the text to be displayed by this node
+ *              (could be an operator or a letter)
+ *      o: whether or not this node is an operator (i.e. should have children)
  */
 void PolishNode::setDetails(QString t, bool o)
 {
@@ -47,7 +52,14 @@ void PolishNode::setDetails(QString t, bool o)
 /////////////
 
 /*
- * To plaintext string
+ * Prints the polish notation subtree of this node into something readable by
+ * humans. Placeholder nodes are represented by " ___ " and get filled in from
+ * left to right.
+ *
+ * This function is called on the root node every time the tree is changed. This
+ * ensures that the UI properly updates to display a readable text box that
+ * makes sense to the user (as opposed to directly printing the polish input,
+ * which is confusing as hell).
  */
 QString PolishNode::toPlaintext()
 {

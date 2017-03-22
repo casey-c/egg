@@ -197,10 +197,6 @@ TreeNode* TreeNode::addChildPlaceholder()
  */
 void TreeNode::move(TreeNode *target, TreeNode *targetParent)
 {
-    // Make sure that move does not go down
-    if (targetParent->isInUpperFamily(target))
-        return;
-
     // Make sure the target is movable
     if (target->isRoot())
         return;
@@ -224,11 +220,13 @@ void TreeNode::move(TreeNode *target, TreeNode *targetParent)
     /* Should be okay to proceed with the move */
     if (target->getParent() != NULL)
         target->getParent()->children.removeOne(target);
+
     targetParent->children.append(target);
     target->parent = targetParent;
 }
 
 /*
+ * DEBUG:
  * This function checks that if parameter node is in upper family line of this
  * node. (parent, grandparent, grand-grandparent..... and goes on)
  *
