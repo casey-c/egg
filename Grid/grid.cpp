@@ -19,13 +19,7 @@ Grid::Grid(TreeState* t) :
     QQueue<TreeNode*> queue;
     QQueue<GridRegion*> parentQueue;
 
-    // Root's placeholder
-    if (tree->getRoot()->hasPlaceHolder())
-    {
-        queue.enqueue(tree->getRoot()->getPlaceHolder());
-        parentQueue.enqueue(root);
-    }
-
+    // Start with children of the root
     for (TreeNode* child : tree->getRoot()->getChildren())
     {
         queue.enqueue(child);
@@ -41,13 +35,6 @@ Grid::Grid(TreeState* t) :
 
         // Make the new region
         GridRegion* region = parent->addChildRegion(current);
-
-        // Append any placeholders to the queue
-        if (current->hasPlaceHolder())
-        {
-            queue.enqueue(current->getPlaceHolder());
-            parentQueue.enqueue(region);
-        }
 
         // Append the children to the queue
         for (TreeNode* child : current->getChildren())

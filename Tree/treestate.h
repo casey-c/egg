@@ -162,6 +162,9 @@ public:
     /* Grid helpers */
     TreeNode* getRoot() { return root; }
 
+    /* DEBUG: remove on release! */
+    void addPlaceholderToHighlighted();
+
 signals:
     void treeChanged(QString s);
 

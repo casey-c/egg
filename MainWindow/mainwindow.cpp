@@ -239,14 +239,9 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
         currentTree->redraw();
         break;
     }
-    case Qt::Key_0:
-        qDebug() << "0 is pressed";
-        delete(currentTree);
-        currentTree = new TreeState();
-        QObject::connect(currentTree,
-                         SIGNAL(treeChanged(QString)),
-                         treeDisplayWidget,
-                         SLOT(updateText(QString)));
+    case Qt::Key_4:
+        qDebug() << "DEBUG ONLY";
+        currentTree->addPlaceholderToHighlighted();
         currentTree->redraw();
         break;
     case Qt::Key_9:
@@ -257,6 +252,16 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
         ui->tempGridText->setText(g.toPlaintext());
         break;
     }
+    case Qt::Key_0:
+        qDebug() << "0 is pressed";
+        delete(currentTree);
+        currentTree = new TreeState();
+        QObject::connect(currentTree,
+                         SIGNAL(treeChanged(QString)),
+                         treeDisplayWidget,
+                         SLOT(updateText(QString)));
+        currentTree->redraw();
+        break;
     case Qt::Key_Period:
         qDebug() << ". is pressed";
         commandInvoker.repeatLastCommand();

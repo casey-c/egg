@@ -37,7 +37,6 @@ public:
         , name(QString("Root"))
         , parent()
         , placeHolderChild()
-        , placeholder()
         , myID(globalID++) {}
 
     /* Copy constructor */
@@ -85,7 +84,6 @@ public:
     /* TODO: fix rep. exposure (make private? friend TreeState?) */
     QList<TreeNode*> getChildren() { return children; }
     TreeNode* getParent() { return parent; }
-    TreeNode* getPlaceHolder() { return placeholder; }
 
     /* Boolean identifiers */
     bool isRoot() { return type == constants::ELEMENT_ROOT; }
@@ -94,6 +92,7 @@ public:
     bool isPlaceHolder() { return type == constants::ELEMENT_PLACEHOLDER; }
     bool isDetached() { return type != constants::ELEMENT_ROOT &&
                         parent == NULL; }
+
 
 private:
     /* Constructor for non-root nodes */
@@ -114,7 +113,10 @@ private:
 
     /* Placeholder */
     bool placeHolderChild;
-    TreeNode* placeholder;
+
+    /* New placeholder helpers */
+    void updatePlaceholderStatus();
+    void addAfterPlaceholders(TreeNode* node);
 
     /* ID's */
     QString pounceID;

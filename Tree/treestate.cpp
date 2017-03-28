@@ -1022,4 +1022,15 @@ void TreeState::pounceTo(QString target)
     // We couldn't find the node, oh well
 }
 
+///////////////////////////////////////
+/// DEBUG, NOT INTENDED FOR RELEASE ///
+///////////////////////////////////////
+/*
+ * Adds a placeholder to the highlighted node
+ */
+void TreeState::addPlaceholderToHighlighted()
+{
+    highlighted = highlighted->addChildPlaceholder();
+}
+
 

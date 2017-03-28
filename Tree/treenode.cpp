@@ -43,8 +43,8 @@ TreeNode::~TreeNode()
         delete child;
 
     // Remove a placeholder
-    if (placeHolderChild)
-        delete placeholder;
+    //if (placeHolderChild)
+        //delete placeholder;
 }
 
 /////////////////
@@ -72,8 +72,13 @@ TreeNode* TreeNode::addChildCut()
         // Replace this element
         type = constants::ELEMENT_CUT;
 
-        // Update our parent's info
-        parent->placeHolderChild = false;
+        // First, remove us from the front of the children list as a placeholder
+        parent->children.removeOne(this);
+
+        // Update our parent's placeholder status by looking for another
+        parent->updatePlaceholderStatus();
+
+        // Put us at the back of our parent's children list as a real cut
         parent->children.append(this);
         return this;
     }
@@ -81,13 +86,11 @@ TreeNode* TreeNode::addChildCut()
     // See if we have a placeholder child to replace
     else if (placeHolderChild)
     {
-        // Replace that element
-        placeholder->type = constants::ELEMENT_CUT;
-        placeHolderChild = false;
+        // Get that element
+        TreeNode* placeholder = children.first();
 
-        // Make it our real child
-        children.append(placeholder);
-        return placeholder;
+        // Use the above logic for placeholders
+        return placeholder->addChildCut();
     }
 
     // Otherwise, make a new cut element
@@ -123,30 +126,36 @@ TreeNode* TreeNode::addChildStatement(QString s)
         type = constants::ELEMENT_STATEMENT;
         name = s;
 
-        // Update our parent's info
-        parent->placeHolderChild = false;
-        parent->children.prepend(this);
+        // Remove us from our parent's children
+        parent->children.removeOne(this);
+
+        // Update our parent's placeholder check
+        parent->updatePlaceholderStatus();
+
+        // Add us back in as a real statement in the proper place
+        parent->addAfterPlaceholders(this);
         return this;
     }
 
     // See if we have a placeholder child to replace
     else if (placeHolderChild)
     {
-        // Replace that element
-        placeholder->type = constants::ELEMENT_STATEMENT;
-        placeholder->name = s;
+        // Get that element
+        TreeNode* placeholder = children.first();
 
-        // Make it a real boy
-        placeHolderChild = false;
-        children.prepend(placeholder);
-        return placeholder;
+        // Use the logic defined above for placeholders
+        return placeholder->addChildStatement(s);
     }
 
     // Otherwise, make a new statement element
     else
     {
-        TreeNode* newStatement = new TreeNode(constants::ELEMENT_STATEMENT,this,s);
-        children.prepend(newStatement);
+        TreeNode* newStatement = new TreeNode(constants::ELEMENT_STATEMENT,
+                                              this,
+                                              s);
+
+        // And add it to our children in the right place
+        addAfterPlaceholders(newStatement);
         return newStatement;
     }
 }
@@ -169,16 +178,12 @@ TreeNode* TreeNode::addChildPlaceholder()
     if (isPlaceHolder())
         return this;
 
-    // Check if we already have a child placeholder
-    if (placeHolderChild)
-        return placeholder;
-
     // Okay to add new placeholder as a child
     TreeNode* newPlaceholder = new TreeNode(constants::ELEMENT_PLACEHOLDER,
                                             this,
                                             NULL);
     placeHolderChild = true;
-    placeholder = newPlaceholder;
+    children.prepend(newPlaceholder);
 
     return newPlaceholder;
 }
@@ -378,9 +383,9 @@ QString TreeNode::getBoxLine(int depth,
 
     // Shows highlighting on parent if the highlighted node is an invisible
     // placeholder
-    if ((highlighted->isPlaceHolder() && highlighted->parent == this) ||
-            highlighted == this)
-    //if (highlighted == this) // Alternate to show actual highlighting
+    //if ((highlighted->isPlaceHolder() && highlighted->parent == this) ||
+            //highlighted == this)
+    if (highlighted == this) // Alternate to show actual highlighting
         result += " ←"; //◀
 
     result += "\n";
@@ -606,4 +611,34 @@ QString TreeNode::getPounceLine(int depth, int end, bool bottom,
         result += s;
 
     return result;
+}
+
+
+
+///////////////////
+/// Placeholder ///
+///////////////////
+
+/*
+ * Checks the first node in children to see if it is a placeholder
+ */
+void TreeNode::updatePlaceholderStatus()
+{
+    // No children
+    if (children.isEmpty())
+        placeHolderChild = false;
+    else // Check if the first child is a placeholder
+        placeHolderChild = children.first()->isPlaceHolder();
+}
+
+void TreeNode::addAfterPlaceholders(TreeNode *node)
+{
+    // Find the position of the first non-placeholder element
+    int i = 0;
+    for (; i < children.size(); ++i)
+        if (!children.at(i)->isPlaceHolder())
+            break;
+
+    // Insert it there
+    children.insert(i, node);
 }
