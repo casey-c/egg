@@ -125,5 +125,5 @@ test {
 }
 
 RESOURCES += \
-    resouces.qrc
+    resources.qrc
 
