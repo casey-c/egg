@@ -27,6 +27,10 @@ MainWindow::MainWindow(QWidget *parent) :
     treeDisplayWidget = new TreeDisplayWidget();
     ui->leftLayout->addWidget(treeDisplayWidget);
 
+    // Give actions shortcuts
+    ui->actionNew->setShortcut(QKeySequence::New);
+    ui->actionOpen->setShortcut(QKeySequence::Open);
+
     // Tell the widget to redraw when the tree updates
     QObject::connect(currentTree,
                      SIGNAL(treeChanged(QString)),
@@ -511,7 +515,29 @@ void MainWindow::on_actionOpen_triggered()
         {
             newWindow->show();
 
-            // Check if this window has unsaved changes
+            // If no nodes on root, close this window so that the new one is
+            // the only window.
+            //
+            // Obviously, the actual check we'll end up needing is a bit more
+            // involved (some kind of actual bool flag that ties into the Save/
+            // Save As * indicator to show if something has changed), but this
+            // basic check will do for now.
+            //
+            // I figure we'll need to do something with the commandInvoker to
+            // see if commands have been run. I wrote the basic helper
+            // commandInvoker->anyCommands() that returns a bool indicating if
+            // at least one command was run, but this isn't exactly what I
+            // needed at the moment. It needs more thought/code to make it work,
+            // and if we're going to put effort into it, we might as well just
+            // spend time making the actual changes verification.
+            //
+            // Until then, this basic check for seeing if the root has any kids
+            // is good enough for me.
+            //
+            // TODO: better verification for detecting notable changes
+
+            if (currentTree->getRoot()->getChildren().empty() )
+                this->close();
         }
     }
 
@@ -531,4 +557,7 @@ void MainWindow::setCurrStateFromLoaded(TreeState *state)
 
     // Draw it
     currentTree->redraw();
+    Grid g(currentTree);
+    ui->tempGridText->setText(g.toPlaintext());
+
 }

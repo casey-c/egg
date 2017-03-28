@@ -26,6 +26,8 @@ public:
     void undoLastCommand();
     void redoLastCommand();
 
+    bool anyCommands() { return commandStack.size() > 0; }
+
 signals:
     void updateMenu(QString undo, QString redo, QString repeat,
                     bool undoable, bool redoable, bool repeatable);
