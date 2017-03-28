@@ -8,8 +8,12 @@
 
 #include "Grid/grid.h"
 
+#include "Utilities/fileconverter.h"
+
 #include <QDebug>
 #include <QTimer>
+#include <QFileDialog>
+#include <QUrl>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -479,4 +483,27 @@ void MainWindow::insertFromFormula(TreeNode *root)
 {
     ICommand* command = new CTreeStateInsertFromFormula(currentTree, root);
     commandInvoker.runCommand(command);
+}
+
+void MainWindow::on_actionOpen_triggered()
+{
+    // Set up the dialog box
+    QFileDialog dialog(this);
+    dialog.setFileMode(QFileDialog::ExistingFile);
+    dialog.setNameFilter("EGG files (*.egg)");
+    dialog.setViewMode(QFileDialog::Detail);
+
+    // Activate the dialog box
+    if (dialog.exec())
+    {
+        QList<QUrl> urls = dialog.selectedUrls();
+        QUrl url = urls.first();
+
+        // Attempt to convert into a MainWindow object
+        MainWindow* newWindow = FileConverter::load(url);
+
+        if (newWindow != nullptr)
+            newWindow->show();
+    }
+
 }

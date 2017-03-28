@@ -44,6 +44,8 @@ private:
 private slots:
     void endTimer();
 
+    void on_actionOpen_triggered();
+
 public slots:
     void updateUndoMenu(QString undo, QString redo, QString repeat,
                         bool undoable, bool redoable, bool repeatable);
