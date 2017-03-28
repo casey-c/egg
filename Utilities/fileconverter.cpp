@@ -40,13 +40,82 @@ MainWindow* FileConverter::load(QUrl filename)
         qDebug() << "line: " << line;
 
         // Parse the line char by char
-        QChar c = line.at(0);
+        int pos = 0;
+        QChar c = line.at(pos);
         int x = c.digitValue();
-        qDebug() << "First char is " << x;
+
+        // NaN - so line isn't well formed
+        if (x < 0)
+        {
+            qDebug() << "First char is not a number";
+            continue;
+        }
+
+        qDebug() << "First char is a number and it is " << x;
+
+        TreeState* state = new TreeState();
+        TreeNode* root = state->getRoot();
+
+        QStack<TreeNode*> stack;
+
+        for (int i = 0; i < x; ++i)
+            stack.push(root->addChildPlaceholder());
+
+        while (!stack.isEmpty())
+        {
+            TreeNode* nextNode = stack.pop();
+
+            if (line.length() < (pos + 1))
+            {
+                qDebug() << "Still stuff in stack, but we've run out of line!";
+                qDebug() << "This indicates an invalid line";
+                continue;
+            }
+
+
+            QChar nextChar = line.at(++pos);
+
+            // Statement
+            if (nextChar.digitValue() == -1)
+            {
+                qDebug() << "We have a statement of " << nextChar;
+                QString s = "";
+                s += nextChar;
+
+                nextNode->addChildStatement(s);
+            }
+            else
+            {
+                qDebug() << "We have a cut of size " << nextChar.digitValue();
+                TreeNode* cut = nextNode->addChildCut();
+
+                // Push the number of children
+                for (int i = 0; i < nextChar.digitValue(); ++i)
+                    stack.push(cut->addChildPlaceholder());
+            }
+
+            qDebug() << "Finished an iteration, stack is size " << stack.size();
+
+        }
+
+        qDebug() << "Stack is empty";
+        qDebug() << "Line length is " << line.length();
+        qDebug() << "pos is " << pos;
+
+        // Inside the while loop for now; later on we'll support multi-line
+        // file input for actual steps in the proof
+        //
+        // At the moment, we only consider loading in the initial premise graph.
+
+        file.close();
+
+        MainWindow* mw = new MainWindow();
+        mw->setCurrStateFromLoaded(state);
+        return mw;
     }
 
     // All done
-    file.close();
+    //file.close();
 
     // TODO: implementation
     return nullptr;

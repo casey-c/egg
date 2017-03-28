@@ -508,7 +508,27 @@ void MainWindow::on_actionOpen_triggered()
         MainWindow* newWindow = FileConverter::load(url);
 
         if (newWindow != nullptr)
+        {
             newWindow->show();
+
+            // Check if this window has unsaved changes
+        }
     }
 
+}
+
+void MainWindow::setCurrStateFromLoaded(TreeState *state)
+{
+    // Remove the old connection
+    currentTree->disconnect();
+
+    // Connect the new state passed in
+    currentTree = state;
+    QObject::connect(currentTree,
+                     SIGNAL(treeChanged(QString)),
+                     treeDisplayWidget,
+                     SLOT(updateText(QString)));
+
+    // Draw it
+    currentTree->redraw();
 }

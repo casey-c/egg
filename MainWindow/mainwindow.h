@@ -18,6 +18,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    /* Load */
+    void setCurrStateFromLoaded(TreeState* state);
+
 private:
     Ui::MainWindow *ui;
     TreeState* currentTree;
@@ -40,6 +43,7 @@ private:
     /* Pounce */
     bool typedOne;
     QString pounceTarget;
+
 
 private slots:
     void endTimer();
