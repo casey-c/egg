@@ -48,12 +48,11 @@ TreeNode::~TreeNode()
 }
 
 /*
- *  Updates the depth of this and all of the children nodes by using BFS
+ *  Updates the depth of this and all of the children nodes by using DFS
  */
 void TreeNode::updateDepth()
 {
     QStack<TreeNode*> stack;
-    QList<TreeNode*> visited;
 
     stack.push(this);
 
@@ -64,8 +63,6 @@ void TreeNode::updateDepth()
         {
             // update depth here
             depth = parent->getDepth() + 1;
-
-            visited.prepend(node);
 
             for (TreeNode* child : node->getChildren())
                 stack.push(child);

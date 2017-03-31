@@ -934,7 +934,6 @@ QList< QList<TreeNode*> > TreeState::popRecentChildren()
 void TreeState::setPounceIDs()
 {
     QStack<TreeNode*> stack;
-    QList<TreeNode*> visited;
 
     stack.push(root);
 
@@ -947,8 +946,6 @@ void TreeState::setPounceIDs()
         {
             // Add the ID here
             node->setPounceID(id++);
-
-            visited.prepend(node);
 
             for (TreeNode* child : node->getChildren())
                 stack.push(child);
