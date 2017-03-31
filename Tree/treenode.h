@@ -34,6 +34,7 @@ public:
     /* Constructor makes a root node */
     TreeNode()
         : type(constants::ELEMENT_ROOT)
+        , depth(0)
         , name(QString("Root"))
         , parent()
         , placeHolderChild()
@@ -45,6 +46,9 @@ public:
 
     /* Destructor */
     ~TreeNode();
+
+    /* Equality */
+    void updateDepth();
 
     /* ID for debugging */
     static int globalID;
@@ -80,6 +84,7 @@ public:
     bool hasPlaceHolder() { return placeHolderChild; }
     int getType(){ return type; }
     QString getPounceID() { return pounceID; }
+    int getDepth() {return depth;}
 
     /* TODO: fix rep. exposure (make private? friend TreeState?) */
     QList<TreeNode*> getChildren() { return children; }
@@ -98,6 +103,7 @@ private:
     /* Constructor for non-root nodes */
     TreeNode(const int t, TreeNode* p, QString n)
             : type(t)
+            , depth(p->getDepth()+1)
             , name(n)
             , parent(p)
             , placeHolderChild()
@@ -105,6 +111,7 @@ private:
 
     /* Details */
     int type;
+    int depth;
     QString name;
 
     /* Connections */

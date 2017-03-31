@@ -47,6 +47,32 @@ TreeNode::~TreeNode()
         delete placeholder;
 }
 
+/*
+ *  Updates the depth of this and all of the children nodes by using BFS
+ */
+void TreeNode::updateDepth()
+{
+    QStack<TreeNode*> stack;
+    QList<TreeNode*> visited;
+
+    stack.push(this);
+
+    while (!stack.isEmpty())
+    {
+        TreeNode* node = stack.pop();
+        if (!visited.contains(node))
+        {
+            // update depth here
+            depth = parent->getDepth() + 1;
+
+            visited.prepend(node);
+
+            for (TreeNode* child : node->getChildren())
+                stack.push(child);
+        }
+    }
+}
+
 /////////////////
 /// Additions ///
 /////////////////
@@ -228,6 +254,7 @@ void TreeNode::move(TreeNode *target, TreeNode *targetParent)
         target->getParent()->children.removeOne(target);
     targetParent->children.append(target);
     target->parent = targetParent;
+    target->updateDepth();
 }
 
 //////////////
