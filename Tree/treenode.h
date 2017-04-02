@@ -36,7 +36,8 @@ public:
         : type(constants::ELEMENT_ROOT)
         , name(QString("Root"))
         , parent()
-        , placeHolderChild()
+        //, placeHolderChild()
+        , numPlaceholderChildren(0)
         , myID(globalID++) {}
 
     /* Copy constructor */
@@ -77,7 +78,8 @@ public:
 
     /* Getters */
     QString getName() { return name; }
-    bool hasPlaceHolder() { return placeHolderChild; }
+    //bool hasPlaceHolder() { return placeHolderChild; }
+    bool hasAtLeastOnePlaceholder() { return numPlaceholderChildren >= 1; }
     int getType(){ return type; }
     QString getPounceID() { return pounceID; }
 
@@ -100,7 +102,7 @@ private:
             : type(t)
             , name(n)
             , parent(p)
-            , placeHolderChild()
+            , numPlaceholderChildren(0)
             , myID(globalID++) {}
 
     /* Details */
@@ -112,11 +114,14 @@ private:
     QList<TreeNode*> children;
 
     /* Placeholder */
-    bool placeHolderChild;
+    //bool placeHolderChild;
+    int numPlaceholderChildren;
 
     /* New placeholder helpers */
-    void updatePlaceholderStatus();
+    //void updatePlaceholderStatus();
     void addAfterPlaceholders(TreeNode* node);
+
+    void removePlaceholder();
 
     /* ID's */
     QString pounceID;

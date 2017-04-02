@@ -416,8 +416,8 @@ void TreeState::removeAndSaveOrphans(TreeNode *target)
     TreeNode* parent = target->getParent();
 
     // Placeholder logic
-    if (target->hasPlaceHolder())
-        parent->addChildPlaceholder();
+    //if (target->hasPlaceHolder())
+        //parent->addChildPlaceholder();
 
     // Save the children
     for (TreeNode* orphan : target->getChildren())

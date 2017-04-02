@@ -15,11 +15,12 @@ int TreeNode::globalID = 0;
 TreeNode::TreeNode(TreeNode *original):
     type(original->getType()),
     name(original->getName()),
-    placeHolderChild(false),
+    numPlaceholderChildren(original->numPlaceholderChildren),
+    //placeHolderChild(false),
     myID(globalID++)
 {
-    if (original->hasPlaceHolder())
-        addChildPlaceholder();
+    //if (original->hasPlaceHolder())
+        //addChildPlaceholder();
 
     for (TreeNode* child : original->getChildren())
     {
@@ -76,7 +77,8 @@ TreeNode* TreeNode::addChildCut()
         parent->children.removeOne(this);
 
         // Update our parent's placeholder status by looking for another
-        parent->updatePlaceholderStatus();
+        //parent->updatePlaceholderStatus();
+        parent->numPlaceholderChildren--;
 
         // Put us at the back of our parent's children list as a real cut
         parent->children.append(this);
@@ -84,7 +86,7 @@ TreeNode* TreeNode::addChildCut()
     }
 
     // See if we have a placeholder child to replace
-    else if (placeHolderChild)
+    else if (numPlaceholderChildren > 0)
     {
         // Get that element
         TreeNode* placeholder = children.first();
@@ -130,7 +132,8 @@ TreeNode* TreeNode::addChildStatement(QString s)
         parent->children.removeOne(this);
 
         // Update our parent's placeholder check
-        parent->updatePlaceholderStatus();
+        //parent->updatePlaceholderStatus();
+        parent->numPlaceholderChildren--;
 
         // Add us back in as a real statement in the proper place
         parent->addAfterPlaceholders(this);
@@ -138,7 +141,7 @@ TreeNode* TreeNode::addChildStatement(QString s)
     }
 
     // See if we have a placeholder child to replace
-    else if (placeHolderChild)
+    else if (numPlaceholderChildren > 0)
     {
         // Get that element
         TreeNode* placeholder = children.first();
@@ -182,8 +185,8 @@ TreeNode* TreeNode::addChildPlaceholder()
     TreeNode* newPlaceholder = new TreeNode(constants::ELEMENT_PLACEHOLDER,
                                             this,
                                             NULL);
-    placeHolderChild = true;
     children.prepend(newPlaceholder);
+    numPlaceholderChildren++;
 
     return newPlaceholder;
 }
@@ -622,23 +625,23 @@ QString TreeNode::getPounceLine(int depth, int end, bool bottom,
 /*
  * Checks the first node in children to see if it is a placeholder
  */
-void TreeNode::updatePlaceholderStatus()
-{
+//void TreeNode::updatePlaceholderStatus()
+//{
     // No children
-    if (children.isEmpty())
-        placeHolderChild = false;
-    else // Check if the first child is a placeholder
-        placeHolderChild = children.first()->isPlaceHolder();
-}
+    //if (children.isEmpty())
+        //placeHolderChild = false;
+    //else // Check if the first child is a placeholder
+        //placeHolderChild = children.first()->isPlaceHolder();
+//}
 
 void TreeNode::addAfterPlaceholders(TreeNode *node)
 {
     // Find the position of the first non-placeholder element
-    int i = 0;
-    for (; i < children.size(); ++i)
-        if (!children.at(i)->isPlaceHolder())
-            break;
+   // int i = 0;
+   // for (; i < children.size(); ++i)
+   //     if (!children.at(i)->isPlaceHolder())
+   //         break;
 
     // Insert it there
-    children.insert(i, node);
+    children.insert(numPlaceholderChildren, node);
 }
