@@ -104,7 +104,7 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
     // A-F will add that letter as a statement
     if (event->key() >= 65 && event->key() <= 70)
     {
-        qDebug() << "Pressed A-F";
+        qDebug() << "A-F: add statement";
         command = new CTreeStateAddStatement(currentTree,
                                              event->text().at(0).toUpper());
         commandInvoker.runCommand(command);
@@ -115,23 +115,23 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
     switch (event->key())
     {
     case Qt::Key_J:
-        qDebug() << "J is pressed";
+        qDebug() << "J: highlight first child";
         command = new CTreeStateHighlightChild(currentTree);
         commandInvoker.runCommand(command);
         break;
     case Qt::Key_K:
-        qDebug() << "K is pressed";
+        qDebug() << "K: highlight parent";
         command = new CTreeStateHighlightParent(currentTree);
         commandInvoker.runCommand(command);
         break;
     case Qt::Key_H:
-        qDebug() << "H is pressed";
+        qDebug() << "H: highlight left";
         command = new CTreeStateHighlightLeft(currentTree);
         commandInvoker.runCommand(command);
         break;
     case Qt::Key_I:
     {
-        qDebug() << "I is pressed";
+        qDebug() << "I: insert from formula";
         PolishInputWidget* widget = new PolishInputWidget();
 
         // Connect it up
@@ -144,78 +144,78 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
         break;
     }
     case Qt::Key_L:
-        qDebug() << "L is pressed";
+        qDebug() << "L: highlight right";
         command = new CTreeStateHighlightRight(currentTree);
         commandInvoker.runCommand(command);
         break;
     case Qt::Key_M:
-        qDebug() << "M is pressed";
+        qDebug() << "M: delete a node, but save its children";
         command = new CTreeStateDetachNodeButSaveChildren(currentTree);
         commandInvoker.runCommand(command);
         break;
     case Qt::Key_N:
-        qDebug() << "N is pressed";
+        qDebug() << "N: a(n)nhilate a node / delete it and all its children";
         command = new CTreeStateDetachNode(currentTree);
         commandInvoker.runCommand(command);
         break;
     case Qt::Key_O:
-        qDebug() << "O is pressed";
-        if (QString::compare(event->text(), "O"))
+        qDebug() << "O: surround with cut (capital letter works on individuals)";
+        if (QString::compare(event->text(), "o") == 0)
             command = new CTreeStateSurroundWithCutAsGroup(currentTree);
         else
             command = new CTreeStateSurroundWithCut(currentTree);
         commandInvoker.runCommand(command);
         break;
     case Qt::Key_P: // TODO: change this to a group maybe
-        qDebug() << "P is pressed";
+        qDebug() << "P: surround with double cut";
         command = new CTreeStateSurroundWithDoubleCut(currentTree);
         commandInvoker.runCommand(command);
         break;
     case Qt::Key_Q:
-        qDebug() << "Q is pressed";
+        qDebug() << "Q: enter Q mode for 1 second";
         keybindMode = constants::MODE_Q;
         QTimer::singleShot(1000,this,SLOT(endTimer()));
         break;
     case Qt::Key_R:
-        qDebug() << "R is pressed.";
+        qDebug() << "R: add conditional template";
         command = new CTreeStateAddConditionalTemplate(currentTree);
         commandInvoker.runCommand(command);
         break;
     case Qt::Key_S:
-        qDebug() << "S is pressed.";
+        qDebug() << "S: enter select mode";
         keybindMode = constants::MODE_SELECT; // Enter select mode
         break;
     case Qt::Key_T:
-        qDebug() << "T is pressed";
+        qDebug() << "T: add biconditional template";
         command = new CTreeStateAddBiconditionalTemplate(currentTree);
         commandInvoker.runCommand(command);
         break;
     case Qt::Key_U:
-        qDebug() << "U is pressed";
+        qDebug() << "U: undo the last command";
         commandInvoker.undoLastCommand();
         break;
     case Qt::Key_V:
-        qDebug() << "V is pressed";
+        qDebug() << "V: adds or template";
         command = new CTreeStateAddOrTemplate(currentTree);
         commandInvoker.runCommand(command);
         break;
     case Qt::Key_X:
-        qDebug() << "X is pressed";
+        qDebug() << "X: adds a cut";
         command = new CTreeStateAddCut(currentTree);
         commandInvoker.runCommand(command);
         break;
     case Qt::Key_Y:
-        qDebug() << "Y is pressed";
+        qDebug() << "Y: redo the last command";
         commandInvoker.redoLastCommand();
         break;
     case Qt::Key_Z:
-        qDebug() << "Z is pressed";
+        qDebug() << "Z: adds a double cut";
         command = new CTreeStateAddDoubleCut(currentTree);
         commandInvoker.runCommand(command);
         break;
     case Qt::Key_1: // DEBUG: copy the current tree
     {
-        qDebug() << "1 is pressed";
+        qDebug() << "DEBUG: 1 saves a tree state to test swapping with 2 key";
         if (copiedTree != NULL)
             delete copiedTree;
 
@@ -224,7 +224,7 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
     }
     case Qt::Key_2: // DEBUG: swap between copied tree and current tree
     {
-        qDebug() << "2 is pressed";
+        qDebug() << "DEBUG: 2 swaps between tree states saved with 1 key";
 
         // Disconnect the old tree
         currentTree->disconnect();
@@ -244,39 +244,33 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
         break;
     }
     case Qt::Key_4:
-        qDebug() << "DEBUG ONLY";
+        qDebug() << "DEBUG: 4 adds placeholder to highlighted";
         currentTree->addPlaceholderToHighlighted();
         currentTree->redraw();
         break;
+    case Qt::Key_5:
+        qDebug() << "DEBUG: 5 shows output string";
+        qDebug() << currentTree->toOutputString();
+        break;
     case Qt::Key_9:
     {
-        qDebug() << "9 is pressed";
+        qDebug() << "DEBUG: 9 prints grid in plaintext";
         Grid g(currentTree);
 
         ui->tempGridText->setText(g.toPlaintext());
         break;
     }
-    case Qt::Key_0:
-        qDebug() << "0 is pressed";
-        delete(currentTree);
-        currentTree = new TreeState();
-        QObject::connect(currentTree,
-                         SIGNAL(treeChanged(QString)),
-                         treeDisplayWidget,
-                         SLOT(updateText(QString)));
-        currentTree->redraw();
-        break;
     case Qt::Key_Period:
-        qDebug() << ". is pressed";
+        qDebug() << "( . ): repeat last command";
         commandInvoker.repeatLastCommand();
         break;
     case Qt::Key_Semicolon:
-        qDebug() << "; is pressed";
+        qDebug() << "( ; ): highlight root";
         command = new CTreeStateHighlightRoot(currentTree);
         commandInvoker.runCommand(command);
         break;
     case Qt::Key_BracketLeft:
-        qDebug() << "[ is pressed";
+        qDebug() << "( [ ): enter pounce mode";
         keybindMode = constants::MODE_POUNCE;
         currentTree->setPounceIDs();
         currentTree->drawPounceTree();

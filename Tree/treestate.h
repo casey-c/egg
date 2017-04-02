@@ -144,6 +144,7 @@ public:
 
     /* Text output in tree form */
     QString getBoxedString();
+    QString toOutputString();
 
     /* Update any views */
     void redraw();

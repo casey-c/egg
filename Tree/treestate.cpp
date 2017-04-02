@@ -878,6 +878,39 @@ QString TreeState::getBoxedString()
     return result;
 }
 
+/*
+ * Turns this tree state into a single line in the output *.egg file format
+ *
+ * The *.egg format is essentially just a depth-first search tree:
+ *     * Root / Cut elements are printed by the number of their children
+ *     * Statements are printed by their letter
+ *
+ * TODO: adding placeholders as real children broke this function; should only
+ * report the # of non-placeholder children
+ */
+QString TreeState::toOutputString()
+{
+    QString result = "";
+
+    QStack<TreeNode*> stack;
+    stack.push(root);
+
+    while (!stack.isEmpty())
+    {
+        TreeNode* current = stack.pop();
+        if (current->isStatement())
+            result += current->getName();
+        else if (current->isRoot() || current->isCut())
+        {
+            result += QString::number(current->getChildren().size());
+            for (TreeNode* child : current->getChildren())
+                stack.push(child);
+        }
+    }
+
+    return result;
+}
+
 
 /* Redraw the tree after changes */
 void TreeState::redraw()
