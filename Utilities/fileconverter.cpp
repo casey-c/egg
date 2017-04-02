@@ -1,5 +1,6 @@
 #include "fileconverter.h"
 #include <QMessageBox>
+#include <QFileDialog>
 
 /*
  * Attempts to parse an *.egg input file and produce a new MainWindow with the
@@ -134,11 +135,31 @@ MainWindow* FileConverter::load(QUrl filename)
  */
 bool FileConverter::save(MainWindow *state)
 {
-    // Paranoid null check
-    if (state == nullptr)
-        return false;
+    TreeState* tree = state->getCurrentTree();
 
-    // TODO: implementation
+    // Show a Save dialog box
+    QUrl url = QFileDialog::getSaveFileUrl(NULL,
+                                           "Save File",
+                                           QUrl(),
+                                           "EGG (*.egg)");
+
+    // Didn't click cancel on the dialog box
+    if (url.isValid())
+    {
+        // What to write to the file
+        QString data = tree->toOutputString();
+
+        // Try and write it
+        QFile file(url.toLocalFile());
+        if (file.open(QIODevice::WriteOnly))
+        {
+            QTextStream stream( &file );
+            stream << data;
+        }
+
+        file.close();
+        return true;
+    }
 
     return false;
 }

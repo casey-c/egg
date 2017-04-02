@@ -21,6 +21,9 @@ public:
     /* Load */
     void setCurrStateFromLoaded(TreeState* state);
 
+    /* Save */
+    TreeState* getCurrentTree() { return currentTree; }
+
 private:
     Ui::MainWindow *ui;
     TreeState* currentTree;
@@ -49,6 +52,8 @@ private slots:
     void endTimer();
 
     void on_actionOpen_triggered();
+
+    void on_actionSave_triggered();
 
 public slots:
     void updateUndoMenu(QString undo, QString redo, QString repeat,

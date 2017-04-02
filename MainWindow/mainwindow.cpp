@@ -30,6 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Give actions shortcuts
     ui->actionNew->setShortcut(QKeySequence::New);
     ui->actionOpen->setShortcut(QKeySequence::Open);
+    ui->actionSave->setShortcut(QKeySequence::Save);
 
     // Tell the widget to redraw when the tree updates
     QObject::connect(currentTree,
@@ -537,6 +538,16 @@ void MainWindow::on_actionOpen_triggered()
 
 }
 
+/*
+ * Save the current tree to a text file.
+ *
+ * TODO: make save work with full history, not just a single tree as it is now.
+ */
+void MainWindow::on_actionSave_triggered()
+{
+    FileConverter::save(this);
+}
+
 void MainWindow::setCurrStateFromLoaded(TreeState *state)
 {
     // Remove the old connection
@@ -555,3 +566,4 @@ void MainWindow::setCurrStateFromLoaded(TreeState *state)
     ui->tempGridText->setText(g.toPlaintext());
 
 }
+
