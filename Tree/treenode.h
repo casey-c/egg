@@ -80,6 +80,7 @@ public:
     QString getName() { return name; }
     //bool hasPlaceHolder() { return placeHolderChild; }
     bool hasAtLeastOnePlaceholder() { return numPlaceholderChildren >= 1; }
+    int getNumPlaceholderChildren() { return numPlaceholderChildren; }
     int getType(){ return type; }
     QString getPounceID() { return pounceID; }
 

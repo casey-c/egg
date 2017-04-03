@@ -902,9 +902,11 @@ QString TreeState::toOutputString()
             result += current->getName();
         else if (current->isRoot() || current->isCut())
         {
-            result += QString::number(current->getChildren().size());
+            result += QString::number(current->getChildren().size() -
+                                      current->getNumPlaceholderChildren() );
             for (TreeNode* child : current->getChildren())
-                stack.push(child);
+                if (!child->isPlaceHolder())
+                    stack.push(child);
         }
     }
 
