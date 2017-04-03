@@ -82,6 +82,9 @@ public:
     /* Destructor */
     ~TreeState();
 
+    /* Equality */
+    bool isEqualWith(TreeState* tree);
+
     /* Highlighted */
     void highlightChild();
     void highlightParent();

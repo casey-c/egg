@@ -8,6 +8,11 @@ TreeState::~TreeState()
     qDebug() << "Successfully deleted root";
 }
 
+bool TreeState::isEqualWith(TreeState* tree)
+{
+    return this->getRoot()->isEqualWith(tree->getRoot());
+}
+
 /////////////////
 /// Highlight ///
 /////////////////
@@ -942,14 +947,13 @@ void TreeState::setPounceIDs()
     while (!stack.isEmpty())
     {
         TreeNode* node = stack.pop();
-        if (!visited.contains(node))
-        {
-            // Add the ID here
-            node->setPounceID(id++);
 
-            for (TreeNode* child : node->getChildren())
-                stack.push(child);
-        }
+        // Add the ID here
+        node->setPounceID(id++);
+
+        for (TreeNode* child : node->getChildren())
+            stack.push(child);
+
     }
 }
 

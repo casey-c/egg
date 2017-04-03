@@ -1,8 +1,9 @@
 #ifndef TREE_TREENODE_H
 #define TREE_TREENODE_H
 
-#include<QList>
+#include <QList>
 #include <QString>
+#include <QQueue>
 
 #include "Utilities/constants.h"
 
@@ -48,6 +49,8 @@ public:
     ~TreeNode();
 
     /* Equality */
+    bool isEqualWith(TreeNode* node);
+    QList< QList<TreeNode*> > TreeNode::getLeaves(TreeNode* root);
     void updateDepth();
 
     /* ID for debugging */

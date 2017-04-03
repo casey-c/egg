@@ -47,26 +47,62 @@ TreeNode::~TreeNode()
         delete placeholder;
 }
 
+//////////////////////////
+///      Equality      ///
+//////////////////////////
+
 /*
- *  Updates the depth of this and all of the children nodes by using DFS
+ *  Compares this node with another input node and determines if they are EQUAL.
+ *
+ *  EQUAL means that two of the nodes have the same structure of tree.
+ *  The order of their children can be different but the number, type, and name
+ *  (if it is a statement) should be same to be considered EQUAL.
+ *
+ *  Input : node - a node to be compared with this node
+ *
+ *  effects : compares two trees from this and input node as a root.
+ *
+ *  returns : true or false if EQUAL or not
+ */
+bool TreeNode::isEqualWith(TreeNode* node)
+{
+    QList< QList<TreeNode*> > list1, list2;
+
+    list1 = getLeaves(this);
+    list2 = getLeaves(node);
+
+    return true;
+}
+
+/*
+ *  Helper function for isEqualWith()
+ *
+ *  From the input node, we will BFS search and find the leaves and
+ *  return them in a 2D matrix of QList.
+ */
+QList< QList<TreeNode*> > TreeNode::getLeaves(TreeNode* root)
+{
+
+}
+
+/*
+ *  Updates the depth of this and all of the children nodes by using BFS
  */
 void TreeNode::updateDepth()
 {
-    QStack<TreeNode*> stack;
+    QQueue<TreeNode*> queue;
 
-    stack.push(this);
+    queue.enqueue(this);
 
-    while (!stack.isEmpty())
+    while (!queue.isEmpty())
     {
-        TreeNode* node = stack.pop();
-        if (!visited.contains(node))
-        {
-            // update depth here
-            depth = parent->getDepth() + 1;
+        TreeNode* node = queue.dequeue();
 
-            for (TreeNode* child : node->getChildren())
-                stack.push(child);
-        }
+        // update depth here
+        depth = parent->getDepth() + 1;
+
+        for (TreeNode* child : node->getChildren())
+            queue.enqueue(child);
     }
 }
 
