@@ -50,7 +50,9 @@ public:
 
     /* Equality */
     bool isEqualWith(TreeNode* node);
-    QList< QList<TreeNode*> > TreeNode::getLeaves(TreeNode* root);
+    QList< QList<TreeNode*> > getLeaves(TreeNode* root);
+    static bool compareLeaves(QList< QList<TreeNode*> > list1,
+                              QList< QList<TreeNode*> > list2);
     void updateDepth();
 
     /* ID for debugging */

@@ -66,12 +66,10 @@ TreeNode::~TreeNode()
  */
 bool TreeNode::isEqualWith(TreeNode* node)
 {
-    QList< QList<TreeNode*> > list1, list2;
+    QList< QList<TreeNode*> > list1 = getLeaves(this);
+    QList< QList<TreeNode*> > list2 = getLeaves(node);
 
-    list1 = getLeaves(this);
-    list2 = getLeaves(node);
-
-    return true;
+    return TreeNode::compareLeaves(list1, list2);
 }
 
 /*
@@ -81,6 +79,56 @@ bool TreeNode::isEqualWith(TreeNode* node)
  *  return them in a 2D matrix of QList.
  */
 QList< QList<TreeNode*> > TreeNode::getLeaves(TreeNode* root)
+{
+    QList< QList<TreeNode*> > list;
+    QQueue<TreeNode*> queue;
+    int currentDepth = 0, currentIndex = -1;
+
+    //Special case for root not having any children
+    //returns a 2D list that contains root itself
+    if(root->getChildren().isEmpty())
+    {
+        QList<TreeNode*> newIndex;
+        newIndex.append(root);
+        list.append(newIndex);
+        return list;
+    }
+
+    //BFS search starts here
+    queue.enqueue(root);
+
+    while (!queue.isEmpty())
+    {
+        TreeNode* node = queue.dequeue();
+
+        //when ever find leaves(no more child) then add it to list
+        if(node->getChildren().isEmpty())
+        {
+            //if this node has same depth with currentDepth then add it to
+            //current index otherwise create new index and add it there
+            if(node->getDepth() == currentDepth)
+            {
+                list[currentIndex].append(node);
+            }
+            else
+            {
+                QList<TreeNode*> newIndex;
+                newIndex.append(node);
+                list.append(newIndex);
+                currentDepth = node->getDepth();
+                currentIndex++;
+            }
+        }
+
+        for (TreeNode* child : node->getChildren())
+            queue.enqueue(child);
+    }
+
+    return list;
+}
+
+bool TreeNode::compareLeaves(QList< QList<TreeNode*> > list1,
+                             QList< QList<TreeNode*> > list2)
 {
 
 }
