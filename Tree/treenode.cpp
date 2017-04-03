@@ -126,7 +126,9 @@ QList< QList<TreeNode*> > TreeNode::getLeaves(TreeNode* root)
 
     return list;
 }
-
+/*
+ *  Compares two 2D matrix of leaves and returns if they have same leaves
+ */
 bool TreeNode::compareLeaves(QList< QList<TreeNode*> > list1,
                              QList< QList<TreeNode*> > list2)
 {
@@ -147,7 +149,7 @@ void TreeNode::updateDepth()
         TreeNode* node = queue.dequeue();
 
         // update depth here
-        depth = parent->getDepth() + 1;
+        node->depth = parent->getDepth() + 1;
 
         for (TreeNode* child : node->getChildren())
             queue.enqueue(child);
