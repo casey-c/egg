@@ -104,6 +104,10 @@ QList< QList<TreeNode*> > TreeNode::getLeaves(TreeNode* root)
         //when ever find leaves(no more child) then add it to list
         if(node->getChildren().isEmpty())
         {
+            //If this leaf is a placeholder then just skip it
+            if(node->getType() == constants::ELEMENT_PLACEHOLDER)
+                continue;
+
             //if this node has same depth with currentDepth then add it to
             //current index otherwise create new index and add it there
             if(node->getDepth() == currentDepth)
@@ -127,12 +131,35 @@ QList< QList<TreeNode*> > TreeNode::getLeaves(TreeNode* root)
     return list;
 }
 /*
- *  Compares two 2D matrix of leaves and returns if they have same leaves
+ *  Compares two 2D matrix of leaves and returns bool indicates
+ *  if they have same leaves
  */
 bool TreeNode::compareLeaves(QList< QList<TreeNode*> > list1,
                              QList< QList<TreeNode*> > list2)
 {
+    //Return false if two lists have different number of varity on depth
+    if(list1.size() != list2.size())
+        return false;
 
+    //Loop for changing depth index
+    for(int i = 0; i < list1.size(); i++)
+    {
+        //Return false if two lists do not have same size of each index
+        if(list1[i].size() != list2[i].size())
+            return false;
+
+        //First loop for changing list1 index
+        for(int j = 0; j < list1.size(); j++)
+        {
+            //Second loop ofr chaning list2 index
+            for(int k = 0; k < list2.size(); k++)
+            {
+
+            }
+        }
+    }
+
+    return true;
 }
 
 /*
