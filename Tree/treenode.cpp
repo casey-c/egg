@@ -69,17 +69,53 @@ bool TreeNode::equals(TreeNode* node1, TreeNode* node2)
     QList<int> cutCount1, cutCount2, depths1, depths2;
     QList< QList<QString> > list1, list2;
 
+    //Get lists of leaves
     TreeNode::getLeaves(node1, list1, cutCount1, depths1);
     TreeNode::getLeaves(node2, list2, cutCount2, depths2);
 
+    //Comparison begins
+    if(list1.size() != list2.size() || cutCount1.size() != cutCount2.size()
+            || depths1.size() != depths2.size())
+        return false;
+
+    for (int i = 0; i < depths1.size(); i++)
+    {
+        //Compare each depth for each index
+        if(depths1[i] != depths2[i])
+            return false;
+
+        //Compare the number of cuts for each depth
+        if(cutCount1[i] != cutCount2[i])
+            return false;
+
+        //Compare size of each second index of lists
+        if(list1[i].size() != list2[i].size())
+            return false;
+
+        //Sorting each second list of statement(run time of O(n*logn))
+        std::sort(list1[i].begin(), list1[i].end());
+        std::sort(list2[i].begin(), list2[i].end());
+
+        //Compare the sorted strings of statement in each depths
+        for (int j = 0; j < list1[i].size(); i++)
+        {
+            if(list1[i][j] != list2[i][j])
+                return false;
+        }
+    }
+
+    //If it hasn't been returned false then two leaves lists are same
+    //so return true
     return true;
 }
 
 /*
  *  Helper function for isEqualWith()
  *
- *  From the input node, we will BFS search and find the leaves and
- *  return them in a 2D matrix of QList.
+ *  From the input node, we will BFS search and find the leaves(cut/statements)
+ *  and update the input QLists based off the BFS search
+ *
+ *  Statement list is still unsorted after this function
  */
 void TreeNode::getLeaves(TreeNode* root, QList< QList<QString> > &list,
                          QList<int> &cutCount, QList<int> &depths)
@@ -138,11 +174,9 @@ void TreeNode::getLeaves(TreeNode* root, QList< QList<QString> > &list,
                 currentIndex++;
             }
         }
-        else
-        {
-            for (TreeNode* child : node->getChildren())
-                queue.enqueue(child);
-        }
+
+        for (TreeNode* child : node->getChildren())
+            queue.enqueue(child);
     }
 }
 
