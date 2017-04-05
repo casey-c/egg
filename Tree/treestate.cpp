@@ -8,6 +8,11 @@ TreeState::~TreeState()
     qDebug() << "Successfully deleted root";
 }
 
+bool TreeState::equals(TreeState* tree1, TreeState* tree2)
+{
+    return TreeNode::equals(tree1->getRoot(), tree2->getRoot());
+}
+
 /////////////////
 /// Highlight ///
 /////////////////
@@ -934,7 +939,6 @@ QList< QList<TreeNode*> > TreeState::popRecentChildren()
 void TreeState::setPounceIDs()
 {
     QStack<TreeNode*> stack;
-    QList<TreeNode*> visited;
 
     stack.push(root);
 
@@ -943,16 +947,13 @@ void TreeState::setPounceIDs()
     while (!stack.isEmpty())
     {
         TreeNode* node = stack.pop();
-        if (!visited.contains(node))
-        {
-            // Add the ID here
-            node->setPounceID(id++);
 
-            visited.prepend(node);
+        // Add the ID here
+        node->setPounceID(id++);
 
-            for (TreeNode* child : node->getChildren())
-                stack.push(child);
-        }
+        for (TreeNode* child : node->getChildren())
+            stack.push(child);
+
     }
 }
 

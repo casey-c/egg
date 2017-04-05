@@ -82,6 +82,9 @@ public:
     /* Destructor */
     ~TreeState();
 
+    /* Equality */
+    static bool equals(TreeState* tree1, TreeState* tree2);
+
     /* Highlighted */
     void highlightChild();
     void highlightParent();

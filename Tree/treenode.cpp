@@ -47,6 +47,160 @@ TreeNode::~TreeNode()
         delete placeholder;
 }
 
+//////////////////////////
+///      Equality      ///
+//////////////////////////
+
+/*
+ *  Compares this node with another input node and determines if they are EQUAL.
+ *
+ *  EQUAL means that two of the nodes have the same structure of tree.
+ *  The order of their children can be different but the number, type, and name
+ *  (if it is a statement) should be same to be considered EQUAL.
+ *
+ *  Input : node - a node to be compared with this node
+ *
+ *  effects : compares two trees from this and input node as a root.
+ *
+ *  returns : true or false if EQUAL or not
+ */
+bool TreeNode::equals(TreeNode* node1, TreeNode* node2)
+{
+    QList<int> cutCount1, cutCount2, depths1, depths2;
+    QList< QList<QString> > list1, list2;
+
+    //Get lists of leaves
+    TreeNode::getLeaves(node1, list1, cutCount1, depths1);
+    TreeNode::getLeaves(node2, list2, cutCount2, depths2);
+
+    //Comparison begins
+    if(list1.size() != list2.size() || cutCount1.size() != cutCount2.size()
+            || depths1.size() != depths2.size())
+        return false;
+
+    for (int i = 0; i < depths1.size(); i++)
+    {
+        //Compare each depth for each index
+        if(depths1[i] != depths2[i])
+            return false;
+
+        //Compare the number of cuts for each depth
+        if(cutCount1[i] != cutCount2[i])
+            return false;
+
+        //Compare size of each second index of lists
+        if(list1[i].size() != list2[i].size())
+            return false;
+
+        //Sorting each second list of statement(run time of O(n*logn))
+        std::sort(list1[i].begin(), list1[i].end());
+        std::sort(list2[i].begin(), list2[i].end());
+
+        //Compare the sorted strings of statement in each depths
+        for (int j = 0; j < list1[i].size(); i++)
+        {
+            if(list1[i][j] != list2[i][j])
+                return false;
+        }
+    }
+
+    //If it hasn't been returned false then two leaves lists are same
+    //so return true
+    return true;
+}
+
+/*
+ *  Helper function for isEqualWith()
+ *
+ *  From the input node, we will BFS search and find the leaves(cut/statements)
+ *  and update the input QLists based off the BFS search
+ *
+ *  Statement list is still unsorted after this function
+ */
+void TreeNode::getLeaves(TreeNode* root, QList< QList<QString> > &list,
+                         QList<int> &cutCount, QList<int> &depths)
+{
+    QQueue<TreeNode*> queue;
+    int currentDepth = 0, currentIndex = -1;
+
+    //Special case for root not having any children
+    //Will just return without any effect
+    if(root->getChildren().isEmpty())
+        return;
+
+    //BFS search starts here
+    queue.enqueue(root);
+
+    while (!queue.isEmpty())
+    {
+        TreeNode* node = queue.dequeue();
+
+        //whenever we find a leaf (has no child)
+        if(node->getChildren().isEmpty())
+        {
+            //If this leaf is a placeholder then just skip it
+            if(node->getType() == constants::ELEMENT_PLACEHOLDER)
+                continue;
+
+            if(node->getDepth() == currentDepth)
+            {
+                //If same depth was already found,
+                //For cut, increment cutCount of current index
+                //For statement, append this node name to current index's list
+                if(node->getType() == constants::ELEMENT_CUT)
+                    cutCount[currentIndex]++;
+                else if(node->getType() == constants::ELEMENT_STATEMENT)
+                    list[currentIndex].append(node->getName());
+            }
+            else
+            {
+                //Create a list for new depth and if the leaf is a statement
+                //then add it to the new list
+                QList<QString> newIndex;
+                if(node->getType() == constants::ELEMENT_STATEMENT)
+                    newIndex.append(node->getName());
+                list.append(newIndex);
+
+                //Append the cutCount and if the leaf is a cut then
+                //increment by 1
+                cutCount.append(0);
+                if(node->getType() == constants::ELEMENT_CUT)
+                    cutCount.last()++;
+
+                //Append depth with new node's depth to parallelize the lists
+                depths.append(node->getDepth());
+
+                currentDepth = node->getDepth();
+                currentIndex++;
+            }
+        }
+
+        for (TreeNode* child : node->getChildren())
+            queue.enqueue(child);
+    }
+}
+
+/*
+ *  Updates the depth of this and all of the children nodes by using BFS
+ */
+void TreeNode::updateDepth()
+{
+    QQueue<TreeNode*> queue;
+
+    queue.enqueue(this);
+
+    while (!queue.isEmpty())
+    {
+        TreeNode* node = queue.dequeue();
+
+        // update depth here
+        node->depth = parent->getDepth() + 1;
+
+        for (TreeNode* child : node->getChildren())
+            queue.enqueue(child);
+    }
+}
+
 /////////////////
 /// Additions ///
 /////////////////
@@ -228,6 +382,7 @@ void TreeNode::move(TreeNode *target, TreeNode *targetParent)
         target->getParent()->children.removeOne(target);
     targetParent->children.append(target);
     target->parent = targetParent;
+    target->updateDepth();
 }
 
 //////////////
