@@ -477,10 +477,6 @@ void MainWindow::updateUndoMenu(QString undo, QString redo, QString repeat,
 
 void MainWindow::insertFromFormula(TreeNode *root)
 {
-    qDebug() << "Received a root node";
-    for (TreeNode* node : root->getChildren())
-        currentTree->move(node, currentTree->getHighlighted());
-
-    delete root;
-    currentTree->redraw();
+    ICommand* command = new CTreeStateInsertFromFormula(currentTree, root);
+    commandInvoker.runCommand(command);
 }
