@@ -8,9 +8,9 @@ TreeState::~TreeState()
     qDebug() << "Successfully deleted root";
 }
 
-bool TreeState::isEqualWith(TreeState* tree)
+bool TreeState::equals(TreeState* tree1, TreeState* tree2)
 {
-    return this->getRoot()->isEqualWith(tree->getRoot());
+    return TreeNode::equals(tree1->getRoot(), tree2->getRoot());
 }
 
 /////////////////

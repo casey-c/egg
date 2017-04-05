@@ -49,10 +49,9 @@ public:
     ~TreeNode();
 
     /* Equality */
-    bool isEqualWith(TreeNode* node);
-    QList< QList<TreeNode*> > getLeaves(TreeNode* root);
-    static bool compareLeaves(QList< QList<TreeNode*> > list1,
-                              QList< QList<TreeNode*> > list2);
+    static bool equals(TreeNode* node1, TreeNode* node2);
+    static void getLeaves(TreeNode * root, QList<QList<QString> > &list,
+                          QList<int> &cutCount, QList<int> &depths);
     void updateDepth();
 
     /* ID for debugging */

@@ -83,7 +83,7 @@ public:
     ~TreeState();
 
     /* Equality */
-    bool isEqualWith(TreeState* tree);
+    static bool equals(TreeState* tree1, TreeState* tree2);
 
     /* Highlighted */
     void highlightChild();

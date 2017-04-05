@@ -64,12 +64,15 @@ TreeNode::~TreeNode()
  *
  *  returns : true or false if EQUAL or not
  */
-bool TreeNode::isEqualWith(TreeNode* node)
+bool TreeNode::equals(TreeNode* node1, TreeNode* node2)
 {
-    QList< QList<TreeNode*> > list1 = getLeaves(this);
-    QList< QList<TreeNode*> > list2 = getLeaves(node);
+    QList<int> cutCount1, cutCount2, depths1, depths2;
+    QList< QList<QString> > list1, list2;
 
-    return TreeNode::compareLeaves(list1, list2);
+    TreeNode::getLeaves(node1, list1, cutCount1, depths1);
+    TreeNode::getLeaves(node2, list2, cutCount2, depths2);
+
+    return true;
 }
 
 /*
@@ -78,21 +81,16 @@ bool TreeNode::isEqualWith(TreeNode* node)
  *  From the input node, we will BFS search and find the leaves and
  *  return them in a 2D matrix of QList.
  */
-QList< QList<TreeNode*> > TreeNode::getLeaves(TreeNode* root)
+void TreeNode::getLeaves(TreeNode* root, QList< QList<QString> > &list,
+                         QList<int> &cutCount, QList<int> &depths)
 {
-    QList< QList<TreeNode*> > list;
     QQueue<TreeNode*> queue;
     int currentDepth = 0, currentIndex = -1;
 
     //Special case for root not having any children
-    //returns a 2D list that contains root itself
+    //Will just return without any effect
     if(root->getChildren().isEmpty())
-    {
-        QList<TreeNode*> newIndex;
-        newIndex.append(root);
-        list.append(newIndex);
-        return list;
-    }
+        return;
 
     //BFS search starts here
     queue.enqueue(root);
@@ -101,65 +99,51 @@ QList< QList<TreeNode*> > TreeNode::getLeaves(TreeNode* root)
     {
         TreeNode* node = queue.dequeue();
 
-        //when ever find leaves(no more child) then add it to list
+        //whenever we find a leaf (has no child)
         if(node->getChildren().isEmpty())
         {
             //If this leaf is a placeholder then just skip it
             if(node->getType() == constants::ELEMENT_PLACEHOLDER)
                 continue;
 
-            //if this node has same depth with currentDepth then add it to
-            //current index otherwise create new index and add it there
             if(node->getDepth() == currentDepth)
             {
-                list[currentIndex].append(node);
+                //If same depth was already found,
+                //For cut, increment cutCount of current index
+                //For statement, append this node name to current index's list
+                if(node->getType() == constants::ELEMENT_CUT)
+                    cutCount[currentIndex]++;
+                else if(node->getType() == constants::ELEMENT_STATEMENT)
+                    list[currentIndex].append(node->getName());
             }
             else
             {
-                QList<TreeNode*> newIndex;
-                newIndex.append(node);
+                //Create a list for new depth and if the leaf is a statement
+                //then add it to the new list
+                QList<QString> newIndex;
+                if(node->getType() == constants::ELEMENT_STATEMENT)
+                    newIndex.append(node->getName());
                 list.append(newIndex);
+
+                //Append the cutCount and if the leaf is a cut then
+                //increment by 1
+                cutCount.append(0);
+                if(node->getType() == constants::ELEMENT_CUT)
+                    cutCount.last()++;
+
+                //Append depth with new node's depth to parallelize the lists
+                depths.append(node->getDepth());
+
                 currentDepth = node->getDepth();
                 currentIndex++;
             }
         }
-
-        for (TreeNode* child : node->getChildren())
-            queue.enqueue(child);
-    }
-
-    return list;
-}
-/*
- *  Compares two 2D matrix of leaves and returns bool indicates
- *  if they have same leaves
- */
-bool TreeNode::compareLeaves(QList< QList<TreeNode*> > list1,
-                             QList< QList<TreeNode*> > list2)
-{
-    //Return false if two lists have different number of varity on depth
-    if(list1.size() != list2.size())
-        return false;
-
-    //Loop for changing depth index
-    for(int i = 0; i < list1.size(); i++)
-    {
-        //Return false if two lists do not have same size of each index
-        if(list1[i].size() != list2[i].size())
-            return false;
-
-        //First loop for changing list1 index
-        for(int j = 0; j < list1.size(); j++)
+        else
         {
-            //Second loop ofr chaning list2 index
-            for(int k = 0; k < list2.size(); k++)
-            {
-
-            }
+            for (TreeNode* child : node->getChildren())
+                queue.enqueue(child);
         }
     }
-
-    return true;
 }
 
 /*
