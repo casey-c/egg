@@ -14,7 +14,7 @@
    <string>EGG</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../resouces.qrc">
+   <iconset resource="../resources.qrc">
     <normaloff>:/Resources/egg.ico</normaloff>:/Resources/egg.ico</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -127,7 +127,7 @@
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionNew">
    <property name="icon">
-    <iconset resource="../resouces.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/Resources/new.svg</normaloff>:/Resources/new.svg</iconset>
    </property>
    <property name="text">
@@ -136,7 +136,7 @@
   </action>
   <action name="actionOpen">
    <property name="icon">
-    <iconset resource="../resouces.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/Resources/open.svg</normaloff>:/Resources/open.svg</iconset>
    </property>
    <property name="text">
@@ -145,7 +145,7 @@
   </action>
   <action name="actionSave">
    <property name="icon">
-    <iconset resource="../resouces.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/Resources/save.svg</normaloff>:/Resources/save.svg</iconset>
    </property>
    <property name="text">
@@ -154,7 +154,7 @@
   </action>
   <action name="actionExit">
    <property name="icon">
-    <iconset resource="../resouces.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/Resources/x.svg</normaloff>:/Resources/x.svg</iconset>
    </property>
    <property name="text">
@@ -176,7 +176,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../resouces.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/Resources/undo.svg</normaloff>:/Resources/undo.svg</iconset>
    </property>
    <property name="text">
@@ -188,7 +188,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../resouces.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/Resources/redo.svg</normaloff>:/Resources/redo.svg</iconset>
    </property>
    <property name="text">
@@ -197,7 +197,7 @@
   </action>
   <action name="actionOptions">
    <property name="icon">
-    <iconset resource="../resouces.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/Resources/gear.svg</normaloff>:/Resources/gear.svg</iconset>
    </property>
    <property name="text">
@@ -206,7 +206,7 @@
   </action>
   <action name="actionTutorial">
    <property name="icon">
-    <iconset resource="../resouces.qrc">
+    <iconset resource="../resources.qrc">
      <normaloff>:/Resources/help.svg</normaloff>:/Resources/help.svg</iconset>
    </property>
    <property name="text">
@@ -229,7 +229,7 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="../resouces.qrc"/>
+  <include location="../resources.qrc"/>
  </resources>
  <connections/>
 </ui>

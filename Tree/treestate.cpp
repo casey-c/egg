@@ -421,8 +421,8 @@ void TreeState::removeAndSaveOrphans(TreeNode *target)
     TreeNode* parent = target->getParent();
 
     // Placeholder logic
-    if (target->hasPlaceHolder())
-        parent->addChildPlaceholder();
+    //if (target->hasPlaceHolder())
+        //parent->addChildPlaceholder();
 
     // Save the children
     for (TreeNode* orphan : target->getChildren())
@@ -883,6 +883,41 @@ QString TreeState::getBoxedString()
     return result;
 }
 
+/*
+ * Turns this tree state into a single line in the output *.egg file format
+ *
+ * The *.egg format is essentially just a depth-first search tree:
+ *     * Root / Cut elements are printed by the number of their children
+ *     * Statements are printed by their letter
+ *
+ * TODO: adding placeholders as real children broke this function; should only
+ * report the # of non-placeholder children
+ */
+QString TreeState::toOutputString()
+{
+    QString result = "";
+
+    QStack<TreeNode*> stack;
+    stack.push(root);
+
+    while (!stack.isEmpty())
+    {
+        TreeNode* current = stack.pop();
+        if (current->isStatement())
+            result += current->getName();
+        else if (current->isRoot() || current->isCut())
+        {
+            result += QString::number(current->getChildren().size() -
+                                      current->getNumPlaceholderChildren() );
+            for (TreeNode* child : current->getChildren())
+                if (!child->isPlaceHolder())
+                    stack.push(child);
+        }
+    }
+
+    return result;
+}
+
 
 /* Redraw the tree after changes */
 void TreeState::redraw()
@@ -1021,6 +1056,17 @@ void TreeState::pounceTo(QString target)
     }
 
     // We couldn't find the node, oh well
+}
+
+///////////////////////////////////////
+/// DEBUG, NOT INTENDED FOR RELEASE ///
+///////////////////////////////////////
+/*
+ * Adds a placeholder to the highlighted node
+ */
+void TreeState::addPlaceholderToHighlighted()
+{
+    highlighted = highlighted->addChildPlaceholder();
 }
 
 

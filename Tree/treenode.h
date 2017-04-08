@@ -38,8 +38,8 @@ public:
         , depth(0)
         , name(QString("Root"))
         , parent()
-        , placeHolderChild()
-        , placeholder()
+        //, placeHolderChild()
+        , numPlaceholderChildren(0)
         , myID(globalID++) {}
 
     /* Copy constructor */
@@ -85,7 +85,9 @@ public:
 
     /* Getters */
     QString getName() { return name; }
-    bool hasPlaceHolder() { return placeHolderChild; }
+    //bool hasPlaceHolder() { return placeHolderChild; }
+    bool hasAtLeastOnePlaceholder() { return numPlaceholderChildren >= 1; }
+    int getNumPlaceholderChildren() { return numPlaceholderChildren; }
     int getType(){ return type; }
     QString getPounceID() { return pounceID; }
     int getDepth() {return depth;}
@@ -93,7 +95,6 @@ public:
     /* TODO: fix rep. exposure (make private? friend TreeState?) */
     QList<TreeNode*> getChildren() { return children; }
     TreeNode* getParent() { return parent; }
-    TreeNode* getPlaceHolder() { return placeholder; }
 
     /* Boolean identifiers */
     bool isRoot() { return type == constants::ELEMENT_ROOT; }
@@ -103,6 +104,7 @@ public:
     bool isDetached() { return type != constants::ELEMENT_ROOT &&
                         parent == NULL; }
 
+
 private:
     /* Constructor for non-root nodes */
     TreeNode(const int t, TreeNode* p, QString n)
@@ -110,7 +112,7 @@ private:
             , depth(p->getDepth()+1)
             , name(n)
             , parent(p)
-            , placeHolderChild()
+            , numPlaceholderChildren(0)
             , myID(globalID++) {}
 
     /* Details */
@@ -123,8 +125,14 @@ private:
     QList<TreeNode*> children;
 
     /* Placeholder */
-    bool placeHolderChild;
-    TreeNode* placeholder;
+    //bool placeHolderChild;
+    int numPlaceholderChildren;
+
+    /* New placeholder helpers */
+    //void updatePlaceholderStatus();
+    void addAfterPlaceholders(TreeNode* node);
+
+    void removePlaceholder();
 
     /* ID's */
     QString pounceID;

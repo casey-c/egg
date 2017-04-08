@@ -147,6 +147,7 @@ public:
 
     /* Text output in tree form */
     QString getBoxedString();
+    QString toOutputString();
 
     /* Update any views */
     void redraw();
@@ -164,6 +165,9 @@ public:
 
     /* Grid helpers */
     TreeNode* getRoot() { return root; }
+
+    /* DEBUG: remove on release! */
+    void addPlaceholderToHighlighted();
 
 signals:
     void treeChanged(QString s);
