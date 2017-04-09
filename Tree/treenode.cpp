@@ -817,7 +817,7 @@ QString TreeNode::getPounceLine(int depth, int end, bool bottom,
 ///////////////////////
 
 /*
- * Helper to sort a list of pairs by the first element
+ * Comparator function to sort a list of pairs by the first element
  */
 bool comparePairs( const QPair<QString, TreeNode*>& first,
                    const QPair<QString, TreeNode*>& second)
@@ -860,30 +860,14 @@ bool TreeNode::addAndStandardize(TreeNode *node)
         return true;
     }
 
-    // Store my old string rep
-    QString oldRep = stringRep;
-    qDebug() << "Attempting to standardize, my oldRep was: " << oldRep;
+    qDebug() << "Attempting to standardize, my oldRep was: " << stringRep;
 
     // Add the new node and call the sorting method
     children.append(node);
     sortChildren();
 
-    // Recalculate our string rep
+    // Recalculate our string rep, which we propagate up the tree
     updateStringRep();
-
-    // If it's changed, notify our parent to update as well
-    if (stringRep != oldRep)
-    {
-        if (parent != nullptr)
-        {
-            qDebug() << "Update parent too";
-        }
-        else
-        {
-            qDebug() << "NULL parent, so we're done";
-        }
-
-    }
 
     qDebug() << "Updated stringrep, it's now: " << stringRep;
 
@@ -897,7 +881,7 @@ bool TreeNode::addAndStandardize(TreeNode *node)
  */
 void TreeNode::sortChildren()
 {
-    // Find out the new node's sibling strings for sorting purposes
+    // Create different lists for each type of child
     QList< QPair<QString, TreeNode*> > cutPairs;
     QList< QPair<QString, TreeNode*> > statementPairs;
 
@@ -905,7 +889,7 @@ void TreeNode::sortChildren()
     QList< TreeNode* > cutList;
     QList< TreeNode* > statementList;
 
-    // Separate children into lists segregated by type
+    // Separate the children into the above lists
     for ( TreeNode* child : children)
     {
         if (child->isPlaceHolder())
@@ -919,68 +903,29 @@ void TreeNode::sortChildren()
         pair.second = child;
 
         if (child->isCut())
-        {
             cutPairs.append(pair);
-            //cutList.append(child);
-        }
         else if (child->isStatement())
-        {
             statementPairs.append(pair);
-            //statementList.append(child);
-        }
     }
 
-    // The new node to be added
-    //QPair<QString, TreeNode*> newPair;
-    //newPair.first = node->stringRep;
-    //newPair.second = node;
+    // Sort cuts
+    std::sort(cutPairs.begin(), cutPairs.end(), comparePairs);
+    for (QPair<QString, TreeNode*> pair : cutPairs)
+        cutList.append(pair.second);
 
-    // Now perform the actual sorting
-    //if (node->isCut())
-    //{
-        // Add the new cut to the proper group
-        //cutPairs.append(newPair);
-
-        // Sort that group by string rep
-        std::sort(cutPairs.begin(), cutPairs.end(), comparePairs);
-
-        // Acquire the updated ordering
-        //QList<TreeNode*> sortedCuts;
-        for (QPair<QString, TreeNode*> pair : cutPairs)
-            cutList.append(pair.second);
-
-        // Replace the old cut list
-        //cutList = sortedCuts;
-    //}
-    //else if (node->isStatement())
-    //{
-        // Add the new statement to the proper group
-        //statementPairs.append(newPair);
-
-        // Sort that group by string rep
-        std::sort(statementPairs.begin(), statementPairs.end(), comparePairs);
-
-        // Acquire the updated ordering
-        //QList<TreeNode*> sortedStatements;
-        for (QPair< QString, TreeNode* > pair : statementPairs)
-            statementList.append(pair.second);
-
-        // Replace the old statement list
-        //originalStatements = sortedStatements;
-    //}
+    // Sort statements
+    std::sort(statementPairs.begin(), statementPairs.end(), comparePairs);
+    for (QPair< QString, TreeNode* > pair : statementPairs)
+        statementList.append(pair.second);
 
     // Recombine everything
-        children.clear();
-        //QList< TreeNode* > combined;
-        for (TreeNode* n : placeholderList)
-            children.append(n);
-        for (TreeNode* n : cutList)
-            children.append(n);
-        for (TreeNode* n : statementList)
-            children.append(n);
-
-    // Update our children
-    //children = combined;
+    children.clear();
+    for (TreeNode* n : placeholderList)
+        children.append(n);
+    for (TreeNode* n : statementList)
+        children.append(n);
+    for (TreeNode* n : cutList)
+        children.append(n);
 }
 
 /*
@@ -988,22 +933,23 @@ void TreeNode::sortChildren()
  */
 void TreeNode::updateStringRep()
 {
-    // Use my children's string reps to construct my own
-    QString result = "";
+    QString oldRep = stringRep;
 
+    // Statements are easy
     if (isStatement())
     {
         stringRep = name;
         return;
     }
-    else if (isCut() || isRoot())
-    {
-        int numChildren = children.size() - numPlaceholderChildren;
-        QString toString = QString("%1").arg(numChildren);
-        result += toString;
-        qDebug() << "Result so far" << result;
-    }
 
+    QString result = "";
+
+    // Cuts are first indicated by the number of children they have
+    if (isCut() || isRoot())
+        result += QString("%1").arg(children.size() -
+                                    numPlaceholderChildren);
+
+    // Then the children's string reps are appended
     for (TreeNode* child : children)
     {
         if (!child->isPlaceHolder())
@@ -1011,4 +957,14 @@ void TreeNode::updateStringRep()
     }
 
     stringRep = result;
+
+    // Changed, so update parent as well
+    if (stringRep != oldRep)
+    {
+        if (parent != nullptr)
+        {
+            parent->sortChildren();
+            parent->updateStringRep();
+        }
+    }
 }

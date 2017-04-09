@@ -104,6 +104,8 @@ public:
     bool isDetached() { return type != constants::ELEMENT_ROOT &&
                         parent == NULL; }
 
+    /* Debug: standardization */
+    QString getStringRep() { return stringRep; }
 
 private:
     /* Constructor for non-root nodes */

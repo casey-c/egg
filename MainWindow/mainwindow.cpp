@@ -253,6 +253,10 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
         qDebug() << "DEBUG: 5 shows output string";
         qDebug() << currentTree->toOutputString();
         break;
+    case Qt::Key_6:
+        qDebug() << "DEBUG: 6 shows standardized string";
+        qDebug() << currentTree->getRoot()->getStringRep();
+        break;
     case Qt::Key_9:
     {
         qDebug() << "DEBUG: 9 prints grid in plaintext";
