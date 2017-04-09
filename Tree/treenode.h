@@ -135,8 +135,9 @@ private:
 
 
     /* Standardization */
-    bool addStandard( TreeNode* node );
+    bool addAndStandardize( TreeNode* node );
     void updateStringRep();
+    void sortChildren();
 
     /* ID's */
     QString pounceID;
