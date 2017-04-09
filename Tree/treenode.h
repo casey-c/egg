@@ -131,12 +131,18 @@ private:
     /* New placeholder helpers */
     //void updatePlaceholderStatus();
     void addAfterPlaceholders(TreeNode* node);
+    //void removePlaceholder();
 
-    void removePlaceholder();
+
+    /* Standardization */
+    bool addStandard( TreeNode* node );
+    void updateStringRep();
 
     /* ID's */
     QString pounceID;
     int myID;
+
+    QString stringRep;
 
 };
 

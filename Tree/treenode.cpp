@@ -406,18 +406,18 @@ void TreeNode::move(TreeNode *target, TreeNode *targetParent)
  * Params:
  *      node : node that we are checking if it is in the line
  */
-bool TreeNode::isInUpperFamily(TreeNode* node)
-{
-    TreeNode* compareNode = parent;
-    while (compareNode->getType() != constants::ELEMENT_ROOT)
-    {
-        if(compareNode->getID() == node->getID())
-            return true;
-
-        compareNode = compareNode->getParent();
-    }
-    return false;
-}
+//bool TreeNode::isInUpperFamily(TreeNode* node)
+//{
+    //TreeNode* compareNode = parent;
+    //while (compareNode->getType() != constants::ELEMENT_ROOT)
+    //{
+        //if(compareNode->getID() == node->getID())
+            //return true;
+//
+        //compareNode = compareNode->getParent();
+    //}
+    //return false;
+//}
 
 //////////////
 /// Detach ///
@@ -805,4 +805,43 @@ void TreeNode::addAfterPlaceholders(TreeNode *node)
 
     // Insert it there
     children.insert(numPlaceholderChildren, node);
+}
+
+///////////////////////
+/// Standardization ///
+///////////////////////
+
+/*
+ * The intermediate add function. This is called after the node is already
+ * created, but before it is added to the children list of this current node.
+ *
+ * This function will be called during all of the add() family of functions and
+ * will attempt to sort all of this nodes' children, and any node above this one
+ * that depend on this sorting (i.e. my parent, grandparent, etc. all the way
+ * up). This functionality is contained within sortChildren().
+ *
+ * The sorting process will also construct an output string as a biproduct; this
+ * process is produced in updateStringRep().
+ */
+bool TreeNode::addAndStandardize(TreeNode *node)
+{
+
+}
+
+/*
+ * When called, it is assumed that all the required children of this node are
+ * already well-sorted and have proper string reps already set. This function
+ * will then look at the string reps of its kids and sort them alphabetically.
+ */
+void TreeNode::sortChildren()
+{
+
+}
+
+/*
+ * A helper function for constructing the updated string rep (not sure if used)
+ */
+void TreeNode::updateStringRep()
+{
+
 }
