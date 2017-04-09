@@ -235,7 +235,8 @@ TreeNode* TreeNode::addChildCut()
         parent->numPlaceholderChildren--;
 
         // Put us at the back of our parent's children list as a real cut
-        parent->children.append(this);
+        //parent->children.append(this);
+        parent->addAndStandardize(this);
         return this;
     }
 
@@ -253,7 +254,8 @@ TreeNode* TreeNode::addChildCut()
     else
     {
         TreeNode* newCut = new TreeNode(constants::ELEMENT_CUT,this,NULL);
-        children.append(newCut);
+        //children.append(newCut);
+        addAndStandardize(newCut);
         return newCut;
     }
 }
@@ -280,7 +282,7 @@ TreeNode* TreeNode::addChildStatement(QString s)
     {
         // Replace this element
         type = constants::ELEMENT_STATEMENT;
-        name = s;
+        name = stringRep = s;
 
         // Remove us from our parent's children
         parent->children.removeOne(this);
@@ -290,7 +292,8 @@ TreeNode* TreeNode::addChildStatement(QString s)
         parent->numPlaceholderChildren--;
 
         // Add us back in as a real statement in the proper place
-        parent->addAfterPlaceholders(this);
+        //parent->addAfterPlaceholders(this);
+        parent->addAndStandardize(this);
         return this;
     }
 
@@ -310,9 +313,11 @@ TreeNode* TreeNode::addChildStatement(QString s)
         TreeNode* newStatement = new TreeNode(constants::ELEMENT_STATEMENT,
                                               this,
                                               s);
+        newStatement->stringRep = s;
 
         // And add it to our children in the right place
-        addAfterPlaceholders(newStatement);
+        //addAfterPlaceholders(newStatement);
+        addAndStandardize(newStatement);
         return newStatement;
     }
 }
@@ -795,8 +800,8 @@ QString TreeNode::getPounceLine(int depth, int end, bool bottom,
         //placeHolderChild = children.first()->isPlaceHolder();
 //}
 
-void TreeNode::addAfterPlaceholders(TreeNode *node)
-{
+//void TreeNode::addAfterPlaceholders(TreeNode *node)
+//{
     // Find the position of the first non-placeholder element
    // int i = 0;
    // for (; i < children.size(); ++i)
@@ -804,8 +809,8 @@ void TreeNode::addAfterPlaceholders(TreeNode *node)
    //         break;
 
     // Insert it there
-    children.insert(numPlaceholderChildren, node);
-}
+    //children.insert(numPlaceholderChildren, node);
+//}
 
 ///////////////////////
 /// Standardization ///
@@ -847,6 +852,9 @@ bool TreeNode::addAndStandardize(TreeNode *node)
     // Placeholder check
     if (node->isPlaceHolder())
     {
+        qDebug() << "ERROR: We should only enter addAndStandardize on cut and"
+                 << "statement add calls; NOT placeholders";
+
         // Placeholders aren't sorted, and don't affect anyone else
         children.prepend(node);
         return true;
@@ -854,6 +862,7 @@ bool TreeNode::addAndStandardize(TreeNode *node)
 
     // Store my old string rep
     QString oldRep = stringRep;
+    qDebug() << "Attempting to standardize, my oldRep was: " << oldRep;
 
     // Add the new node and call the sorting method
     children.append(node);
@@ -875,6 +884,8 @@ bool TreeNode::addAndStandardize(TreeNode *node)
         }
 
     }
+
+    qDebug() << "Updated stringrep, it's now: " << stringRep;
 
     return true;
 }
@@ -987,7 +998,10 @@ void TreeNode::updateStringRep()
     }
     else if (isCut() || isRoot())
     {
-        result += children.size() - numPlaceholderChildren;
+        int numChildren = children.size() - numPlaceholderChildren;
+        QString toString = QString("%1").arg(numChildren);
+        result += toString;
+        qDebug() << "Result so far" << result;
     }
 
     for (TreeNode* child : children)
@@ -996,4 +1010,5 @@ void TreeNode::updateStringRep()
             result += child->stringRep;
     }
 
+    stringRep = result;
 }

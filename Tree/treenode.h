@@ -130,7 +130,7 @@ private:
 
     /* New placeholder helpers */
     //void updatePlaceholderStatus();
-    void addAfterPlaceholders(TreeNode* node);
+    //void addAfterPlaceholders(TreeNode* node);
     //void removePlaceholder();
 
 
