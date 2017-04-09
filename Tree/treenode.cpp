@@ -397,6 +397,10 @@ void TreeNode::move(TreeNode *target, TreeNode *targetParent)
     targetParent->children.append(target);
     target->parent = targetParent;
     target->updateDepth();
+
+    // Standardize
+    targetParent->sortChildren();
+    targetParent->updateStringRep();
 }
 
 /*

@@ -14,6 +14,7 @@
 #include <QTimer>
 #include <QFileDialog>
 #include <QUrl>
+#include <QClipboard>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -252,6 +253,7 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
     case Qt::Key_5:
         qDebug() << "DEBUG: 5 shows output string";
         qDebug() << currentTree->toOutputString();
+        QApplication::clipboard()->setText(currentTree->toOutputString());
         break;
     case Qt::Key_6:
         qDebug() << "DEBUG: 6 shows standardized string";
