@@ -2,6 +2,7 @@
 #define TESTTREE_H
 
 #include <QtTest/QtTest>
+#include "Tree/treestate.h"
 #include "Tree/treenode.h"
 
 /*
@@ -13,12 +14,19 @@ class TestTree: public QObject {
     Q_OBJECT
 
 public:
-    TestTree();
 
 /* Each test will be considered as a slot function */
 private slots:
-    void testCompare();
+
+    //Basic Tree Testing
+    void emptyTree();
+
+    //Equality Testing
+    void equalEmptyTree();
+    void equalNodeTree();
 
 };
+
+//QTEST_MAIN(TestTree)
 
 #endif // TESTTREE_H

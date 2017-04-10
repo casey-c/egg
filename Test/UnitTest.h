@@ -24,7 +24,9 @@ class UnitTest
 {
 
 public:
+    //unused contructor
     UnitTest();
+
     static void run();
 };
 

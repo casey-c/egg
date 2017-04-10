@@ -1,13 +1,42 @@
 #include "Test/TestTree.h"
 
-TestTree::TestTree()
+/*
+ *  Tests creation of TreeState and initial values
+ */
+void TestTree::emptyTree()
 {
+    TreeState* tree = new TreeState();
 
+    //root node should be highligited as created
+    QCOMPARE(tree->getRoot(),tree->getHighlighted());
+    delete tree;
 }
 
-void TestTree::testCompare()
+/*
+ *  Tests equality of TreeState
+ */
+void TestTree::equalEmptyTree()
 {
-    QCOMPARE(2, 3); //QCOMPARE( actual, expected)
-    QCOMPARE("TEST","TEST");
+    TreeState* tree = new TreeState();
+    TreeState* tree2 = new TreeState();
+
+    //root node should be highligited as created
+    QCOMPARE(TreeState::equals(tree, tree2),true);
+    delete tree;
 }
 
+/*
+ *  Tests equality of TreeState
+ */
+void TestTree::equalNodeTree()
+{
+    TreeState* tree = new TreeState();
+    TreeState* tree2 = new TreeState();
+
+    tree->addChildStatement("S");
+    tree2->addChildStatement("S");
+
+    //root node should be highligited as created
+    QCOMPARE(TreeState::equals(tree, tree2),true);
+    delete tree;
+}

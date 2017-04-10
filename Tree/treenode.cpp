@@ -386,31 +386,6 @@ void TreeNode::move(TreeNode *target, TreeNode *targetParent)
     target->updateDepth();
 }
 
-/*
- * DEBUG:
- * This function checks that if parameter node is in upper family line of this
- * node. (parent, grandparent, grand-grandparent..... and goes on)
- *
- * Returns:
- *      true : if parameter is a part of the upper family line
- *      false : if not
- *
- * Params:
- *      node : node that we are checking if it is in the line
- */
-bool TreeNode::isInUpperFamily(TreeNode* node)
-{
-    TreeNode* compareNode = parent;
-    while (compareNode->getType() != constants::ELEMENT_ROOT)
-    {
-        if(compareNode->getID() == node->getID())
-            return true;
-
-        compareNode = compareNode->getParent();
-    }
-    return false;
-}
-
 //////////////
 /// Detach ///
 //////////////

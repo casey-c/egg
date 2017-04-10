@@ -6,7 +6,15 @@
 
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+# With C++11 support
+greaterThan(QT_MAJOR_VERSION, 4){
+    QT += widgets
+    CONFIG += c++11\
+            test
+
+} else {
+    QMAKE_CXXFLAGS += -std=c++0x
+}
 
 TARGET = Egg
 TEMPLATE = app
@@ -94,6 +102,8 @@ FORMS    += MainWindow/mainwindow.ui \
     TreeDisplayWidget/treedisplaywidget.ui \
     PolishInputWidget/polishinputwidget.ui
 
+# Including a path up to local/egg to avoid conflict between different
+# operating systems
 INCLUDEPATH += $$PWD
 
 # the following files will be included for Unit test build
