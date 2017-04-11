@@ -17,7 +17,7 @@ public:
     ~TreeDisplayWidget();
 
 public slots:
-    void updateText(QString s);
+    void updateText(QString s, QString);
 
 private:
     Ui::TreeDisplayWidget *ui;

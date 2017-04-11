@@ -1,5 +1,6 @@
 #include "Tree/treestate.h"
 #include <QDebug>
+#include "Grid/grid.h"
 
 TreeState::~TreeState()
 {
@@ -922,7 +923,8 @@ QString TreeState::toOutputString()
 /* Redraw the tree after changes */
 void TreeState::redraw()
 {
-    emit treeChanged(getBoxedString());
+    Grid g(this);
+    emit treeChanged(getBoxedString(), g.toPlaintext());
 }
 
 
@@ -997,7 +999,8 @@ void TreeState::setPounceIDs()
  */
 void TreeState::drawPounceTree()
 {
-    emit treeChanged(getPounceString());
+    Grid g(this);
+    emit treeChanged(getPounceString(), g.toPlaintext());
 }
 
 /*

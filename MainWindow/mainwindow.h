@@ -61,6 +61,8 @@ public slots:
 
     void insertFromFormula(TreeNode* root);
 
+    void updateGrid(QString, QString gridText);
+
 };
 
 #endif // MAINWINDOW_MAINWINDOW_H

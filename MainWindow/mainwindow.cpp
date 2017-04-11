@@ -35,9 +35,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Tell the widget to redraw when the tree updates
     QObject::connect(currentTree,
-                     SIGNAL(treeChanged(QString)),
+                     SIGNAL(treeChanged(QString, QString)),
                      treeDisplayWidget,
-                     SLOT(updateText(QString)));
+                     SLOT(updateText(QString, QString)));
+
+    QObject::connect(currentTree,
+                     SIGNAL( treeChanged(QString, QString)),
+                     this,
+                     SLOT(updateGrid(QString, QString)));
 
     // Update the undo/redo menu bar when the commandInvoker updates
     QObject::connect(&commandInvoker,
@@ -570,6 +575,12 @@ void MainWindow::setCurrStateFromLoaded(TreeState *state)
     currentTree->redraw();
     Grid g(currentTree);
     ui->tempGridText->setText(g.toPlaintext());
+
+}
+
+void MainWindow::updateGrid(QString, QString gridText)
+{
+    ui->tempGridText->setText(gridText);
 
 }
 
