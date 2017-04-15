@@ -227,33 +227,24 @@ TreeNode* TreeNode::addChildCut()
         // Replace this element
         type = constants::ELEMENT_CUT;
 
-        // First, remove us from the front of the children list as a placeholder
+        // Remove our placeholder status
         parent->children.removeOne(this);
-
-        // Update our parent's placeholder status by looking for another
-        //parent->updatePlaceholderStatus();
         parent->numPlaceholderChildren--;
 
-        // Put us at the back of our parent's children list as a real cut
-        parent->children.append(this);
+        // Correctly sort us back in
+        parent->addAndStandardize(this);
         return this;
     }
 
-    // See if we have a placeholder child to replace
+    // If we have a placeholder, use the above logic
     else if (numPlaceholderChildren > 0)
-    {
-        // Get that element
-        TreeNode* placeholder = children.first();
+        return children.first()->addChildCut();
 
-        // Use the above logic for placeholders
-        return placeholder->addChildCut();
-    }
-
-    // Otherwise, make a new cut element
+    // Otherwise, make a new cut element and sort it correctly
     else
     {
         TreeNode* newCut = new TreeNode(constants::ELEMENT_CUT,this,NULL);
-        children.append(newCut);
+        addAndStandardize(newCut);
         return newCut;
     }
 }
@@ -280,7 +271,7 @@ TreeNode* TreeNode::addChildStatement(QString s)
     {
         // Replace this element
         type = constants::ELEMENT_STATEMENT;
-        name = s;
+        name = stringRep = s;
 
         // Remove us from our parent's children
         parent->children.removeOne(this);
@@ -290,7 +281,8 @@ TreeNode* TreeNode::addChildStatement(QString s)
         parent->numPlaceholderChildren--;
 
         // Add us back in as a real statement in the proper place
-        parent->addAfterPlaceholders(this);
+        //parent->addAfterPlaceholders(this);
+        parent->addAndStandardize(this);
         return this;
     }
 
@@ -310,9 +302,11 @@ TreeNode* TreeNode::addChildStatement(QString s)
         TreeNode* newStatement = new TreeNode(constants::ELEMENT_STATEMENT,
                                               this,
                                               s);
+        newStatement->stringRep = s;
 
         // And add it to our children in the right place
-        addAfterPlaceholders(newStatement);
+        //addAfterPlaceholders(newStatement);
+        addAndStandardize(newStatement);
         return newStatement;
     }
 }
@@ -392,6 +386,10 @@ void TreeNode::move(TreeNode *target, TreeNode *targetParent)
     targetParent->children.append(target);
     target->parent = targetParent;
     target->updateDepth();
+
+    // Standardize
+    targetParent->sortChildren();
+    targetParent->updateStringRep();
 }
 
 /*
@@ -406,18 +404,18 @@ void TreeNode::move(TreeNode *target, TreeNode *targetParent)
  * Params:
  *      node : node that we are checking if it is in the line
  */
-bool TreeNode::isInUpperFamily(TreeNode* node)
-{
-    TreeNode* compareNode = parent;
-    while (compareNode->getType() != constants::ELEMENT_ROOT)
-    {
-        if(compareNode->getID() == node->getID())
-            return true;
-
-        compareNode = compareNode->getParent();
-    }
-    return false;
-}
+//bool TreeNode::isInUpperFamily(TreeNode* node)
+//{
+    //TreeNode* compareNode = parent;
+    //while (compareNode->getType() != constants::ELEMENT_ROOT)
+    //{
+        //if(compareNode->getID() == node->getID())
+            //return true;
+//
+        //compareNode = compareNode->getParent();
+    //}
+    //return false;
+//}
 
 //////////////
 /// Detach ///
@@ -795,8 +793,8 @@ QString TreeNode::getPounceLine(int depth, int end, bool bottom,
         //placeHolderChild = children.first()->isPlaceHolder();
 //}
 
-void TreeNode::addAfterPlaceholders(TreeNode *node)
-{
+//void TreeNode::addAfterPlaceholders(TreeNode *node)
+//{
     // Find the position of the first non-placeholder element
    // int i = 0;
    // for (; i < children.size(); ++i)
@@ -804,5 +802,162 @@ void TreeNode::addAfterPlaceholders(TreeNode *node)
    //         break;
 
     // Insert it there
-    children.insert(numPlaceholderChildren, node);
+    //children.insert(numPlaceholderChildren, node);
+//}
+
+///////////////////////
+/// Standardization ///
+///////////////////////
+
+/*
+ * Comparator function to sort a list of pairs by the first element
+ */
+bool comparePairs( const QPair<QString, TreeNode*>& first,
+                   const QPair<QString, TreeNode*>& second)
+{
+    return first.first < second.first;
+}
+
+/*
+ * The intermediate add function. This is called after the node is already
+ * created, but before it is added to the children list of this current node.
+ *
+ * This function will be called during all of the add() family of functions and
+ * will attempt to sort all of this nodes' children, and any node above this one
+ * that depend on this sorting (i.e. my parent, grandparent, etc. all the way
+ * up). This functionality is contained within sortChildren().
+ *
+ * The sorting process will also construct an output string as a biproduct; this
+ * process is produced in updateStringRep().
+ *
+ * Params
+ *      node: the new child I want as my own
+ */
+bool TreeNode::addAndStandardize(TreeNode *node)
+{
+    // Null check
+    if (node == nullptr)
+    {
+        qDebug() << "ERROR: nullptr passed to addAndStandardize.";
+        return false;
+    }
+
+    // Placeholder check
+    if (node->isPlaceHolder())
+    {
+        qDebug() << "ERROR: We should only enter addAndStandardize on cut and"
+                 << "statement add calls; NOT placeholders";
+
+        // Placeholders aren't sorted, and don't affect anyone else
+        children.prepend(node);
+        return true;
+    }
+
+    qDebug() << "Attempting to standardize, my oldRep was: " << stringRep;
+
+    // Add the new node and call the sorting method
+    children.append(node);
+    sortChildren();
+
+    // Recalculate our string rep, which we propagate up the tree
+    updateStringRep();
+
+    qDebug() << "Updated stringrep, it's now: " << stringRep;
+
+    return true;
+}
+
+/*
+ * When called, it is assumed that all the required children of this node are
+ * already well-sorted and have proper string reps already set. This function
+ * will then look at the string reps of its kids and sort them alphabetically.
+ */
+void TreeNode::sortChildren()
+{
+    // Create different lists for each type of child
+    QList< QPair<QString, TreeNode*> > cutPairs;
+    QList< QPair<QString, TreeNode*> > statementPairs;
+
+    QList< TreeNode* > placeholderList;
+    QList< TreeNode* > cutList;
+    QList< TreeNode* > statementList;
+
+    // Separate the children into the above lists
+    for ( TreeNode* child : children)
+    {
+        if (child->isPlaceHolder())
+        {
+            placeholderList.append(child);
+            continue;
+        }
+
+        QPair< QString, TreeNode*> pair;
+        pair.first = child->stringRep;
+        pair.second = child;
+
+        if (child->isCut())
+            cutPairs.append(pair);
+        else if (child->isStatement())
+            statementPairs.append(pair);
+    }
+
+    // Sort cuts
+    std::sort(cutPairs.begin(), cutPairs.end(), comparePairs);
+    for (QPair<QString, TreeNode*> pair : cutPairs)
+        cutList.append(pair.second);
+
+    // Sort statements
+    std::sort(statementPairs.begin(), statementPairs.end(), comparePairs);
+    for (QPair< QString, TreeNode* > pair : statementPairs)
+        statementList.append(pair.second);
+
+    // Recombine everything
+    children.clear();
+    for (TreeNode* n : placeholderList)
+        children.append(n);
+    for (TreeNode* n : statementList)
+        children.append(n);
+    for (TreeNode* n : cutList)
+        children.append(n);
+}
+
+/*
+ * A helper function for constructing the updated string rep (not sure if used)
+ */
+void TreeNode::updateStringRep()
+{
+    QString oldRep = stringRep;
+
+    // Statements are easy
+    if (isStatement())
+    {
+        stringRep = name;
+        return;
+    }
+
+    QString result = "";
+
+    // Cuts are first indicated by the number of children they have
+    if (isCut() || isRoot())
+        result += QString("%1").arg(children.size() -
+                                    numPlaceholderChildren);
+
+    // Then the children's string reps are appended
+    for (TreeNode* child : children)
+    {
+        if (!child->isPlaceHolder())
+            result += child->stringRep;
+    }
+
+    stringRep = result;
+
+    // Changed, so update parent as well
+    if (stringRep != oldRep)
+    {
+        if (parent != nullptr)
+        {
+            parent->sortChildren();
+            parent->updateStringRep();
+        }
+    }
 }

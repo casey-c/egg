@@ -104,6 +104,8 @@ public:
     bool isDetached() { return type != constants::ELEMENT_ROOT &&
                         parent == NULL; }
 
+    /* Debug: standardization */
+    QString getStringRep() { return stringRep; }
 
 private:
     /* Constructor for non-root nodes */
@@ -130,13 +132,20 @@ private:
 
     /* New placeholder helpers */
     //void updatePlaceholderStatus();
-    void addAfterPlaceholders(TreeNode* node);
+    //void addAfterPlaceholders(TreeNode* node);
+    //void removePlaceholder();
 
-    void removePlaceholder();
+
+    /* Standardization */
+    bool addAndStandardize( TreeNode* node );
+    void updateStringRep();
+    void sortChildren();
 
     /* ID's */
     QString pounceID;
     int myID;
+
+    QString stringRep;
 
 };
 

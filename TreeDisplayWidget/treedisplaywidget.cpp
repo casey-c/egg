@@ -14,7 +14,7 @@ TreeDisplayWidget::~TreeDisplayWidget()
     delete ui;
 }
 
-void TreeDisplayWidget::updateText(QString s)
+void TreeDisplayWidget::updateText(QString s, QString)
 {
     ui->textEdit->setText(s);
 }

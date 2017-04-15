@@ -14,6 +14,7 @@
 #include <QTimer>
 #include <QFileDialog>
 #include <QUrl>
+#include <QClipboard>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -34,9 +35,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Tell the widget to redraw when the tree updates
     QObject::connect(currentTree,
-                     SIGNAL(treeChanged(QString)),
+                     SIGNAL(treeChanged(QString, QString)),
                      treeDisplayWidget,
-                     SLOT(updateText(QString)));
+                     SLOT(updateText(QString, QString)));
+
+    QObject::connect(currentTree,
+                     SIGNAL( treeChanged(QString, QString)),
+                     this,
+                     SLOT(updateGrid(QString, QString)));
 
     // Update the undo/redo menu bar when the commandInvoker updates
     QObject::connect(&commandInvoker,
@@ -252,6 +258,11 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
     case Qt::Key_5:
         qDebug() << "DEBUG: 5 shows output string";
         qDebug() << currentTree->toOutputString();
+        QApplication::clipboard()->setText(currentTree->toOutputString());
+        break;
+    case Qt::Key_6:
+        qDebug() << "DEBUG: 6 shows standardized string";
+        qDebug() << currentTree->getRoot()->getStringRep();
         break;
     case Qt::Key_9:
     {
@@ -564,6 +575,12 @@ void MainWindow::setCurrStateFromLoaded(TreeState *state)
     currentTree->redraw();
     Grid g(currentTree);
     ui->tempGridText->setText(g.toPlaintext());
+
+}
+
+void MainWindow::updateGrid(QString, QString gridText)
+{
+    ui->tempGridText->setText(gridText);
 
 }
 
