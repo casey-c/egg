@@ -227,34 +227,23 @@ TreeNode* TreeNode::addChildCut()
         // Replace this element
         type = constants::ELEMENT_CUT;
 
-        // First, remove us from the front of the children list as a placeholder
+        // Remove our placeholder status
         parent->children.removeOne(this);
-
-        // Update our parent's placeholder status by looking for another
-        //parent->updatePlaceholderStatus();
         parent->numPlaceholderChildren--;
 
-        // Put us at the back of our parent's children list as a real cut
-        //parent->children.append(this);
+        // Correctly sort us back in
         parent->addAndStandardize(this);
         return this;
     }
 
-    // See if we have a placeholder child to replace
+    // If we have a placeholder, use the above logic
     else if (numPlaceholderChildren > 0)
-    {
-        // Get that element
-        TreeNode* placeholder = children.first();
+        return children.first()->addChildCut();
 
-        // Use the above logic for placeholders
-        return placeholder->addChildCut();
-    }
-
-    // Otherwise, make a new cut element
+    // Otherwise, make a new cut element and sort it correctly
     else
     {
         TreeNode* newCut = new TreeNode(constants::ELEMENT_CUT,this,NULL);
-        //children.append(newCut);
         addAndStandardize(newCut);
         return newCut;
     }
