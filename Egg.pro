@@ -47,7 +47,9 @@ SOURCES += MainWindow/main.cpp\
     Grid/grid.cpp \
     Utilities/Command/ctreestateinsertfromformula.cpp \
     Utilities/settingsmanager.cpp \
-    Utilities/fileconverter.cpp
+    Utilities/fileconverter.cpp \
+    ProofTree/prooftreeoverview.cpp \
+    ProofTree/prooftreenodeview.cpp
 
 HEADERS  += MainWindow/mainwindow.h \
     Utilities/constants.h \
@@ -92,11 +94,15 @@ HEADERS  += MainWindow/mainwindow.h \
     Grid/grid.h \
     Utilities/Command/ctreestateinsertfromformula.h \
     Utilities/settingsmanager.h \
-    Utilities/fileconverter.h
+    Utilities/fileconverter.h \
+    ProofTree/prooftreeoverview.h \
+    ProofTree/prooftreenodeview.h
 
 FORMS    += MainWindow/mainwindow.ui \
     TreeDisplayWidget/treedisplaywidget.ui \
-    PolishInputWidget/polishinputwidget.ui
+    PolishInputWidget/polishinputwidget.ui \
+    ProofTree/prooftreeoverview.ui \
+    ProofTree/prooftreenodeview.ui
 
 INCLUDEPATH += $$PWD
 

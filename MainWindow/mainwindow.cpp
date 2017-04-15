@@ -10,6 +10,8 @@
 
 #include "Utilities/fileconverter.h"
 
+#include "ProofTree/prooftreeoverview.h"
+
 #include <QDebug>
 #include <QTimer>
 #include <QFileDialog>
@@ -71,6 +73,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Draw the starting node on the text widget
     currentTree->redraw();
+
+    // Proof tree junk
+    ui->verticalLayout_2->addWidget( new ProofTreeOverview() );
 }
 
 MainWindow::~MainWindow()

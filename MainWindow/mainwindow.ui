@@ -63,7 +63,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>250</width>
+         <width>234</width>
          <height>444</height>
         </rect>
        </property>
@@ -74,6 +74,23 @@
        </layout>
       </widget>
      </widget>
+    </item>
+    <item row="1" column="2">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
