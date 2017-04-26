@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QString>
 
+#include "Tree/treestate.h"
+
 namespace Ui {
 class TreeDisplayWidget;
 }
@@ -18,6 +20,8 @@ public:
 
 public slots:
     void updateText(QString s, QString);
+
+    void updateFromTreeState( TreeState* t );
 
 private:
     Ui::TreeDisplayWidget *ui;

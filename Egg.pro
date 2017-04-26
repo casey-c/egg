@@ -56,7 +56,8 @@ SOURCES += MainWindow/main.cpp\
     ProofTree/stepitem.cpp \
     ProofTree/hspacer.cpp \
     Utilities/Command/cmodsurroundwithdoublecut.cpp \
-    Utilities/Command/imodification.cpp
+    Utilities/Command/imodification.cpp \
+    Grid/griddisplayer.cpp
 
 HEADERS  += MainWindow/mainwindow.h \
     Utilities/constants.h \
@@ -110,7 +111,8 @@ HEADERS  += MainWindow/mainwindow.h \
     ProofTree/stepitem.h \
     ProofTree/hspacer.h \
     Utilities/Command/cmodsurroundwithdoublecut.h \
-    Utilities/Command/imodification.h
+    Utilities/Command/imodification.h \
+    Grid/griddisplayer.h
 
 FORMS    += MainWindow/mainwindow.ui \
     TreeDisplayWidget/treedisplaywidget.ui \
@@ -118,7 +120,8 @@ FORMS    += MainWindow/mainwindow.ui \
     ProofTree/prooftreeoverview.ui \
     ProofTree/prooftreenodeview.ui \
     ProofTree/clickableframe.ui \
-    ProofTree/stepoverview.ui
+    ProofTree/stepoverview.ui \
+    Grid/griddisplayer.ui
 
 INCLUDEPATH += $$PWD
 

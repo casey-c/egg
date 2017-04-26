@@ -173,7 +173,9 @@ public:
     void addPlaceholderToHighlighted();
 
 signals:
-    void treeChanged(QString t, QString g);
+    void treeChanged();
+    //void treeChanged(TreeState* t);
+    //void treeChanged(QString t, QString g);
 
 private:
     TreeNode* root;

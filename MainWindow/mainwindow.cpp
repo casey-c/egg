@@ -28,25 +28,34 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    currentTree = new TreeState();
+    /* Set up the tree displayer */
     treeDisplayWidget = new TreeDisplayWidget();
-    ui->leftLayout->addWidget(treeDisplayWidget);
+    ui->detailsPlaceholderLayout->addWidget(treeDisplayWidget);
+
+    /* Setup the grid displayer */
+    gridDisplayer = new GridDisplayer(this);
+    ui->gridPlaceholderLayout->addWidget( gridDisplayer );
 
     // Give actions shortcuts
     ui->actionNew->setShortcut(QKeySequence::New);
     ui->actionOpen->setShortcut(QKeySequence::Open);
     ui->actionSave->setShortcut(QKeySequence::Save);
 
-    // Tell the widget to redraw when the tree updates
-    QObject::connect(currentTree,
-                     SIGNAL(treeChanged(QString, QString)),
-                     treeDisplayWidget,
-                     SLOT(updateText(QString, QString)));
+    /* The current tree ( premise graph ) */
+    currentTree = new TreeState();
 
-    QObject::connect(currentTree,
-                     SIGNAL( treeChanged(QString, QString)),
-                     this,
-                     SLOT(updateGrid(QString, QString)));
+    // Tell the widget to redraw when the tree updates
+    connectTree();
+
+    //QObject::connect(currentTree,
+                     //SIGNAL(treeChanged(QString, QString)),
+                     //treeDisplayWidget,
+                     //SLOT(updateText(QString, QString)));
+
+    //QObject::connect(currentTree,
+                     //SIGNAL( treeChanged(QString, QString)),
+                     //this,
+                     //SLOT(updateGrid(QString, QString)));
 
     // Update the undo/redo menu bar when the commandInvoker updates
     QObject::connect(&commandInvoker,
@@ -73,14 +82,28 @@ MainWindow::MainWindow(QWidget *parent) :
                          this->commandInvoker.repeatLastCommand();
                      });
 
-    // Draw the starting node on the text widget
+    // Connect the various display widgets
+    QObject::connect( this,
+                      SIGNAL(sendUpdatedGridText(TreeState*)),
+                      gridDisplayer,
+                      SLOT( updateFromTreeState(TreeState*)) );
+
+    QObject::connect( this,
+                      SIGNAL( sendUpdatedTreeText(TreeState*)),
+                      treeDisplayWidget,
+                      SLOT( updateFromTreeState(TreeState*)) );
+
+    // Force a redraw
     currentTree->redraw();
 
-    // Proof tree junk
-    //ui->verticalLayout_2->addWidget( new ProofTreeOverview() );
-
+    /* Proof steps */
     stepOverview = new StepOverview();
-    ui->stepLayout->addWidget( stepOverview );
+    ui->stepPlaceholderLayout->addWidget( stepOverview );
+
+    QObject::connect(stepOverview,
+                     SIGNAL(stepAdded(TreeState*)),
+                     this,
+                     SLOT( setNewState(TreeState*)) );
 }
 
 MainWindow::~MainWindow()
@@ -274,14 +297,14 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
         qDebug() << "DEBUG: 6 shows standardized string";
         qDebug() << currentTree->getRoot()->getStringRep();
         break;
-    case Qt::Key_9:
-    {
-        qDebug() << "DEBUG: 9 prints grid in plaintext";
-        Grid g(currentTree);
+    //case Qt::Key_9:
+    //{
+        //qDebug() << "DEBUG: 9 prints grid in plaintext";
+        //Grid g(currentTree);
 
-        ui->tempGridText->setText(g.toPlaintext());
-        break;
-    }
+        //ui->tempGridText->setText(g.toPlaintext());
+        //break;
+    //}
     case Qt::Key_Period:
         qDebug() << "( . ): repeat last command";
         commandInvoker.repeatLastCommand();
@@ -600,28 +623,70 @@ void MainWindow::on_actionSave_triggered()
     FileConverter::save(this);
 }
 
-void MainWindow::setCurrStateFromLoaded(TreeState *state)
+void MainWindow::setCurrState(TreeState *state)
 {
     // Remove the old connection
     currentTree->disconnect();
 
     // Connect the new state passed in
     currentTree = state;
-    QObject::connect(currentTree,
-                     SIGNAL(treeChanged(QString)),
-                     treeDisplayWidget,
-                     SLOT(updateText(QString)));
+    connectTree();
+
+    //QObject::connect(currentTree,
+                     //SIGNAL(treeChanged(QString)),
+                     //treeDisplayWidget,
+                     //SLOT(updateText(QString)));
 
     // Draw it
-    currentTree->redraw();
-    Grid g(currentTree);
-    ui->tempGridText->setText(g.toPlaintext());
+    //currentTree->redraw(); // redraw calls the connected tree
+    //Grid g(currentTree);
+    //ui->tempGridText->setText(g.toPlaintext());
 
 }
 
-void MainWindow::updateGrid(QString, QString gridText)
+//void MainWindow::updateGrid(QString, QString gridText)
+//{
+    //ui->tempGridText->setText(gridText);
+
+//}
+
+
+void MainWindow::setNewState(TreeState *s)
 {
-    ui->tempGridText->setText(gridText);
+    // Disconnect the old one
+    currentTree->disconnect();
 
+    // Connect up the new one
+    currentTree = s;
+    connectTree();
+
+    // Force redraw
+    currentTree->redraw();
 }
 
+void MainWindow::currTreeNeedsRedraw()
+{
+    qDebug() << "I should redraw the current tree!";
+
+    // Emit the signal to the GridDisplayer
+    qDebug() << "Emit grid displayer";
+    emit( sendUpdatedGridText( currentTree ) );
+
+    // Emit the signal to the TreeDisplayWidget
+    qDebug() << "Emit tree displayer";
+    emit( sendUpdatedTreeText( currentTree ) );
+}
+
+void MainWindow::connectTree()
+{
+    // Connect the currentTree
+    QObject::connect( currentTree,
+                      SIGNAL( treeChanged() ),
+                      this,
+                      SLOT( currTreeNeedsRedraw() ) );
+
+    //QObject::connect(currentTree,
+                     //SIGNAL(treeChanged(TreeState*)),
+                     //this,
+                     //SLOT(setNewState(TreeState*)) );
+}

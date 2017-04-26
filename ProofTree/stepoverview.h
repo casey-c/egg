@@ -27,6 +27,9 @@ public:
 private slots:
     void on_pushButton_clicked();
 
+signals:
+    void stepAdded( TreeState* );
+
 private:
     Ui::StepOverview *ui;
 

@@ -18,3 +18,10 @@ void TreeDisplayWidget::updateText(QString s, QString)
 {
     ui->textEdit->setText(s);
 }
+
+void TreeDisplayWidget::updateFromTreeState(TreeState *t)
+{
+    qDebug() << "TreeDisplayWidget: updating from tree";
+
+    ui->textEdit->setText( t->getBoxedString() );
+}

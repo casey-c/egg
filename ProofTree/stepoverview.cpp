@@ -95,4 +95,7 @@ void StepOverview::addStep(QString text, TreeState *state)
                                          text,
                                          state));
 
+    // Emit the signal to display
+    emit( stepAdded(state) );
+
 }

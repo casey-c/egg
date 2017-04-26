@@ -990,7 +990,9 @@ QString TreeState::toOutputString()
 void TreeState::redraw()
 {
     Grid g(this);
-    emit treeChanged(getBoxedString(), g.toPlaintext());
+    //emit( treeChanged(this) );
+    emit( treeChanged() );
+    //emit treeChanged(getBoxedString(), g.toPlaintext());
 }
 
 
@@ -1066,7 +1068,10 @@ void TreeState::setPounceIDs()
 void TreeState::drawPounceTree()
 {
     Grid g(this);
-    emit treeChanged(getPounceString(), g.toPlaintext());
+    //emit( treeChanged(this) );
+    emit( treeChanged() );
+    // TODO: reimplement the pounce functionality
+    //emit treeChanged(getPounceString(), g.toPlaintext());
 }
 
 /*

@@ -111,7 +111,7 @@ MainWindow* FileConverter::load(QUrl filename)
         file.close();
 
         MainWindow* mw = new MainWindow();
-        mw->setCurrStateFromLoaded(state);
+        mw->setCurrState(state);
         return mw;
     }
 

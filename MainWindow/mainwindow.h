@@ -7,6 +7,8 @@
 #include "Utilities/Command/commandinvoker.h"
 #include "ProofTree/stepoverview.h"
 
+#include "Grid/griddisplayer.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -20,7 +22,7 @@ public:
     ~MainWindow();
 
     /* Load */
-    void setCurrStateFromLoaded(TreeState* state);
+    void setCurrState(TreeState* state);
 
     /* Save */
     TreeState* getCurrentTree() { return currentTree; }
@@ -49,9 +51,13 @@ private:
     bool typedOne;
     QString pounceTarget;
 
+    /* Grid display */
+    GridDisplayer* gridDisplayer;
+
     /* Mod */
     StepOverview* stepOverview;
 
+    void connectTree();
 
 private slots:
     void endTimer();
@@ -60,13 +66,24 @@ private slots:
 
     void on_actionSave_triggered();
 
+    /* Change or redraw the current tree state */
+    void currTreeNeedsRedraw();
+    void setNewState( TreeState* s );
+
+signals:
+    /* These connect to the GridDisplayer and TreeView widgets */
+    void sendUpdatedGridText( TreeState* t );
+    void sendUpdatedTreeText( TreeState* t );
+
 public slots:
     void updateUndoMenu(QString undo, QString redo, QString repeat,
                         bool undoable, bool redoable, bool repeatable);
 
     void insertFromFormula(TreeNode* root);
 
-    void updateGrid(QString, QString gridText);
+    //void updateGrid(QString, QString gridText);
+
+    //void updateState( QString tree, QString grid );
 
 };
 
