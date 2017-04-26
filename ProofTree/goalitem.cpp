@@ -41,8 +41,9 @@ void GoalItem::updateIcon()
 
 void GoalItem::onSuccessfulClick()
 {
-    ClickableFrame::onSuccessfulClick();
+    //ClickableFrame::onSuccessfulClick();
 
+    ((StepOverview*)overViewWidget)->selectGoalItem(this);
     qDebug() << "Clicked on goal";
 
     isGood = !isGood;

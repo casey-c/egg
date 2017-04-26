@@ -5,6 +5,7 @@
 #include <QVBoxLayout>
 #include "clickableframe.h"
 #include "goalitem.h"
+#include "stepitem.h"
 
 #include "Tree/treestate.h"
 
@@ -17,10 +18,13 @@ class StepOverview : public QWidget
     Q_OBJECT
 
 public:
-    explicit StepOverview(QWidget *parent = 0);
+    explicit StepOverview(QWidget *parent, TreeState* premise);
     ~StepOverview();
 
     void selectChild( ClickableFrame* child );
+
+    void selectStepItem( StepItem* step );
+    void selectGoalItem( GoalItem* goal );
 
     void addStep( QString text, TreeState* state );
 
@@ -28,7 +32,8 @@ private slots:
     void on_pushButton_clicked();
 
 signals:
-    void stepAdded( TreeState* );
+    //void stepAdded( TreeState* );
+    void selectionChanged( TreeState* );
 
 private:
     Ui::StepOverview *ui;

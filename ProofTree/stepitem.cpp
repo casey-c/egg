@@ -1,6 +1,7 @@
 #include "stepitem.h"
 #include "ui_clickableframe.h"
 #include "hspacer.h"
+#include "stepoverview.h"
 
 #include <QLabel>
 #include <QFrame>
@@ -31,8 +32,9 @@ StepItem::StepItem( QWidget* parent, int c, QString s, TreeState* state ) :
 
 void StepItem::onSuccessfulClick()
 {
-    ClickableFrame::onSuccessfulClick();
-    qDebug() << "Clicked on step" << numLabel->text();
+    //ClickableFrame::onSuccessfulClick();
+    ((StepOverview*)overViewWidget)->selectStepItem(this);
 
+    qDebug() << "Clicked on step" << numLabel->text();
     qDebug() << "Tree is " << correspondingTree->toOutputString();
 }

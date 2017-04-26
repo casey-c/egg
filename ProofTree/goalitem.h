@@ -20,6 +20,8 @@ public:
 
     void updateIcon();
 
+    bool isGoal() { return true; }
+
 private:
     QLabel* iconLabel;
     QPixmap xIcon;

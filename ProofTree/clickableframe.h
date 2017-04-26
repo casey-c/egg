@@ -19,6 +19,10 @@ public:
     void select();
     void deselect();
 
+    /* Type identifier */
+    virtual bool isGoal() { return false; }
+    virtual bool isStep() { return false; }
+
 protected:
     Ui::ClickableFrame *ui;
     QWidget* overViewWidget;
@@ -30,7 +34,7 @@ protected:
     void updatePalette();
 
     /* Extra actions performed by a valid click on this widget */
-    virtual void onSuccessfulClick();
+    virtual void onSuccessfulClick() = 0;
 
     /* Mouse handling */
     void mousePressEvent(QMouseEvent* event);

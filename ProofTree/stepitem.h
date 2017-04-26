@@ -17,6 +17,10 @@ class StepItem : public ClickableFrame
 public:
     explicit StepItem(QWidget* parent, int c, QString s, TreeState* state );
 
+    TreeState* state() { return correspondingTree; }
+
+    bool isStep() { return true; }
+
 private:
     QLabel* numLabel;
     QLabel* text;

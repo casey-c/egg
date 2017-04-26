@@ -97,11 +97,11 @@ MainWindow::MainWindow(QWidget *parent) :
     currentTree->redraw();
 
     /* Proof steps */
-    stepOverview = new StepOverview();
+    stepOverview = new StepOverview( this, currentTree );
     ui->stepPlaceholderLayout->addWidget( stepOverview );
 
     QObject::connect(stepOverview,
-                     SIGNAL(stepAdded(TreeState*)),
+                     SIGNAL( selectionChanged(TreeState*) ),
                      this,
                      SLOT( setNewState(TreeState*)) );
 }
@@ -653,6 +653,8 @@ void MainWindow::setCurrState(TreeState *state)
 
 void MainWindow::setNewState(TreeState *s)
 {
+    qDebug() << "Supposed to set a new state";
+    qDebug() << "State output is " << s->toOutputString();
     // Disconnect the old one
     currentTree->disconnect();
 

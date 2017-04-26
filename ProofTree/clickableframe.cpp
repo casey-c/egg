@@ -119,10 +119,10 @@ void ClickableFrame::mouseReleaseEvent(QMouseEvent *event)
  * Additional actions to perform on click. This should be extended by inheriting
  * classes... (make sure to call ClickableFrame::onSuccessfulClick() )
  */
-void ClickableFrame::onSuccessfulClick()
-{
-    ((StepOverview*)overViewWidget)->selectChild(this);
-}
+//void ClickableFrame::onSuccessfulClick()
+//{
+    //((StepOverview*)overViewWidget)->selectChild(this);
+//}
 
 /*
  * Mouse enters the widget
