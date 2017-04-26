@@ -50,7 +50,8 @@ StepOverview::StepOverview(QWidget *parent) :
 
     scrollLayout->addWidget(new StepItem(this,
                                          lastStepCounter++,
-                                         "Premise"));
+                                         "Premise",
+                                         new TreeState()));
 }
 
 
@@ -77,11 +78,21 @@ void StepOverview::on_pushButton_clicked()
 {
     scrollLayout->addWidget(new StepItem(this,
                                          lastStepCounter++,
-                                         getRandStepType()));
+                                         getRandStepType(),
+                                         new TreeState()));
 
     // Scroll to bottom (kinda ugly)
     ui->scrollArea->widget()->adjustSize();
     qApp->processEvents();
     ui->scrollArea->verticalScrollBar()->setValue(
                 ui->scrollArea->verticalScrollBar()->maximum() );
+}
+
+void StepOverview::addStep(QString text, TreeState *state)
+{
+    scrollLayout->addWidget(new StepItem(this,
+                                         lastStepCounter++,
+                                         text,
+                                         state));
+
 }

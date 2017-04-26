@@ -23,6 +23,7 @@ namespace constants
     const int MODE_Q = 1;
     const int MODE_SELECT = 2;
     const int MODE_POUNCE = 3;
+    const int MODE_MOD = 4;
 
     // Types of modifications
     const int STEP_DC_ADD = 0;

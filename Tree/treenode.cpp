@@ -379,7 +379,7 @@ void TreeNode::move(TreeNode *target, TreeNode *targetParent)
     if (targetParent->isPlaceHolder())
         return;
 
-    /* Should be okay to proceed with the move */
+    // Should be okay to proceed with the move
     if (target->getParent() != NULL)
         target->getParent()->children.removeOne(target);
 

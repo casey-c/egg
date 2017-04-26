@@ -78,7 +78,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Proof tree junk
     //ui->verticalLayout_2->addWidget( new ProofTreeOverview() );
-    ui->stepLayout->addWidget( new StepOverview() );
+
+    stepOverview = new StepOverview();
+    ui->stepLayout->addWidget( stepOverview );
 }
 
 MainWindow::~MainWindow()
@@ -289,6 +291,10 @@ void MainWindow::handleKeyPressDefault(QKeyEvent *event)
         command = new CTreeStateHighlightRoot(currentTree);
         commandInvoker.runCommand(command);
         break;
+    case Qt::Key_Slash:
+        qDebug() << "( Slash ): mod mode";
+        keybindMode = constants::MODE_MOD;
+        break;
     case Qt::Key_BracketLeft:
         qDebug() << "( [ ): enter pounce mode";
         keybindMode = constants::MODE_POUNCE;
@@ -455,6 +461,30 @@ void MainWindow::handleKeyPressPounce(QKeyEvent *event)
 }
 
 /*
+ * Modification mode commands
+ */
+void MainWindow::handleKeyPressMod(QKeyEvent *event)
+{
+    ICommand* command;
+
+    switch (event->key())
+    {
+    case Qt::Key_Escape:
+        keybindMode = constants::MODE_DEFAULT;
+        qDebug() << "Switching back to default mode";
+        break;
+    case Qt::Key_W:
+        qDebug() << "(W)rap in double cut";
+        command = new CModSurroundWithDoubleCut(currentTree, stepOverview );
+        commandInvoker.runCommand( command );
+        break;
+    default:
+        qDebug() << "Not a valid keypress in MOD mode";
+    }
+
+}
+
+/*
  * All key presses go here first. The keybindMode will turn the event over to
  * the proper function for further processing.
  */
@@ -476,6 +506,9 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         break;
     case constants::MODE_POUNCE:
         handleKeyPressPounce(event);
+        break;
+    case constants::MODE_MOD:
+        handleKeyPressMod(event);
         break;
     default:
         QMainWindow::keyPressEvent(event);

@@ -5,6 +5,7 @@
 #include "Tree/treestate.h"
 #include "TreeDisplayWidget/treedisplaywidget.h"
 #include "Utilities/Command/commandinvoker.h"
+#include "ProofTree/stepoverview.h"
 
 namespace Ui {
 class MainWindow;
@@ -42,10 +43,14 @@ private:
     void handleKeyPressQ(QKeyEvent* event);
     void handleKeyPressSelect(QKeyEvent* event);
     void handleKeyPressPounce(QKeyEvent* event);
+    void handleKeyPressMod(QKeyEvent* event);
 
     /* Pounce */
     bool typedOne;
     QString pounceTarget;
+
+    /* Mod */
+    StepOverview* stepOverview;
 
 
 private slots:

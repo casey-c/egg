@@ -6,6 +6,8 @@
 #include "clickableframe.h"
 #include "goalitem.h"
 
+#include "Tree/treestate.h"
+
 namespace Ui {
 class StepOverview;
 }
@@ -19,6 +21,8 @@ public:
     ~StepOverview();
 
     void selectChild( ClickableFrame* child );
+
+    void addStep( QString text, TreeState* state );
 
 private slots:
     void on_pushButton_clicked();

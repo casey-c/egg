@@ -79,6 +79,9 @@ public:
     TreeState(TreeState* original):
         root(new TreeNode(original->root)), highlighted(root){}
 
+    /* Better copy with highlight/selection */
+    static TreeState* copyTree( TreeState* original );
+
     /* Destructor */
     ~TreeState();
 

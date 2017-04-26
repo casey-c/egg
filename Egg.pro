@@ -54,7 +54,9 @@ SOURCES += MainWindow/main.cpp\
     ProofTree/stepoverview.cpp \
     ProofTree/goalitem.cpp \
     ProofTree/stepitem.cpp \
-    ProofTree/hspacer.cpp
+    ProofTree/hspacer.cpp \
+    Utilities/Command/cmodsurroundwithdoublecut.cpp \
+    Utilities/Command/imodification.cpp
 
 HEADERS  += MainWindow/mainwindow.h \
     Utilities/constants.h \
@@ -106,7 +108,9 @@ HEADERS  += MainWindow/mainwindow.h \
     ProofTree/stepoverview.h \
     ProofTree/goalitem.h \
     ProofTree/stepitem.h \
-    ProofTree/hspacer.h
+    ProofTree/hspacer.h \
+    Utilities/Command/cmodsurroundwithdoublecut.h \
+    Utilities/Command/imodification.h
 
 FORMS    += MainWindow/mainwindow.ui \
     TreeDisplayWidget/treedisplaywidget.ui \

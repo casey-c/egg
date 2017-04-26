@@ -44,4 +44,8 @@
 // Insert from formula
 #include "Utilities/Command/ctreestateinsertfromformula.h"
 
+// Modification mode
+#include "Utilities/Command/cmodsurroundwithdoublecut.h"
+
+
 #endif // ALLCOMMANDS_H

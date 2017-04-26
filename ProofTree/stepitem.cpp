@@ -6,8 +6,9 @@
 #include <QFrame>
 #include <QDebug>
 
-StepItem::StepItem( QWidget* parent, int c, QString s ) :
-    ClickableFrame( parent )
+StepItem::StepItem( QWidget* parent, int c, QString s, TreeState* state ) :
+    ClickableFrame( parent ),
+    correspondingTree( state )
 {
     numLabel = new QLabel( QString::number(c) );
     numLabel->setMinimumWidth(20);
@@ -32,4 +33,6 @@ void StepItem::onSuccessfulClick()
 {
     ClickableFrame::onSuccessfulClick();
     qDebug() << "Clicked on step" << numLabel->text();
+
+    qDebug() << "Tree is " << correspondingTree->toOutputString();
 }

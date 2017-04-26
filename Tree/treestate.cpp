@@ -14,6 +14,62 @@ bool TreeState::equals(TreeState* tree1, TreeState* tree2)
     return TreeNode::equals(tree1->getRoot(), tree2->getRoot());
 }
 
+/*
+ * Better copy, this one preserves highlight and selection
+ */
+TreeState* TreeState::copyTree(TreeState *original)
+{
+    TreeState* newState = new TreeState();
+
+    TreeNode* newHighlight;
+    QList<TreeNode*> newSelection;
+
+    QQueue<TreeNode*> queue;
+    queue.enqueue(original->root);
+    QQueue<TreeNode*> newQueue;
+    newQueue.enqueue(newState->root);
+
+    while ( !queue.empty() )
+    {
+        TreeNode* oldNode = queue.dequeue();
+        TreeNode* newNode = newQueue.dequeue();
+
+        // Preserve highlighting
+        if (oldNode == original->highlighted)
+            newHighlight = newNode;
+
+        // Preserve selection
+        if ( original->selectionList.contains(oldNode) )
+            newSelection.append(newNode);
+
+        // Add the next children to be copied
+        for ( TreeNode* next : oldNode->getChildren() )
+        {
+            TreeNode* nextNew;
+
+            if ( next->isPlaceHolder() )
+                nextNew = newNode->addChildPlaceholder();
+            else if ( next->isCut() )
+                nextNew = newNode->addChildCut();
+            else if ( next->isStatement() )
+                nextNew = newNode->addChildStatement(next->getName() );
+            else
+                qDebug() << "Didn't copy this node"
+                         << "Is there a new type to update the copy with?";
+
+            queue.enqueue(next);
+            newQueue.enqueue(nextNew);
+        }
+
+    }
+
+    // Set the selection and highlight
+    newState->selectionList = newSelection;
+    newState->highlighted = newHighlight;
+
+    return newState;
+}
+
 /////////////////
 /// Highlight ///
 /////////////////
@@ -596,22 +652,32 @@ void TreeState::surroundWithCut()
  */
 void TreeState::surroundWithDoubleCut()
 {
+    qDebug() << "in tree state surround with double cut";
     // With no selection, act on the highlighted node
     if (selectionList.isEmpty())
+    {
+        qDebug() << "empty select, so adding highlight";
         selectionList.append(highlighted);
+    }
 
     // Surround all selected nodes with double cuts
     for (TreeNode* node : selectionList)
     {
-        // Nodes cannot be surrounded
+        qDebug() << "surround node " << node->getID();
+        // Root nodes cannot be surrounded
         if (node->isRoot())
+        {
+            qDebug() << "node" << node->getID() << " is root???";
             return;
+        }
+        qDebug() << "made it";
 
         TreeNode* oldParent = node->getParent();
         TreeNode* newOuterCut = oldParent->addChildCut();
         TreeNode* newInnerCut = newOuterCut->addChildCut();
 
         TreeNode::move(node,newInnerCut);
+        recentUpdatedNodes.append(newOuterCut);
     }
 
     // If we acted on the highlighted node, update the highlight
