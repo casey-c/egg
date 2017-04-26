@@ -10,7 +10,9 @@
 
 #include "Utilities/fileconverter.h"
 
-#include "ProofTree/prooftreeoverview.h"
+//#include "ProofTree/prooftreeoverview.h"
+
+#include "ProofTree/stepoverview.h"
 
 #include <QDebug>
 #include <QTimer>
@@ -75,7 +77,8 @@ MainWindow::MainWindow(QWidget *parent) :
     currentTree->redraw();
 
     // Proof tree junk
-    ui->verticalLayout_2->addWidget( new ProofTreeOverview() );
+    //ui->verticalLayout_2->addWidget( new ProofTreeOverview() );
+    ui->stepLayout->addWidget( new StepOverview() );
 }
 
 MainWindow::~MainWindow()

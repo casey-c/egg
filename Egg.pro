@@ -49,7 +49,12 @@ SOURCES += MainWindow/main.cpp\
     Utilities/settingsmanager.cpp \
     Utilities/fileconverter.cpp \
     ProofTree/prooftreeoverview.cpp \
-    ProofTree/prooftreenodeview.cpp
+    ProofTree/prooftreenodeview.cpp \
+    ProofTree/clickableframe.cpp \
+    ProofTree/stepoverview.cpp \
+    ProofTree/goalitem.cpp \
+    ProofTree/stepitem.cpp \
+    ProofTree/hspacer.cpp
 
 HEADERS  += MainWindow/mainwindow.h \
     Utilities/constants.h \
@@ -96,13 +101,20 @@ HEADERS  += MainWindow/mainwindow.h \
     Utilities/settingsmanager.h \
     Utilities/fileconverter.h \
     ProofTree/prooftreeoverview.h \
-    ProofTree/prooftreenodeview.h
+    ProofTree/prooftreenodeview.h \
+    ProofTree/clickableframe.h \
+    ProofTree/stepoverview.h \
+    ProofTree/goalitem.h \
+    ProofTree/stepitem.h \
+    ProofTree/hspacer.h
 
 FORMS    += MainWindow/mainwindow.ui \
     TreeDisplayWidget/treedisplaywidget.ui \
     PolishInputWidget/polishinputwidget.ui \
     ProofTree/prooftreeoverview.ui \
-    ProofTree/prooftreenodeview.ui
+    ProofTree/prooftreenodeview.ui \
+    ProofTree/clickableframe.ui \
+    ProofTree/stepoverview.ui
 
 INCLUDEPATH += $$PWD
 

@@ -9,5 +9,7 @@
         <file>Resources/save.svg</file>
         <file>Resources/undo.svg</file>
         <file>Resources/x.svg</file>
+        <file>Resources/check.svg</file>
+        <file>Resources/goalx.svg</file>
     </qresource>
 </RCC>
