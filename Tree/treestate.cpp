@@ -652,32 +652,33 @@ void TreeState::surroundWithCut()
  */
 void TreeState::surroundWithDoubleCut()
 {
-    qDebug() << "in tree state surround with double cut";
+    //qDebug() << "in tree state surround with double cut";
     // With no selection, act on the highlighted node
     if (selectionList.isEmpty())
     {
-        qDebug() << "empty select, so adding highlight";
+        //qDebug() << "empty select, so adding highlight";
         selectionList.append(highlighted);
     }
 
     // Surround all selected nodes with double cuts
     for (TreeNode* node : selectionList)
     {
-        qDebug() << "surround node " << node->getID();
+        //qDebug() << "surround node " << node->getID();
         // Root nodes cannot be surrounded
         if (node->isRoot())
         {
-            qDebug() << "node" << node->getID() << " is root???";
+            //qDebug() << "node" << node->getID() << " is root???";
             return;
         }
-        qDebug() << "made it";
+        //qDebug() << "made it";
 
         TreeNode* oldParent = node->getParent();
         TreeNode* newOuterCut = oldParent->addChildCut();
         TreeNode* newInnerCut = newOuterCut->addChildCut();
 
         TreeNode::move(node,newInnerCut);
-        recentUpdatedNodes.append(newOuterCut);
+        //recentUpdatedNodes.append(newOuterCut);
+        recentUpdatedNodes.append(node);
     }
 
     // If we acted on the highlighted node, update the highlight
