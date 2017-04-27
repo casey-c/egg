@@ -64,46 +64,28 @@ StepOverview::~StepOverview()
 
 void StepOverview::selectChild(ClickableFrame *child)
 {
-    qDebug() << "step overview select child";
     // No change in selection
     if ( selected == child )
         return;
-    qDebug() << "selection changed";
 
     // Remove old selection
     if ( selected != nullptr )
         selected->deselect();
 
-    qDebug() << "no current selection ";
-
     selected = child;
     selected->select();
-
-    qDebug() << "selected the new current";
-
-    // Emit the signal to display
-    //if ( StepItem* c = dynamic_cast<StepItem*>(selected))
-    //{
-        //qDebug() << "Cast to stepItem succeeded";
-        //emit( selectionChanged( c->state() ) );
-    //}
-    //else
-    //{
-        //qDebug() << "Cast to stepItem failed";
-    //}
 }
 
 void StepOverview::selectStepItem(StepItem *step)
 {
     selectChild(step);
-    qDebug() << "Emit step here";
     emit( selectionChanged(step->state()) );
 }
 
 void StepOverview::selectGoalItem(GoalItem *goal)
 {
     selectChild(goal);
-    qDebug() << "Emit goal here";
+    qDebug() << "TODO: Emit goal here";
 }
 
 void StepOverview::on_pushButton_clicked()
@@ -113,22 +95,27 @@ void StepOverview::on_pushButton_clicked()
                                          getRandStepType(),
                                          new TreeState()));
 
-    // Scroll to bottom (kinda ugly)
-    ui->scrollArea->widget()->adjustSize();
-    qApp->processEvents();
-    ui->scrollArea->verticalScrollBar()->setValue(
-                ui->scrollArea->verticalScrollBar()->maximum() );
+    scrollToBottom();
 }
 
 void StepOverview::addStep(QString text, TreeState *state)
 {
-    qDebug() << "Stepoverview: addstep";
     StepItem* newItem = new StepItem( this,
                                       lastStepCounter++,
                                       text,
                                       state );
     scrollLayout->addWidget( newItem );
     selectStepItem(newItem);
-    //newItem->select();
-    //selectChild( newItem );
+    scrollToBottom();
+}
+
+void StepOverview::scrollToBottom()
+{
+    qDebug() << "Attempting to scroll to bottom";
+
+    // Scroll to bottom (kinda ugly)
+    ui->scrollArea->widget()->adjustSize();
+    qApp->processEvents();
+    ui->scrollArea->verticalScrollBar()->setValue(
+                ui->scrollArea->verticalScrollBar()->maximum() );
 }

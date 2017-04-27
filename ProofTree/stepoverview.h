@@ -32,7 +32,6 @@ private slots:
     void on_pushButton_clicked();
 
 signals:
-    //void stepAdded( TreeState* );
     void selectionChanged( TreeState* );
 
 private:
@@ -41,6 +40,8 @@ private:
     ClickableFrame* selected;
 
     int lastStepCounter;
+
+    void scrollToBottom();
 
     GoalItem* goalItem;
     QVBoxLayout* scrollLayout;
