@@ -501,6 +501,16 @@ void MainWindow::handleKeyPressMod(QKeyEvent *event)
         command = new CModSurroundWithDoubleCut(currentTree, stepOverview );
         commandInvoker.runCommand( command );
         break;
+    case Qt::Key_A:
+        qDebug() << "(A)nniliate a surrounding double cut";
+        command = new CModRemoveSurroundingDoubleCut( currentTree, stepOverview );
+        commandInvoker.runCommand( command );
+        break;
+    case Qt::Key_E:
+        qDebug() << "(E)rasure";
+        command = new CModErasure( currentTree, stepOverview );
+        commandInvoker.runCommand( command );
+        break;
     default:
         qDebug() << "Not a valid keypress in MOD mode";
     }

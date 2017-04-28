@@ -57,7 +57,9 @@ SOURCES += MainWindow/main.cpp\
     ProofTree/hspacer.cpp \
     Utilities/Command/cmodsurroundwithdoublecut.cpp \
     Utilities/Command/imodification.cpp \
-    Grid/griddisplayer.cpp
+    Grid/griddisplayer.cpp \
+    Utilities/Command/cmodremovesurroundingdoublecut.cpp \
+    Utilities/Command/cmoderasure.cpp
 
 HEADERS  += MainWindow/mainwindow.h \
     Utilities/constants.h \
@@ -112,7 +114,9 @@ HEADERS  += MainWindow/mainwindow.h \
     ProofTree/hspacer.h \
     Utilities/Command/cmodsurroundwithdoublecut.h \
     Utilities/Command/imodification.h \
-    Grid/griddisplayer.h
+    Grid/griddisplayer.h \
+    Utilities/Command/cmodremovesurroundingdoublecut.h \
+    Utilities/Command/cmoderasure.h
 
 FORMS    += MainWindow/mainwindow.ui \
     TreeDisplayWidget/treedisplaywidget.ui \

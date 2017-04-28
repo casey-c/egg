@@ -20,6 +20,8 @@ protected:
 
     virtual bool modify() = 0;
     bool redo();
+
+    QString stepText;
 };
 
 #endif // IMODIFICATION_H

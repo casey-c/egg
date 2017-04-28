@@ -46,6 +46,8 @@
 
 // Modification mode
 #include "Utilities/Command/cmodsurroundwithdoublecut.h"
+#include "Utilities/Command/cmodremovesurroundingdoublecut.h"
+#include "Utilities/Command/cmoderasure.h"
 
 
 #endif // ALLCOMMANDS_H

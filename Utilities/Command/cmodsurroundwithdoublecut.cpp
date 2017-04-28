@@ -8,6 +8,7 @@ CModSurroundWithDoubleCut::CModSurroundWithDoubleCut( TreeState* original,
                                                       StepOverview* overview )
 {
     text = "Surround with double cut";
+    stepText = "Surround with double cut";
     prevTree = original;
     stepOverview = overview;
 }

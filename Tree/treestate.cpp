@@ -920,6 +920,175 @@ TreeState* TreeState::performDeiteration()
     return NULL;
 }
 
+/*
+ * This modification attempts to remove a double cut from surrounding some nodes
+ *
+ * Like other functions, it acts upon the selection list or the highlight if the
+ * selection is empty. These are the "target" nodes - and since we're in
+ * modification mode, all nodes in the target set must share the same parent.
+ *
+ * It's got logic for 2 major cases:
+ *     1. the target set contains at least one statement
+ *     2. everything in the target set is a cut
+ *
+ * In the first case, the only thing we need to check is that there is a cut
+ * parent and a grandparent with only one child (disregarding placeholders).
+ *
+ * The second case is a bit trickier, as it has 3 subcases of its own:
+ *     1. target set is the outer cut of the DC (and nothing else)
+ *     2. target set is the inner cut of the DC (and nothing else)
+ *     3. target set is the inner contents that are surrounded by the DC, i.e.
+ *         similar to the original case above.
+ *
+ * In any of these cases, we must check that the double cut exists and that it
+ * is valid (i.e. the outer cut has ONLY the inner cut as its child and no other
+ * non-placeholder children).
+ *
+ * On success, recentUpdatedNodes will have all the affected children.
+ */
+void TreeState::removeSurroundingDoubleCut()
+{
+    // Determine the target set
+    QList<TreeNode*> target = selectionList;
+
+    if ( target.empty() )
+        target.append(highlighted);
+
+    // Determine the case
+    bool atLeastOneStatement = false;
+    for (TreeNode* n : target)
+    {
+        if ( n->isStatement())
+        {
+            atLeastOneStatement = true;
+            break;
+        }
+
+        // Roots can't have a surrounding double cut
+        else if ( n->isRoot() )
+            return;
+    }
+
+    TreeNode* innerCut;
+    TreeNode* outerCut;
+
+    if ( atLeastOneStatement )
+    {
+        qDebug() << "At least one statement";
+        if ( surroundedByDC( target.first() ) )
+        {
+            qDebug() << "All good";
+            innerCut = target.first()->getParent();
+            outerCut = innerCut->getParent();
+
+            for ( TreeNode* child : innerCut->getChildren() )
+                recentUpdatedNodes.append(child);
+
+            // If we make it here, we should be okay to remove the DC
+            removeAndSaveOrphans(innerCut);
+            removeAndSaveOrphans(outerCut);
+
+            // TODO: make this function return bool, not void
+            // since this breaks if we remove an empty double
+            // cut (i.e. no kids in recentNodes so we can't
+            // know if it's successful with the normal approach)
+        }
+        else
+        {
+            qDebug() << "Not surrounded by DC";
+            return;
+        }
+    }
+    else // Nothing selected is a statement, so we have 3 subcases to check
+    {
+        if (target.size() == 1)
+        {
+            if ( surroundedByDC(target.first()) )
+            {
+                qDebug() << "Solo target is surrounded by DC";
+                innerCut = target.first()->getParent();
+                outerCut = innerCut->getParent();
+            }
+            else // May be the outer or inner cut of DC...
+            {
+                // TODO: implement
+                qDebug() << "Solo may be the cut itself... ";
+            }
+        }
+        else
+        {
+            qDebug() << "More than one target...";
+            // TODO: implementation
+        }
+
+    }
+
+/*
+ *     1. target set is the outer cut of the DC (and nothing else)
+ *     2. target set is the inner cut of the DC (and nothing else)
+ *     3. target set is the inner contents that are surrounded by the DC, i.e.
+ *         similar to the original case above.
+ *
+ */
+
+}
+
+/*
+ * Helper function to determine if the target node is surrounded by a double-cut
+ */
+bool TreeState::surroundedByDC(TreeNode *target)
+{
+    // Root can't be surrounded
+    if ( target->isRoot() )
+        return false;
+
+    TreeNode* parent = target->getParent();
+
+    if (parent->isRoot())
+        return false;
+
+    TreeNode* grandparent = parent->getParent();
+
+    if ( !( grandparent->isCut() && parent->isCut() ) )
+        return false;
+
+    // Make sure parent is the only non-placeholder child of grandparent
+    for ( TreeNode* child : grandparent->getChildren() )
+    {
+        if ( child->isPlaceHolder() && child != parent )
+            return false;
+    }
+
+    // Made it all the way
+    return true;
+}
+
+bool TreeState::erasure()
+{
+    QList<TreeNode*> target = selectionList;
+    if (target.isEmpty())
+        target.append(highlighted);
+
+    qDebug() << "Depth is " << target.first()->getDepth();
+
+    // Depth must subtract one cause of root not being a real node
+    if ( (target.first()->getDepth()-1) % 2 == 0)
+    {
+        qDebug() << "Even";
+
+        for ( TreeNode* node : target)
+            removeAndBurnTheOrphanage(node);
+        return true;
+    }
+    else
+    {
+        qDebug() << "Odd";
+        return false;
+    }
+
+
+}
+
 /////////////////
 /// Box print ///
 /////////////////

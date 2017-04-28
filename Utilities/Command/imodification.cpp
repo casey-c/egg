@@ -14,7 +14,7 @@ bool IModification::execute()
         // We must then put it into a ProofStep item
         // and add it to our proof
 
-        stepOverview->addStep("Double cut surround", resultingTree);
+        stepOverview->addStep(stepText, resultingTree);
 
         return true;
     }

@@ -39,7 +39,20 @@
     </item>
     <item row="1" column="0">
      <widget class="QWidget" name="gridPlaceholder" native="true">
-      <layout class="QVBoxLayout" name="gridPlaceholderLayout"/>
+      <layout class="QVBoxLayout" name="gridPlaceholderLayout">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+      </layout>
      </widget>
     </item>
     <item row="3" column="0" colspan="2">
@@ -145,7 +158,6 @@
    <addaction name="menuEdit"/>
    <addaction name="menuHelp"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
   <action name="actionNew">
    <property name="icon">
     <iconset resource="../resources.qrc">

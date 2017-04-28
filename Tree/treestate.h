@@ -142,6 +142,11 @@ public:
     TreeState* doubleCutRemoval();
     TreeState* doubleCutAddition();
 
+    bool surroundedByDC( TreeNode* target );
+    void removeSurroundingDoubleCut();
+
+    bool erasure();
+
     void setIterationTarget();
     QList<TreeNode*> getIterationTarget() { return iterationList; }
 
