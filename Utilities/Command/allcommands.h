@@ -48,6 +48,7 @@
 #include "Utilities/Command/cmodsurroundwithdoublecut.h"
 #include "Utilities/Command/cmodremovesurroundingdoublecut.h"
 #include "Utilities/Command/cmoderasure.h"
+#include "Utilities/Command/cmodaddemptydoublecut.h"
 
 
 #endif // ALLCOMMANDS_H

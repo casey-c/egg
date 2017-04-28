@@ -501,9 +501,14 @@ void MainWindow::handleKeyPressMod(QKeyEvent *event)
         command = new CModSurroundWithDoubleCut(currentTree, stepOverview );
         commandInvoker.runCommand( command );
         break;
-    case Qt::Key_A:
-        qDebug() << "(A)nniliate a surrounding double cut";
+    case Qt::Key_R:
+        qDebug() << "(R)nniliate a surrounding double cut";
         command = new CModRemoveSurroundingDoubleCut( currentTree, stepOverview );
+        commandInvoker.runCommand( command );
+        break;
+    case Qt::Key_A:
+        qDebug() << "(A)dd empty double cut";
+        command = new CModAddEmptyDoubleCut( currentTree, stepOverview );
         commandInvoker.runCommand( command );
         break;
     case Qt::Key_E:
