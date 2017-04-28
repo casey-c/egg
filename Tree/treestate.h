@@ -146,6 +146,8 @@ public:
     void removeSurroundingDoubleCut();
 
     bool erasure();
+    bool iterate();
+    bool deiterate();
 
     void setIterationTarget();
     QList<TreeNode*> getIterationTarget() { return iterationList; }

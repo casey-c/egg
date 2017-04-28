@@ -511,9 +511,23 @@ void MainWindow::handleKeyPressMod(QKeyEvent *event)
         command = new CModAddEmptyDoubleCut( currentTree, stepOverview );
         commandInvoker.runCommand( command );
         break;
+    case Qt::Key_F:
+        qDebug() << "(F)inalize iteration target";
+        currentTree->setIterationTarget();
+        break;
+    case Qt::Key_T:
+        qDebug() << "I(t)erate";
+        command = new CModIterate( currentTree, stepOverview );
+        commandInvoker.runCommand( command );
+        break;
     case Qt::Key_E:
         qDebug() << "(E)rasure";
         command = new CModErasure( currentTree, stepOverview );
+        commandInvoker.runCommand( command );
+        break;
+    case Qt::Key_D:
+        qDebug() << "(D)eiterate";
+        command = new CModDeiterate( currentTree, stepOverview );
         commandInvoker.runCommand( command );
         break;
     default:

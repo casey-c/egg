@@ -23,6 +23,7 @@ TreeState* TreeState::copyTree(TreeState *original)
 
     TreeNode* newHighlight;
     QList<TreeNode*> newSelection;
+    QList<TreeNode*> newIterationTarget;
 
     QQueue<TreeNode*> queue;
     queue.enqueue(original->root);
@@ -41,6 +42,10 @@ TreeState* TreeState::copyTree(TreeState *original)
         // Preserve selection
         if ( original->selectionList.contains(oldNode) )
             newSelection.append(newNode);
+
+        // Preserve iteration target
+        if ( original->iterationList.contains(oldNode) )
+            newIterationTarget.append(newNode);
 
         // Add the next children to be copied
         for ( TreeNode* next : oldNode->getChildren() )
@@ -66,6 +71,7 @@ TreeState* TreeState::copyTree(TreeState *original)
     // Set the selection and highlight
     newState->selectionList = newSelection;
     newState->highlighted = newHighlight;
+    newState->iterationList = newIterationTarget;
 
     return newState;
 }
@@ -856,7 +862,19 @@ TreeState* TreeState::doubleCutAddition()
  */
 void TreeState::setIterationTarget()
 {
+    // We're going to replace the old list
+    iterationList.clear();
+
+    // Work on highlight
+    if ( selectionList.empty() )
+        selectionList.append( highlighted );
+
+    qDebug() << "Set iteration target!";
     iterationList = selectionList;
+    clearSelection();
+
+    for ( TreeNode* n : iterationList )
+        qDebug() << "\tIteration list has node" << n->getID();
 }
 
 /*
@@ -1087,6 +1105,170 @@ bool TreeState::erasure()
     }
 
 
+}
+
+/*
+ * Iterate will take a finalized iteration target and attempt
+ * to iterate it into the highlighted node, if such a move is
+ * valid.
+ */
+bool TreeState::iterate()
+{
+    // First check if iteration target is empty
+    if ( iterationList.empty() )
+    {
+        qDebug() << "Iteration list empty!";
+        return false;
+    }
+
+    // Check if the iteration target is even valid by
+    // choosing an arbitrary node from the list
+    TreeNode* n = iterationList.first();
+
+    // Can't iterate a ROOT node
+    if ( n->isRoot() )
+        return false;
+
+    TreeNode* parent = n->getParent();
+
+    // Make sure that the highlight is a decendent of this parent
+    TreeNode* potential = highlighted;
+    bool valid = false;
+    while ( potential != NULL )
+    {
+        if ( potential == parent )
+        {
+            valid = true;
+            break;
+        }
+
+        potential = potential->getParent();
+    }
+
+    if ( !valid )
+    {
+        qDebug() << "Not a valid location to iterate into";
+        return false;
+    }
+
+    // really, really, really, really, really lazy
+    // TODO: rework this to be so much less stupid
+    parent = highlighted;
+
+    // If we've made it here, we are safe to iterate
+    for ( TreeNode* node : iterationList )
+    {
+        // Make a copy of this node
+        TreeNode* newNode;
+
+        if ( node->isCut() )
+            newNode = parent->addChildCut();
+        else if ( node->isStatement() )
+            newNode = parent->addChildStatement( node->getName() );
+        else if ( node->isPlaceHolder() )
+            newNode = parent->addChildPlaceholder();
+        else
+            qDebug() << "ERROR: iterate() wrong type";
+
+        // Make a copy of all its decendent structure
+        QQueue<TreeNode*> kids;
+        QQueue<TreeNode*> kidParents;
+        for ( TreeNode* child : node->getChildren() )
+        {
+            kids.enqueue(child);
+            kidParents.enqueue(newNode);
+        }
+
+        while ( !kids.empty() )
+        {
+            TreeNode* oldKid = kids.dequeue();
+            TreeNode* newParent = kidParents.dequeue();
+
+            TreeNode* newKid;
+
+            // Give a new kid to the parent based on the old kid
+            if ( oldKid->isCut() )
+                newKid = newParent->addChildCut();
+            else if ( oldKid->isStatement() )
+                newKid = newParent->addChildStatement( oldKid->getName() );
+            else if ( oldKid->isPlaceHolder() )
+                newKid = newParent->addChildPlaceholder();
+            else
+                qDebug() << "ERROR: iterate() wrong type";
+
+            for ( TreeNode* nextKid : oldKid->getChildren() )
+            {
+                kids.enqueue( nextKid );
+                kidParents.enqueue( newKid );
+            }
+        }
+
+        qDebug() << "Structure all copied successfully";
+
+
+    }
+
+    // All done
+    iterationList.clear();
+    return true;
+}
+
+bool TreeState::deiterate()
+{
+    // Deiterate doesn't need the iteration list i dont think
+    QString str = highlighted->getStringRep();
+
+    qDebug() << "Looking for " << str;
+
+    // Root obviously can't be deiterated
+    if ( highlighted->isRoot() )
+        return false;
+
+    // Search for the string rep
+    TreeNode* parent = highlighted->getParent();
+    bool valid = false;
+
+    while ( parent != nullptr )
+    {
+        for ( TreeNode* child : parent->getChildren() )
+        {
+            // Skip the target node
+            if ( child == highlighted )
+                continue;
+            // Otherwise check if we have a copy of it
+            if ( child->getStringRep() == str)
+            {
+                qDebug() << "Found a copy";
+                valid = true;
+                break;
+            }
+            else
+            {
+                qDebug() << "These two don't match:"
+                         << child->getStringRep()
+                         << "and (target:)"
+                         << str
+                         << "\n";
+            }
+        }
+
+        // We've found what we're looking for, so quit early
+        if ( valid )
+            break;
+
+        parent = parent->getParent();
+    }
+
+    if ( !valid )
+    {
+        qDebug() << "Didn't find a copy above";
+        return false;
+    }
+
+    qDebug() << "Found a copy! Safe to deiterate";
+
+    removeAndBurnTheOrphanage( highlighted );
+    return true;
 }
 
 /////////////////
