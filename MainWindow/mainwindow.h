@@ -70,6 +70,8 @@ private slots:
     void currTreeNeedsRedraw();
     void setNewState( TreeState* s );
 
+    void on_actionNew_triggered();
+
 signals:
     /* These connect to the GridDisplayer and TreeView widgets */
     void sendUpdatedGridText( TreeState* t );

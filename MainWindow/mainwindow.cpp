@@ -721,3 +721,9 @@ void MainWindow::connectTree()
                      //this,
                      //SLOT(setNewState(TreeState*)) );
 }
+
+void MainWindow::on_actionNew_triggered()
+{
+    MainWindow* newWindow = new MainWindow();
+    newWindow->show();
+}
